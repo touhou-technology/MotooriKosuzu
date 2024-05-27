@@ -1,11 +1,9 @@
 /*
-
+Basically, this file is designed to provide an API for the bot
 */
-
-
 namespace TE {
-	//调用网络API
+	//Calling network APIs
 	class Web;
-	//存储使用者的头像名字等
+	//Store user's avatar name, etc
 	class User;
 }
