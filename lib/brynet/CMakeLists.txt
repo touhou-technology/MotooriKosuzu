@@ -1,0 +1,56 @@
+cmake_minimum_required (VERSION 2.6)
+
+project(brynet)
+
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH 1)
+endif()
+
+    
+if(NOT APPLE)
+  find_library(LIB_OPENSSL NAMES crypto ssl)
+  if(LIB_OPENSSL)
+    add_definitions(-DBRYNET_USE_OPENSSL)
+    SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-as-needed -ldl -lrt -lssl -lcrypto")
+  elseif()
+    message("not found openssl")
+  endif()
+endif()
+
+if(WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest")
+elseif(UNIX)
+    if(NOT CMAKE_BUILD_TYPE)
+      set(CMAKE_BUILD_TYPE "Release")
+    endif()
+    SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g -ggdb -Wall -Wextra -D_DEBUG")
+    SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -g -ggdb -Wall -Wextra -DNDEBUG")
+  if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.0)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+  endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -fPIC")
+endif()
+
+SET(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
+install(DIRECTORY include/brynet
+  DESTINATION "${INCLUDE_INSTALL_DIR}")
+
+option(brynet_BUILD_EXAMPLES "Build examples" ON)
+option(brynet_BUILD_TESTS "Build test" ON)
+
+if (brynet_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif(brynet_BUILD_EXAMPLES)
+
+if (brynet_BUILD_TESTS)
+  if(WIN32)
+    if (MSVC_VERSION VERSION_GREATER 1900)
+      add_subdirectory(tests)
+    endif() 
+  elseif(UNIX)
+    add_subdirectory(tests)
+  endif() 
+endif(brynet_BUILD_TESTS)
