@@ -8,11 +8,12 @@ namespace MK {
 	class Function;
 }
 
+//该类设计提供配置文件路径、本体本身
 class MK::MotooriKosuze {
 public:
 	MotooriKosuze();
-	void GetInstance();
+	dpp::activity* GetM_robot();
 private:
-	dpp::activity* m_rubot;
-	Function* m_Fn;
+	dpp::activity* m_robot;
+	std::string token;
 };

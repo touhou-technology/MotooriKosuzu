@@ -1,10 +1,10 @@
 #include "MotooriKosuze.h"
 
 MK::MotooriKosuze::MotooriKosuze(){
-
+	m_robot = new dpp::activity();
 }
 
-//这是获取其他类型的例子
-void MK::MotooriKosuze::GetInstance() {
-
+//等等还没设计好
+dpp::activity* MK::MotooriKosuze::GetM_robot() {
+	return m_robot;
 }
