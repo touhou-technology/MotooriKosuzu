@@ -11,51 +11,45 @@ namespace MotooriKosuze {
 
 	//最后交给这个类来进行初始化（也就是app本体？）
 	class Kosuze {
+	public:
 		static void Init();
-
+		Kosuze();
+		~Kosuze();
 	private:
 		static std::unique_ptr<Kosuze> m_instance;
 	};
 
 	//该类为读取文件内容
-	class Config {
+	class ConfigFile {
 	public:
 		static void Init();
-		Config();
+		static Json::Value* GetJSObj();
 
-		
+		//readFile
+		Json::Value ReadFile();
 
-		//保存修改内容
-		bool SaveConfig();
-
-		friend class DiscordAPI;
+		ConfigFile();
+		~ConfigFile();
 
 	private:
-		static std::unique_ptr<Config> m_instance;
+		static std::unique_ptr<ConfigFile> m_ConfigFile;
 		std::string FilePath;
+		Json::Value JSObj;
 	};
 
 	//该类为DPP的库实例
 	class DiscordAPI {
 	public:
 		//初始化，且创建这个实例
-		static void Init(std::string token);
+		static void Init();
 
-
-		dpp::cluster* m_robot();
 		DiscordAPI(std::string token);
+		~DiscordAPI();
+
 	private:
-		static std::unique_ptr<DiscordAPI> m_instance;
+		dpp::cluster* m_robot();
+		static std::unique_ptr<DiscordAPI> m_DiscordAPI;
 		dpp::cluster bot;
-	};
-
-
-	
-	class FnModule {
-	public:
-
-	private:
-
 	};
 
 }
