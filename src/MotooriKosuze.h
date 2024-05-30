@@ -6,6 +6,7 @@
 #pragma once
 #include <dpp/dpp.h>
 #include <jsoncpp/json/json.h>
+#include <memory>
 
 namespace MotooriKosuze {
 
@@ -16,7 +17,7 @@ namespace MotooriKosuze {
 		Kosuze();
 		~Kosuze();
 	private:
-		static std::unique_ptr<Kosuze> m_instance;
+		static std::unique_ptr<Kosuze> m_Kosuze;
 	};
 
 	//该类为读取文件内容
