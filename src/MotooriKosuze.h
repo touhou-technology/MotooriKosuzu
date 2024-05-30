@@ -5,7 +5,7 @@
 //include discord bot
 #pragma once
 #include <dpp/dpp.h>
-
+#include <jsoncpp/json/json.h>
 
 namespace MotooriKosuze {
 
@@ -20,12 +20,16 @@ namespace MotooriKosuze {
 	//该类为读取文件内容
 	class Config {
 	public:
-		static void Init(std::string Path_);
-		Config(const std::string Path);
+		static void Init();
+		Config();
 
 		
+
 		//保存修改内容
 		bool SaveConfig();
+
+		friend class DiscordAPI;
+
 	private:
 		static std::unique_ptr<Config> m_instance;
 		std::string FilePath;

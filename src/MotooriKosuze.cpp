@@ -1,23 +1,24 @@
 
 
 #include "MotooriKosuze.h"
-
+#include <functional>
 //类名就是包括该类的作用
 namespace MotooriKosuze {
-
+	//该函数为为类初始化
 	void Kosuze::Init() {
+		m_instance.reset(new Kosuze);
 		DiscordAPI::Init();
 		Config::Init();
+		
 	}
 
 
 
-	void Config::Init(std::string Path_){
-		m_instance.reset(new Config(Path_));
+	void Config::Init(){
+		m_instance.reset(new Config());
 	}
 
-	Config::Config(const std::string Path) 
-		:FilePath(Path){
+	Config::Config() {
 
 	}
 
