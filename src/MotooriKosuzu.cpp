@@ -5,44 +5,43 @@ using namespace std;
 //类名就是包括该类的作用
 namespace MotooriKosuzu {
 
-	void Kosuzu::Init(string _Path) {
-		DiscordAPI::Init();
+	void Kosuzu::Init(string _Path, string _Token) {
+		DiscordAPI::Init(_Token);
 		Config::Init(_Path);
 	}
 
 	void Config::Init(string Path_){
-		m_instance.reset(new Config(Path_));
+		//m_instance.reset(new Config(Path_));
 	}
 
-	Config::Config(const string Path) 
-		:FilePath(Path){
+	Config::Config(const string Path): FilePath(Path){
 
 	}
 
 	//保存配置
 	bool Config::SaveConfig() {
 
-
+		return false;
 	}
 
 	//DiscordAPI段的实现
 	void DiscordAPI::Init(string token = "" /*这是测试用接口更换不同的令牌*/) {
-		m_instance.reset(new DiscordAPI(token));
+		//m_instance.reset(new DiscordAPI(token));
 	}
 
 	//返回一个robot以获取额，似乎可以用友元
 	dpp::cluster* DiscordAPI::m_robot() {
-		return &bot;
+		return bot.get();
 	}
 
-	DiscordAPI::DiscordAPI(string token)
-		:bot(token, dpp::i_default_intents | dpp::i_message_content) {
+	DiscordAPI::DiscordAPI(string token){
+		bot = make_unique<dpp::cluster>(token, dpp::i_default_intents | dpp::i_message_content);
 
 		//启动日志
-		bot.on_log(dpp::utility::cout_logger());
+		bot->on_log(dpp::utility::cout_logger());
 
 		//启动以线程阻塞方式
-		bot.start(dpp::st_wait);
+		bot->start(dpp::st_wait);
 	}
 
 }

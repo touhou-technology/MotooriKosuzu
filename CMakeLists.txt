@@ -14,8 +14,8 @@ add_executable (MotooriKosuze
 	)
 
 
-add_subdirectory(lib)
-target_link_libraries(MotooriKosuze PUBLIC nlohmann_json::nlohmann_json brynet httplib::httplib)
+# add_subdirectory(lib)
+# target_link_libraries(MotooriKosuze PUBLIC nlohmann_json::nlohmann_json brynet httplib::httplib)
 target_compile_definitions(MotooriKosuze PUBLIC _SILENCE_CXX17_C_HEADER_DEPRECATION_WARNING)
 
 # Find our pre-installed DPP package (using FindDPP.cmake).
