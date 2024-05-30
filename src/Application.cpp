@@ -1,7 +1,6 @@
 #include "MotooriKosuze.h"
 //需要预先写好配置文件
 void MotooriKosuze_Init(const std::string Pair) {
-	MotooriKosuze::DiscordAPI::Init();
 
 }
 
