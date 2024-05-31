@@ -1,5 +1,0 @@
-add_subdirectory(json)
-add_subdirectory(httplib)
-add_library(brynet INTERFACE)
-target_include_directories(brynet INTERFACE brynet/include)
-target_compile_definitions(brynet INTERFACE _CRT_SECURE_NO_WARNINGS)
