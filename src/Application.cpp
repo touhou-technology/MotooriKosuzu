@@ -1,7 +1,7 @@
-#include "MotooriKosuze.h"
+#include "MotooriKosuzu.h"
 //需要预先写好配置文件
-void MotooriKosuze_Init(const std::string Pair) {
-	MotooriKosuze::Kosuze::Init();
+void MotooriKosuzu_Init(const std::string Pair) {
+	MotooriKosuzu::Kosuze::Init();
 }
 
 //main作为主程序接口，其功能在类实现为多线程
