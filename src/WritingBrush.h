@@ -2,8 +2,11 @@
 * 作为书记更改
 */
 #pragma once
-
-//配置🖊
-class ConfigPen {
-
-};
+#include <json/json.h>
+//配置
+namespace Pen {
+	class ConfigPen {
+	public:
+		static void ReadFile();
+	};
+}
