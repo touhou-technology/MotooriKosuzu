@@ -1,10 +1,12 @@
-#include "MotooriKosuzu.h"
+#include "start.hpp"
 
 #include <iostream>
 #include <vector>
 #include <queue>
 #include <regex>
 
-int main(char* argc,char** arge[]) {
-	std::cout << "test";
+int main() {
+	MoKu::Init("114514");
+
+	return 9;
 } 

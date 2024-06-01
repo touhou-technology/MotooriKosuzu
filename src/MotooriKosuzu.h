@@ -3,6 +3,10 @@
 
 #include <jsoncpp/json/json.h>
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream> 
 /*
 自定义
 */
@@ -18,38 +22,22 @@ namespace MoKu {
 		static std::unique_ptr<Kosuze> m_Kosuze;
 	};
 
-	//该类为读取文件内容
-	class ConfigFile {
-	public:
-		static void Init();
-		static Json::Value* GetJSObj();
+	////该类为读取文件内容
+	//class ConfigFile {
+	//public:
+	//	static void Init(std::string path);
+	//	static Json::Value* GetJSObj();
 
-		//readFile
-		Json::Value ReadFile();
+	//	//readFile
+	//	Json::Value ReadFile();
 
-		ConfigFile();
-		~ConfigFile();
+	//	ConfigFile(std::string path);
+	//	~ConfigFile();
 
-	private:
-		static std::unique_ptr<ConfigFile> m_ConfigFile;
-		std::string FilePath;
-		Json::Value JSObj;
-	};
-
-	//该类为DPP的库实例
-	class DiscordAPI {
-	public:
-		//初始化，且创建这个实例
-		static void Init();
-
-		DiscordAPI(std::string token);
-		~DiscordAPI();
-
-	private:
-		dpp::cluster* m_robot();
-		static std::unique_ptr<DiscordAPI> m_DiscordAPI;
-		dpp::cluster bot;
-	};
-
+	//private:
+	//	static std::unique_ptr<ConfigFile> m_ConfigFile;
+	//	std::string FilePath;
+	//	Json::Value JSObj;
+	//};
 }
 
