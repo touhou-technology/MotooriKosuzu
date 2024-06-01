@@ -8,13 +8,13 @@
 
 //最后交给这个类来进行初始化（也就是app本体？）
 namespace MoKu {
-	class Kosuze {
+	class Kosuzu {
 	public:
 		static void Init();
-		Kosuze();
-		~Kosuze();
+		Kosuzu();
+		~Kosuzu();
 	private:
-		static std::unique_ptr<Kosuze> m_Kosuze;
+		static std::unique_ptr<Kosuzu> m_Kosuze;
 	};
 
 	//该类为读取文件内容
