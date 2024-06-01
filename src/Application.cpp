@@ -1,12 +1,8 @@
-#include "MotooriKosuze.h"
-//需要预先写好配置文件
-void MotooriKosuze_Init(const std::string Pair) {
-	MotooriKosuze::Kosuze::Init();
-}
+#include "Ru_koto.h"
+#include "Qpp.hpp"
+#include "dpp.hpp"
 
-//main作为主程序接口，其功能在类实现为多线程
-int main() {
-	std::cout << "该版本为最终不测试版本" << std::endl;
-	MotooriKosuze_Init("~/server/config");
-	return 0;
-}
+int main(char* argc,char** arge[]) {
+	std::cout << "test:";
+	while (1);
+} 
