@@ -1,8 +1,7 @@
 #include "Ru_koto.h"
-#include "Qpp.hpp"
-#include "dpp.hpp"
+#include "MotooriKosuzu.h"
 
 int main(char* argc,char** arge[]) {
-	std::cout << "test:";
-	while (1);
+	std::cout << "test";
+
 } 
