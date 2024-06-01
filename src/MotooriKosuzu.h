@@ -1,5 +1,6 @@
 #pragma once
 #include <dpp/dpp.h>
+#include <json/json.h>
 
 #include <iostream>
 #include <memory>
@@ -12,10 +13,10 @@ namespace MotooriKosuzu {
 	class Kosuze {
 	public:
 		static void Init();
-		Kosuze();
-		~Kosuze();
+		Kosuzu();
+		~Kosuzu();
 	private:
-		static std::unique_ptr<Kosuze> m_Kosuze;
+		static std::unique_ptr<Kosuzu> m_Kosuze;
 	};
 }
 
