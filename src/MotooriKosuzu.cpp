@@ -8,6 +8,7 @@ using namespace MotooriKosuzu;
 //该函数为为类初始化
 void Kosuzu::Init() {
 	m_Kosuzu.reset(new Kosuzu());
+	
 }
 
 Kosuzu::Kosuzu() {

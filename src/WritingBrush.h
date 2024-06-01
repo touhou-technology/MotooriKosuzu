@@ -2,11 +2,13 @@
 * 作为书记更改
 */
 #pragma once
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
+#include <iostream>
+
 //配置
 namespace Pen {
 	class ConfigPen {
 	public:
-		static void ReadFile();
+		static Json::Value ReadFile(std::string Path);
 	};
 }

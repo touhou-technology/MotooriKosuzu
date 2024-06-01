@@ -1,6 +1,5 @@
 #pragma once
 #include <dpp/dpp.h>
-#include <json/json.h>
 
 #include <iostream>
 #include <memory>
