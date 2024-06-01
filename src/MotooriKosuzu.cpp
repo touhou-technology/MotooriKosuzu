@@ -6,14 +6,14 @@
 using namespace MotooriKosuzu;
 
 //该函数为为类初始化
-void Kosuze::Init() {
-	m_Kosuze.reset(new Kosuze());
+void Kosuzu::Init() {
+	m_Kosuzu.reset(new Kosuzu());
 }
 
-Kosuze::Kosuze() {
+Kosuzu::Kosuzu() {
 	std::cout << "TEST";
 }
 
-Kosuze::~Kosuze() {
+Kosuzu::~Kosuzu() {
 
 }
