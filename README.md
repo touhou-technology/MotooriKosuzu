@@ -1,4 +1,2 @@
-# 本居小鈴
-1. これはbotです
-2. dppを使用した記述 link- https://github.com/brainboxdotcc/DPP
-3. よく考えていない~
+﻿这大概是一个留琴（划掉
+这是链接地址▶ https://discord.gg/touhou-gensokyo-of-china ▜
