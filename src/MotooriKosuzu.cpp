@@ -2,10 +2,10 @@
 
 using namespace MoKu;
 
-void Kosuze::Init(){
+void Kosuzu::Init(){
 
 }
 
-Kosuze::Kosuze(){
+Kosuzu::Kosuzu(){
 
 }
