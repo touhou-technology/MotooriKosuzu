@@ -14,5 +14,5 @@ Kosuzu::Kosuzu() {
 }
 
 Kosuzu::~Kosuzu() {
-
+	
 }
