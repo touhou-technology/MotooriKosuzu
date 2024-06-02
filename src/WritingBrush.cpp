@@ -28,3 +28,12 @@ Json::Value ConfigPen::ReadFile(std::string Path) {
 
     return root;
 }
+
+std::string WebPen::TranslationPen(std::string TStr){
+    if (!TStr.length() > 0)
+        return "?";
+
+    std::string temHTTPURL;
+
+    return std::string();
+}

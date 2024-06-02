@@ -8,4 +8,11 @@ namespace BambooSlips {
 	private:
 		static std::string str;
 	};
+	class WebSlips {
+	public:
+		static std::string GetTranslationURL();
+
+		//存放数据类型
+		static std::string TranslationURL;
+	};
 }
