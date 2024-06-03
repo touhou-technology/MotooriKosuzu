@@ -14,7 +14,7 @@
 namespace Pen {
 	class ConfigPen {
 	public:
-		//
+		//Pen初始化对应的竹木简牍,从config读取
 		static void init();
 		static Json::Value ReadFile(std::string Path);
 
@@ -24,6 +24,8 @@ namespace Pen {
 
 	class WebPen {
 	public:
+		//Pen初始化对应的竹木简牍,从config读取
+		static void init();
 		//web 翻译之类的
 		static std::string TranslationPen(std::string TStr);
 

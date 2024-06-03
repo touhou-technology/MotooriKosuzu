@@ -17,6 +17,6 @@ namespace BambooSlips {
 		};
 		static void SetURL(std::string Content, unsigned int Type);
 		//存放数据类型
-		static std::string TranslationURL;
+		static std::string StrTranslationURL;
 	};
 }

@@ -8,6 +8,10 @@
 
 using namespace Pen;
 
+void ConfigPen::init(){
+    BambooSlips::ConfigSlips::Init();
+}
+
 Json::Value ConfigPen::ReadFile(std::string Path) {
 	std::ifstream File(Path);
 
@@ -30,11 +34,15 @@ Json::Value ConfigPen::ReadFile(std::string Path) {
     return root;
 }
 
+void WebPen::init(){
+
+}
+
 std::string WebPen::TranslationPen(std::string TStr){
     if (!TStr.length() > 0)
         return "?";
 
-    std::string temHTTPURL = BambooSlips::WebSlips::TranslationURL;
+    std::string temHTTPURL = BambooSlips::WebSlips::GetTranslationURL();
 
     return std::string();
 }
