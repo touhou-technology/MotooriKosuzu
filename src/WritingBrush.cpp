@@ -1,4 +1,5 @@
 #include "WritingBrush.h"
+#include "BambooSlips.h"
 
 #include <iostream>
 #include <fstream>
@@ -33,7 +34,7 @@ std::string WebPen::TranslationPen(std::string TStr){
     if (!TStr.length() > 0)
         return "?";
 
-    std::string temHTTPURL;
+    std::string temHTTPURL = BambooSlips::WebSlips::TranslationURL;
 
     return std::string();
 }
