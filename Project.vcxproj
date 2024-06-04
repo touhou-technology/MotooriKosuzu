@@ -82,14 +82,13 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\BambooSlips.cpp" />
     <ClCompile Include="src\MotooriKosuzu.cpp" />
     <ClCompile Include="src\WritingBrush.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BambooSlips.h" />
     <ClInclude Include="src\MotooriKosuzu.h" />
-    <ClInclude Include="src\Desk.hpp" />
+    <ClInclude Include="src\Bookshelf.hpp" />
     <ClInclude Include="src\start.hpp" />
     <ClInclude Include="src\WritingBrush.h" />
   </ItemGroup>

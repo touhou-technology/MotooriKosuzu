@@ -6,6 +6,5 @@ namespace MotooriKosuzu {
 
 	void Init(std::string path) {
 		Kosuzu::Init();
-
 	}
 }

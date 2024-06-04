@@ -9,7 +9,7 @@
 using namespace Pen;
 
 void ConfigPen::init(){
-
+    BambooSlips::ConfigSlips::
 }
 
 Json::Value ConfigPen::ReadFile(std::string Path = BambooSlips::ConfigSlips::Path_) {
