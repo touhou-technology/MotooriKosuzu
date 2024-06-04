@@ -9,10 +9,10 @@
 using namespace Pen;
 
 void ConfigPen::init(){
-    BambooSlips::ConfigSlips::ConfigJson = ReadFileJson();
+    BambooSlips::ConfigSlips::ConfigJson = ReadFileJson(BambooSlips::ConfigSlips::Path_);
 }
 
-Json::Value ConfigPen::ReadFileJson(std::string Path = BambooSlips::ConfigSlips::Path_) {
+Json::Value ConfigPen::ReadFileJson(std::string Path) {
 	std::ifstream File(Path);
 
 	if (!File.is_open()) {
@@ -20,7 +20,7 @@ Json::Value ConfigPen::ReadFileJson(std::string Path = BambooSlips::ConfigSlips:
 	}
 
     Json::CharReaderBuilder ReaderBuilder;
-    ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
+    //ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
 
     Json::Value root;
 
@@ -28,10 +28,14 @@ Json::Value ConfigPen::ReadFileJson(std::string Path = BambooSlips::ConfigSlips:
     std::string strerr;
     bool ok = Json::parseFromStream(ReaderBuilder, File, &root, &strerr);
     if (!ok) {
-        std::cerr << "json解析错误";
+        std::cerr << "json解析错误" << std::endl;
     }
 
     return root;
+}
+
+Json::Value Pen::ConfigPen::GetConfigJson(){
+    return BambooSlips::ConfigSlips::ConfigJson;
 }
 
 void WebPen::init(){

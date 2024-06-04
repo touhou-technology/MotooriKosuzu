@@ -3,11 +3,13 @@
 #include <memory>
 
 namespace BambooSlips {
+
 	class ConfigSlips {
 	public:
 		static std::string Path_;
 		static Json::Value ConfigJson;
 	};
+
 	class WebSlips {
 	public:
 		enum {
