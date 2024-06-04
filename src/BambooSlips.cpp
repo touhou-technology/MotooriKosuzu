@@ -3,9 +3,6 @@
 using namespace BambooSlips;
 
 void ConfigSlips::Init() {
-	std::cout << "Slips test";
-	str = "awa";
-	std::cout << str;
 
 }
 
