@@ -25,6 +25,5 @@ namespace Pen {
 		static void init();
 		//web 翻译之类的
 		static std::string TranslationPen(std::string TStr);
-
 	};
 }
