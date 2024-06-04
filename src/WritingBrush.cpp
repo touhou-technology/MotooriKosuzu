@@ -20,7 +20,7 @@ Json::Value ConfigPen::ReadFileJson(std::string Path) {
 	}
 
     Json::CharReaderBuilder ReaderBuilder;
-    //ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
+    ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
 
     Json::Value root;
 
