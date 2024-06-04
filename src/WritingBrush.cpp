@@ -42,7 +42,5 @@ std::string WebPen::TranslationPen(std::string TStr){
     if (!TStr.length() > 0)
         return "?";
 
-    std::string temHTTPURL = BambooSlips::WebSlips::GetTranslationURL();
-
     return std::string();
 }
