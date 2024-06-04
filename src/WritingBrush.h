@@ -16,7 +16,7 @@ namespace Pen {
 	public:
 		//Pen初始化对应的竹木简牍,从config读取
 		static void init();
-		static Json::Value ReadFile(std::string Path);
+		static Json::Value ReadFileJson(std::string Path);
 	};
 
 	class WebPen {

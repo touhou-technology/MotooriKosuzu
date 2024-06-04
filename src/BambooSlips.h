@@ -1,10 +1,12 @@
 #pragma once
-#include <iostream>
+#include <json/json.h>
+#include <memory>
 
 namespace BambooSlips {
 	class ConfigSlips {
 	public:
 		static std::string Path_;
+		static Json::Value ConfigJson;
 	};
 	class WebSlips {
 	public:

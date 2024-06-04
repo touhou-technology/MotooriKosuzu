@@ -5,5 +5,11 @@
 //Put Slips
 #include "BambooSlips.h"
 
-std::string BambooSlips::ConfigSlips::Path_;
-std::string BambooSlips::WebSlips::StrTranslationURL;
+using namespace BambooSlips;
+
+//Config
+std::string ConfigSlips::Path_;
+Json::Value ConfigSlips::ConfigJson = "./config/ConfigBook.json";
+
+//Web
+std::string WebSlips::StrTranslationURL;
