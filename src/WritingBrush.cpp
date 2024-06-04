@@ -6,17 +6,17 @@
 #include <string>
 #include <sstream>
 
-using namespace Pen;
+using namespace std;
 
 void ConfigPen::init(){
-    BambooSlips::ConfigSlips::ConfigJson = ReadFileJson(BambooSlips::ConfigSlips::Path_);
+    ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
 }
 
-Json::Value ConfigPen::ReadFileJson(std::string Path) {
-	std::ifstream File(Path);
+Json::Value ConfigPen::ReadFileJson(string Path) {
+	ifstream File(Path);
 
 	if (!File.is_open()) {
-		std::cerr << "cennt open file";
+		cerr << "cennt open file";
 	}
 
     Json::CharReaderBuilder ReaderBuilder;
@@ -25,26 +25,26 @@ Json::Value ConfigPen::ReadFileJson(std::string Path) {
     Json::Value root;
 
     //把文件转变为json对象
-    std::string strerr;
+    string strerr;
     bool ok = Json::parseFromStream(ReaderBuilder, File, &root, &strerr);
     if (!ok) {
-        std::cerr << "json解析错误" << std::endl;
+        cerr << "json解析错误" << endl;
     }
 
     return root;
 }
 
-Json::Value Pen::ConfigPen::GetConfigJson(){
-    return BambooSlips::ConfigSlips::ConfigJson;
+Json::Value ConfigPen::GetConfigJson(){
+    return ConfigSlips::ConfigJson;
 }
 
 void WebPen::init(){
 
 }
 
-std::string WebPen::TranslationPen(std::string TStr){
+string WebPen::TranslationPen(string TStr){
     if (!TStr.length() > 0)
         return "?";
 
-    return std::string();
+    return string();
 }

@@ -11,20 +11,18 @@
 #include <openssl/md5.h>
 
 //配置
-namespace Pen {
-	class ConfigPen {
+class ConfigPen {
 	public:
 		//Pen初始化对应的竹木简牍,从config读取
 		static void init();
 		static Json::Value ReadFileJson(std::string Path);
 		static Json::Value GetConfigJson();
-	};
+};
 
-	class WebPen {
+class WebPen {
 	public:
 		//Pen初始化对应的竹木简牍,从config读取
 		static void init();
 		//web 翻译之类的
 		static std::string TranslationPen(std::string TStr);
-	};
-}
+};

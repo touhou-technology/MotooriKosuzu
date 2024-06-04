@@ -1,15 +1,14 @@
+#pragma once
+//Put Slips
+#include "BambooSlips.h"
+
 /*Put class static;
 * 
 */
 
-//Put Slips
-#include "BambooSlips.h"
-
-using namespace BambooSlips;
-
 //Config
 std::string ConfigSlips::Path_ = "../config/ConfigBook.json";
-Json::Value ConfigSlips::ConfigJson;
+Json::Value ConfigJson = NULL;
 
 //Web
-std::string WebSlips::StrTranslationURL;
+std::string WebSlips::StrTranslationURL = "";
