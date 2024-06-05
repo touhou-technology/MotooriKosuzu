@@ -12,7 +12,7 @@ std::string ConfigSlips::Path_ = "/home/awalwa/projects/Project/config/ConfigBoo
 Json::Value ConfigSlips::ConfigJson;
 
 //Robot
-dpp::cluster RobotSlips::bot;
+std::unique_ptr<dpp::cluster> RobotSlips::bot;
 
 //Web
 std::string WebSlips::StrTranslationURL;
