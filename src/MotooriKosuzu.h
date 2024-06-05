@@ -9,12 +9,10 @@ namespace MotooriKosuzu {
 	class Kosuzu {
 	public:
 		static void Init();
-		static void work(void (*Fn)(dpp::cluster* bot));
 
 		Kosuzu();
 		~Kosuzu();
 	private:
 		static std::unique_ptr<Kosuzu> m_Kosuzu;
-		static dpp::cluster bot;
 	};
 }

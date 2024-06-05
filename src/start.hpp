@@ -6,7 +6,6 @@ namespace MotooriKosuzu {
 	std::unique_ptr<Kosuzu> Kosuzu::m_Kosuzu = nullptr;
 
 	void Init(std::string path) {
-		Pen::ConfigPen::init();
 		Kosuzu::Init();
 	}
 }

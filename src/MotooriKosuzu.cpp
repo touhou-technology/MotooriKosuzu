@@ -11,14 +11,11 @@ void Kosuzu::Init() {
 	m_Kosuzu.reset(new Kosuzu());
 }
 
-void Kosuzu::work(void(*Fn)(dpp::cluster* bot)) {
-	Fn(&bot);
-}
-
 Kosuzu::Kosuzu() {
-	bot.on_log(dpp::utility::cout_logger());
-
-	bot.start(dpp::st_wait);
+	//应该最先初始化，因为其他依赖于这个
+	Pen::ConfigPen::Init();
+	Pen::
+	Pen::WebPen::Init();
 }
 
 Kosuzu::~Kosuzu() {

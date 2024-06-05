@@ -7,9 +7,10 @@
 #include <sstream>
 
 using namespace Pen;
+using namespace BambooSlips;
 
-void ConfigPen::init(){
-    BambooSlips::ConfigSlips::ConfigJson = ReadFileJson(BambooSlips::ConfigSlips::Path_);
+void ConfigPen::Init(){
+    ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
 }
 
 Json::Value ConfigPen::ReadFileJson(std::string Path) {
@@ -35,16 +36,21 @@ Json::Value ConfigPen::ReadFileJson(std::string Path) {
 }
 
 Json::Value Pen::ConfigPen::GetConfigJson(){
-    return BambooSlips::ConfigSlips::ConfigJson;
+    return ConfigSlips::ConfigJson;
 }
 
-void WebPen::init(){
-
+void WebPen::Init(){
+    
 }
 
 std::string WebPen::TranslationPen(std::string TStr){
-    if (!TStr.length() > 0)
-        return "?";
-
     return std::string();
+}
+
+void Pen::RobotPen::Init(){
+    RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString()));
+}
+
+void Pen::RobotPen::work(void(*Fn)(dpp::cluster* bot)){
+    Fn(&*RobotSlips::bot);
 }
