@@ -11,8 +11,11 @@ void Kosuzu::Init() {
 	m_Kosuzu.reset(new Kosuzu());
 }
 
-Kosuzu::Kosuzu()
-	:bot(Pen::ConfigPen::GetConfigJson()["BotToken"].asString()) {
+void Kosuzu::work(void(*Fn)(dpp::cluster* bot)) {
+	Fn(&bot);
+}
+
+Kosuzu::Kosuzu() {
 	bot.on_log(dpp::utility::cout_logger());
 
 	bot.start(dpp::st_wait);
