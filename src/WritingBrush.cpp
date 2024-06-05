@@ -9,8 +9,8 @@
 using namespace Pen;
 using namespace BambooSlips;
 
-void ConfigPen::Init(){
-    ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
+void ConfigPen::Init() {
+	ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
 }
 
 Json::Value ConfigPen::ReadFileJson(std::string Path) {
@@ -20,37 +20,41 @@ Json::Value ConfigPen::ReadFileJson(std::string Path) {
 		std::cerr << "cennt open file";
 	}
 
-    Json::CharReaderBuilder ReaderBuilder;
-    ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
+	Json::CharReaderBuilder ReaderBuilder;
+	ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
 
-    Json::Value root;
+	Json::Value root;
 
-    //把文件转变为json对象
-    std::string strerr;
-    bool ok = Json::parseFromStream(ReaderBuilder, File, &root, &strerr);
-    if (!ok) {
-        std::cerr << "json解析错误" << std::endl;
-    }
+	//把文件转变为json对象
+	std::string strerr;
+	bool ok = Json::parseFromStream(ReaderBuilder, File, &root, &strerr);
+	if (!ok) {
+		std::cerr << "json解析错误" << std::endl;
+	}
 
-    return root;
+	return root;
 }
 
-Json::Value Pen::ConfigPen::GetConfigJson(){
-    return ConfigSlips::ConfigJson;
+Json::Value Pen::ConfigPen::GetConfigJson() {
+	return ConfigSlips::ConfigJson;
 }
 
-void WebPen::Init(){
-    
+void WebPen::Init() {
+
 }
 
-std::string WebPen::TranslationPen(std::string TStr){
-    return std::string();
+std::string WebPen::TranslationPen(std::string TStr) {
+	return std::string();
 }
 
-void Pen::RobotPen::Init(){
-    RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString()));
+void Pen::RobotPen::Init() {
+	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString(), dpp::i_default_intents | dpp::i_message_content));
 }
 
-void Pen::RobotPen::work(void(*Fn)(dpp::cluster* bot)){
-    Fn(&*RobotSlips::bot);
+void Pen::RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
+	Fn(&*RobotSlips::bot);
+}
+//Adapt to Lambda
+dpp::cluster* Pen::RobotPen::GetBot(){
+	return &*RobotSlips::bot;
 }

@@ -25,6 +25,7 @@ namespace Pen {
 	public:
 		static void Init();
 		static void work(void (*Fn)(dpp::cluster* bot));
+		static dpp::cluster* GetBot();
 	};
 
 	class WebPen {
