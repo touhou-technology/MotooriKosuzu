@@ -39,14 +39,6 @@ Json::Value Pen::ConfigPen::GetConfigJson() {
 	return ConfigSlips::ConfigJson;
 }
 
-void WebPen::Init() {
-
-}
-
-std::string WebPen::TranslationPen(std::string TStr) {
-	return std::string();
-}
-
 void Pen::RobotPen::Init() {
 	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString(), dpp::i_default_intents | dpp::i_message_content));
 }
@@ -57,4 +49,12 @@ void Pen::RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
 //Adapt to Lambda
 dpp::cluster* Pen::RobotPen::GetBot(){
 	return &*RobotSlips::bot;
+}
+
+void WebPen::Init() {
+
+}
+
+std::string WebPen::TranslationPen(std::string TStr) {
+	return std::string();
 }
