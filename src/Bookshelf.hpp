@@ -13,6 +13,3 @@ Json::Value ConfigSlips::ConfigJson;
 
 //Web
 std::string WebSlips::StrTranslationURL;
-
-//令牌碎片
-std::string Token;

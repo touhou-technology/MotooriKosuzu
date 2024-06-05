@@ -26,9 +26,9 @@ Json::Value ConfigPen::ReadFileJson(std::string Path) {
 
     //把文件转变为json对象
     std::string strerr;
-    
-    if (!Json::parseFromStream(ReaderBuilder, File, &root, &strerr)) {
-        std::cerr << "ERROR:" << strerr << std::endl;
+    bool ok = Json::parseFromStream(ReaderBuilder, File, &root, &strerr);
+    if (!ok) {
+        std::cerr << "json解析错误" << std::endl;
     }
 
     return root;
