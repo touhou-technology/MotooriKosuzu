@@ -8,7 +8,7 @@
 using namespace BambooSlips;
 
 //Config
-std::string ConfigSlips::Path_ = "../config/ConfigBook.json";
+std::string ConfigSlips::Path_ = "/home/awalwa/projects/Project/config";
 Json::Value ConfigSlips::ConfigJson;
 
 //Web

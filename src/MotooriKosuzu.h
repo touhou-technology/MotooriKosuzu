@@ -17,5 +17,7 @@ namespace MotooriKosuzu {
 		~Kosuzu();
 	private:
 		static std::unique_ptr<Kosuzu> m_Kosuzu;
+		//bot 符合书写
+		dpp::cluster bot;
 	};
 }

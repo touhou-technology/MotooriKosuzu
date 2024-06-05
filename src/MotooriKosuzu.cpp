@@ -11,11 +11,12 @@ void Kosuzu::Init() {
 	m_Kosuzu.reset(new Kosuzu());
 }
 
-Kosuzu::Kosuzu() {
+Kosuzu::Kosuzu()
+//添加bot令牌
+	:bot(Pen::ConfigPen::GetConfigJson().get("BotToken", "null").asString()) {
 	Pen::ConfigPen::init();
-	std::cout << "TEST";
 }
 
 Kosuzu::~Kosuzu() {
-	
+
 }
