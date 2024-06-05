@@ -13,7 +13,8 @@ namespace MotooriKosuzu {
 	class Kosuzu {
 	public:
 		static void Init();
-		Kosuzu();
+		
+		Kosuzu(std::string Token);
 		~Kosuzu();
 	private:
 		static std::unique_ptr<Kosuzu> m_Kosuzu;

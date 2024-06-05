@@ -8,13 +8,17 @@ using namespace MotooriKosuzu;
 
 //该函数为为类初始化
 void Kosuzu::Init() {
-	m_Kosuzu.reset(new Kosuzu());
+	std::cout << Pen::ConfigPen::GetConfigJson()["DiscordBotToken"] << std::endl;
+	Token = Pen::ConfigPen::GetConfigJson().get("DiscordBotToken", "null").asString();
+	m_Kosuzu.reset(new Kosuzu(Token));
 }
 
-Kosuzu::Kosuzu()
+Kosuzu::Kosuzu(std::string Token)
 //添加bot令牌
-	:bot(Pen::ConfigPen::GetConfigJson().get("BotToken", "null").asString()) {
+	:bot(Token) {
 	Pen::ConfigPen::init();
+	bot.on_log(dpp::utility::cout_logger());
+	bot.start(dpp::st_return);
 }
 
 Kosuzu::~Kosuzu() {
