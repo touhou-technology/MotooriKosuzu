@@ -3,9 +3,9 @@
 
 void Plan() {
 	//test funtion
-	Pen::RobotPen::work([](dpp::cluster* bot)->void {
+	RobotPen::work([](dpp::cluster* bot)->void {
 		bot->on_message_create([](dpp::message_create_t event) {
-			if (event.msg.author.id != Pen::RobotPen::GetBot()->me.id)
+			if (event.msg.author.id != RobotPen::GetBot()->me.id)
 				event.reply("awa");
 			});
 
@@ -14,11 +14,11 @@ void Plan() {
 
 #include <iostream>
 int main() {
-	MotooriKosuzu::Init("114514");
+	// Kosuzu::Init("114514");
 	Plan();
 
 	//start bot
-	BambooSlips::RobotSlips::bot->on_log(dpp::utility::cout_logger());
-	BambooSlips::RobotSlips::bot->start(dpp::st_wait);
+	RobotSlips::bot->on_log(dpp::utility::cout_logger());
+	RobotSlips::bot->start(dpp::st_wait);
 	return 9;
 }

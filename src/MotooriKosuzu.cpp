@@ -12,10 +12,10 @@ void Kosuzu::Init() {
 
 Kosuzu::Kosuzu() {
 	//应该最先初始化，因为其他依赖于这个
-	Pen::ConfigPen::Init();
+	ConfigPen::Init();
 
-	Pen::RobotPen::Init();
-	Pen::WebPen::Init();
+	RobotPen::Init();
+	WebPen::Init();
 }
 
 Kosuzu::~Kosuzu() {
