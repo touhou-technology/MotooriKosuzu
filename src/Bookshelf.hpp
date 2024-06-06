@@ -8,7 +8,7 @@
 
 //Config
 std::string ConfigSlips::Path_ = "../config/ConfigBook.json";
-Json::Value ConfigJson = NULL;
+Json::Value ConfigSlips::ConfigJson = NULL;
 
 //Web
 std::string WebSlips::StrTranslationURL = "";

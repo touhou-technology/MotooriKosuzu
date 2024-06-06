@@ -11,7 +11,7 @@ void Kosuzu::Init() {
 }
 
 Kosuzu::Kosuzu() {
-	Pen::ConfigPen::init();
+	ConfigPen::init();
 	std::cout << "TEST";
 }
 
