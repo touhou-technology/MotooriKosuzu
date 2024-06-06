@@ -21,7 +21,7 @@ void Kosuzu::Read_config(){
 	config = ReadJson(config_dir);
 }
 
-static unique_ptr<Json::Value> ReadJson(string dir){
+unique_ptr<Json::Value> Kosuzu::ReadJson(string dir){
 	ifstream file(dir);
 
 	if (!file.is_open()) {
