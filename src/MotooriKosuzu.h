@@ -20,6 +20,6 @@ class Kosuzu{
 		Kosuzu();
 		~Kosuzu();
 
-		void Init();
+		bool Init();
 		void Reset();
 };

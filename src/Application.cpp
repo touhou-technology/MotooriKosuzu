@@ -12,6 +12,7 @@ void Plan() {
 int main(){
 	//start bot
 	auto MK = make_unique<Kosuzu>();
-	MK->Init();
+	bool init_success = MK->Init();
+	cout << "Initialized: " << init_success << endl;
 	return 0;
 }

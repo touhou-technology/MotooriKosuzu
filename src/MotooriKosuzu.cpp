@@ -6,11 +6,16 @@ Kosuzu::Kosuzu(): config_dir("../config/"), local_dir("../local/") {}
 
 Kosuzu::~Kosuzu() {}
 
-void Kosuzu::Init(){
+bool Kosuzu::Init(){
 	Read_config();
+	if(config == nullptr){
+		cerr << "Configuration failed" << endl;
+		return false;
+	}
 	string token = config->get("token", "null").asString();
 	kosuzu_bot = make_unique<dpp::cluster>(token, dpp::i_default_intents | dpp::i_message_content /*add intents as needed*/);
 	kosuzu_bot->on_log(dpp::utility::cout_logger());
+	return true;
 }
 
 void Kosuzu::Reset(){
@@ -25,7 +30,8 @@ unique_ptr<Json::Value> Kosuzu::ReadJson(string dir){
 	ifstream file(dir);
 
 	if (!file.is_open()) {
-		cerr << "cennt open file";
+		cerr << "cannot open file";
+		return nullptr;
 	}
 
 	Json::CharReaderBuilder ReaderBuilder;
