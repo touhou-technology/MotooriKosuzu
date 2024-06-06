@@ -7,7 +7,8 @@
 */
 
 //Config
-std::string ConfigSlips::Path_ = "../config/ConfigBook.json";
+//debug
+std::string ConfigSlips::Path_ = "/home/awalwa/projects/Project/config/ConfigBook.json";
 Json::Value ConfigSlips::ConfigJson;
 
 //Robot

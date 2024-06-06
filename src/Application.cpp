@@ -14,7 +14,7 @@ void Plan() {
 
 #include <iostream>
 int main() {
-	// Kosuzu::Init("114514");
+	Kosuzu::Init();
 	Plan();
 
 	//start bot
