@@ -2,11 +2,11 @@
 #include "start.hpp"
 
 void Plan() {
-	//test funtion
+	//echo
 	RobotPen::work([](dpp::cluster* bot)->void {
 		bot->on_message_create([](dpp::message_create_t event) {
 			if (event.msg.author.id != RobotPen::GetBot()->me.id)
-				event.reply("awa");
+				event.reply(event.msg.content);
 			});
 
 		});
