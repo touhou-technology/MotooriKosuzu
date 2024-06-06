@@ -1,23 +1,44 @@
 #include "MotooriKosuzu.h"
 
-#include "WritingBrush.h"
-#include "Bookshelf.hpp"
+using namespace std;
 
-//类名就是包括该类的作用
+Kosuzu::Kosuzu(): config_dir("../config/"), local_dir("../local/") {}
 
-//该函数为为类初始化
-void Kosuzu::Init() {
-	m_Kosuzu.reset(new Kosuzu());
+Kosuzu::~Kosuzu() {}
+
+void Kosuzu::Init(){
+	Read_config();
+	string token = config->get("token", "null").asString();
+	kosuzu_bot = make_unique<dpp::cluster>(token, dpp::i_default_intents | dpp::i_message_content /*add intents as needed*/);
+	kosuzu_bot->on_log(dpp::utility::cout_logger());
 }
 
-Kosuzu::Kosuzu() {
-	//应该最先初始化，因为其他依赖于这个
-	ConfigPen::Init();
-
-	RobotPen::Init();
-	WebPen::Init();
+void Kosuzu::Reset(){
+	Init();
 }
 
-Kosuzu::~Kosuzu() {
+void Kosuzu::Read_config(){
+	config = ReadJson(config_dir);
+}
 
+static unique_ptr<Json::Value> ReadJson(string dir){
+	ifstream file(dir);
+
+	if (!file.is_open()) {
+		cerr << "cennt open file";
+	}
+
+	Json::CharReaderBuilder ReaderBuilder;
+	ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
+
+	unique_ptr<Json::Value> root;
+
+	//把文件转变为json对象
+	string strerr;
+
+	if (!Json::parseFromStream(ReaderBuilder, file, root.get(), &strerr)) {
+		cerr << "json解析错误" << endl;
+	}
+
+	return root;
 }
