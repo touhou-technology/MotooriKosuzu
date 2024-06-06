@@ -42,6 +42,11 @@ void RobotPen::Init() {
 	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString(), dpp::i_default_intents | dpp::i_message_content));
 }
 
+//start bot(thread wait)
+void RobotPen::Start(){
+	GetBot()->start(dpp::st_wait);
+}
+
 void RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
 	Fn(&*RobotSlips::bot);
 }

@@ -17,8 +17,8 @@ int main() {
 	Kosuzu::Init();
 	Plan();
 
-	//start bot
+	//debug
 	RobotSlips::bot->on_log(dpp::utility::cout_logger());
-	RobotSlips::bot->start(dpp::st_wait);
+	RobotPen::Start();
 	return 9;
 }
