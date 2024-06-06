@@ -373,3 +373,7 @@ build/
 
 #local configs. Stuffs such as tokens will not be pushed
 config/*.json
+
+#local files
+local/
+config/

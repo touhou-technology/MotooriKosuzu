@@ -13,12 +13,8 @@ void Plan() {
 }
 
 #include <iostream>
-int main() {
-	// Kosuzu::Init("114514");
-	Plan();
-
+int main(){
 	//start bot
-	RobotSlips::bot->on_log(dpp::utility::cout_logger());
-	RobotSlips::bot->start(dpp::st_wait);
-	return 9;
+	Kosuzu MK();
+	return 0;
 }
