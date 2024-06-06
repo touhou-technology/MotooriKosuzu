@@ -12,7 +12,6 @@ void Plan() {
 		});
 }
 
-#include <iostream>
 int main() {
 	Kosuzu::Init();
 	Plan();
