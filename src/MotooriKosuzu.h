@@ -3,16 +3,16 @@
 
 #include <iostream>
 #include <memory>
-/*
-自定义
-*/
-
 //最后交给这个类来进行初始化（也就是app本体？）
-class Kosuzu {
+namespace MotooriKosuzu {
+	//本体daze
+	class Kosuzu {
 	public:
 		static void Init();
+
 		Kosuzu();
 		~Kosuzu();
 	private:
+	};
 		static std::unique_ptr<Kosuzu> m_Kosuzu;
 };

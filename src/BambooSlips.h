@@ -8,6 +8,11 @@ class ConfigSlips {
 		static Json::Value ConfigJson;
 	};
 
+	class RobotSlips {
+	public:
+		static std::unique_ptr<dpp::cluster> bot;
+	};
+
 	class WebSlips {
 	public:
 		enum {
