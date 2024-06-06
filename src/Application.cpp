@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "MotooriKosuzu.h"
+
 void Plan() {
 	//test funtion
 
