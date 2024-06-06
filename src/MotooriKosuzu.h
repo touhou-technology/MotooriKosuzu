@@ -12,7 +12,9 @@ class Kosuzu {
 	private:
 		std::string config_dir;
 		std::string local_dir;
-		dpp::cluster kosuzu_bot;
+		unique_ptr<dpp::cluster> kosuzu_bot;
+
+		std::string Read_token();
 	public:
 		Kosuzu();
 		~Kosuzu();
