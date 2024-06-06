@@ -364,6 +364,11 @@ FodyWeavers.xsd
 
 #vscode
 .vscode/
+
+#vcpp
+*.vcxproj
+
+#cmake
 build/
 
 #local configs. Stuffs such as tokens will not be pushed

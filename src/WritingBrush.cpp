@@ -6,18 +6,17 @@
 #include <string>
 #include <sstream>
 
-using namespace Pen;
-using namespace BambooSlips;
+using namespace std;
 
 void ConfigPen::Init() {
 	ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
 }
 
-Json::Value ConfigPen::ReadFileJson(std::string Path) {
-	std::ifstream File(Path);
+Json::Value ConfigPen::ReadFileJson(string Path) {
+	ifstream File(Path);
 
 	if (!File.is_open()) {
-		std::cerr << "cennt open file";
+		cerr << "cennt open file";
 	}
 
 	Json::CharReaderBuilder ReaderBuilder;
@@ -35,19 +34,19 @@ Json::Value ConfigPen::ReadFileJson(std::string Path) {
 	return root;
 }
 
-Json::Value Pen::ConfigPen::GetConfigJson() {
+Json::Value ConfigPen::GetConfigJson() {
 	return ConfigSlips::ConfigJson;
 }
 
-void Pen::RobotPen::Init() {
+void RobotPen::Init() {
 	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString(), dpp::i_default_intents | dpp::i_message_content));
 }
 
-void Pen::RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
+void RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
 	Fn(&*RobotSlips::bot);
 }
 //Adapt to Lambda
-dpp::cluster* Pen::RobotPen::GetBot(){
+dpp::cluster* RobotPen::GetBot(){
 	return &*RobotSlips::bot;
 }
 

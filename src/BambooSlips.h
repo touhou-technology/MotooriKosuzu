@@ -2,9 +2,7 @@
 #include <json/json.h>
 #include <memory>
 
-namespace BambooSlips {
-
-	class ConfigSlips {
+class ConfigSlips {
 	public:
 		static std::string Path_;
 		static Json::Value ConfigJson;
@@ -23,5 +21,4 @@ namespace BambooSlips {
 		};
 		//存放数据类型
 		static std::string StrTranslationURL;
-	};
-}
+};

@@ -4,7 +4,6 @@
 #include "Bookshelf.hpp"
 
 //类名就是包括该类的作用
-using namespace MotooriKosuzu;
 
 //该函数为为类初始化
 void Kosuzu::Init() {
@@ -13,10 +12,10 @@ void Kosuzu::Init() {
 
 Kosuzu::Kosuzu() {
 	//应该最先初始化，因为其他依赖于这个
-	Pen::ConfigPen::Init();
+	ConfigPen::Init();
 
-	Pen::RobotPen::Init();
-	Pen::WebPen::Init();
+	RobotPen::Init();
+	WebPen::Init();
 }
 
 Kosuzu::~Kosuzu() {
