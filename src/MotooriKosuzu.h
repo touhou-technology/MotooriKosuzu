@@ -12,8 +12,8 @@ class Kosuzu {
 	private:
 		std::string config_dir;
 		std::string local_dir;
-		unique_ptr<Json::Value> config;
-		unique_ptr<dpp::cluster> kosuzu_bot;
+		std::unique_ptr<Json::Value> config;
+		std::unique_ptr<dpp::cluster> kosuzu_bot;
 
 		void Read_config();
 	public:
