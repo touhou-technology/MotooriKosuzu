@@ -80,3 +80,24 @@ std::string WebPen::TranslationPen(std::string q, std::string Tolanguage) {
 
 	return std::string(q);
 }
+
+void WebPen::Webhook() {
+
+}
+
+void PlanPen::Init() {
+	Slashcommand();
+	Message();
+}
+
+void PlanPen::Slashcommand() {
+
+
+}
+
+void PlanPen::Message() {
+	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
+		if (event.msg.author.id != RobotSlips::bot->me.id)
+			event.reply(event.msg.content);
+		});
+}

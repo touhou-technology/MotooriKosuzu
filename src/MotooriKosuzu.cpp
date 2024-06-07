@@ -16,7 +16,9 @@ Kosuzu::Kosuzu() {
 	HashPen::Init();
 
 	WebPen::Init();
+	//先要写什么再写什么
 	RobotPen::Init();
+	PlanPen::Init();
 }
 
 Kosuzu::~Kosuzu() {

@@ -11,9 +11,13 @@ public:
 	static Json::Value ConfigJson;
 };
 
+//struct HashIllustion{
+//	dpp::snowflake ObjChannel;
+//};
+
 class HashSlips {
 public:
-	static std::map<dpp::snowflake, dpp::snowflake> MessageHash;
+	static std::vector<dpp::snowflake*> ChannelSnowflake;
 };
 
 class RobotSlips {

@@ -47,3 +47,12 @@ public:
 	//Webhook
 	static void Webhook();
 };
+
+//运行需要安排的任务
+class PlanPen {
+public:
+	static void Init();
+
+	static void Slashcommand();
+	static void Message();
+};

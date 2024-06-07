@@ -12,7 +12,7 @@ std::string ConfigSlips::Path_ = "/home/awalwa/projects/Project/config/ConfigBoo
 Json::Value ConfigSlips::ConfigJson;
 
 //HashSlips
-std::map<dpp::snowflake, dpp::snowflake> HashSlips::MessageHash;
+std::vector<dpp::snowflake*> HashSlips::ChannelSnowflake = std::vector<dpp::snowflake*>(200);
 
 //Robot
 std::unique_ptr<dpp::cluster> RobotSlips::bot;
