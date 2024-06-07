@@ -14,7 +14,7 @@ void ConfigPen::Init() {
 
 //类Init御用（
 std::string ConfigPen::InitPen(std::string ClassName, std::string obtain) {
-	return (ConfigPen::GetConfigJson()[ClassName])[obtain].asString();
+	return ConfigPen::GetConfigJson()[ClassName][obtain].asString();
 }
 
 Json::Value ConfigPen::ReadFileJson(string Path) {
@@ -43,6 +43,10 @@ Json::Value ConfigPen::GetConfigJson() {
 	return ConfigSlips::ConfigJson;
 }
 
+void HashPen::Init() {
+
+}
+
 void RobotPen::Init() {
 	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::InitPen("RobotSlips", "Token"), dpp::i_default_intents | dpp::i_message_content));
 }
@@ -65,15 +69,14 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 	WebSlips::APPID = ConfigPen::InitPen("WebPen", "APPID");
 	//use default
-	WebPen::SetTranslator();
+	//WebPen::SetTranslator();
 }
 
-void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL){
-
-	WebSlips::Translator.reset(new httplib::Client());
-	std::cout << 
+void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
+	//WebSlips::Translator.reset(new httplib::Client(""));
 }
 
-std::string WebPen::TranslationPen(std::string TStr) {
-	return std::string(TStr);
+std::string WebPen::TranslationPen(std::string q, std::string Tolanguage) {
+
+	return std::string(q);
 }

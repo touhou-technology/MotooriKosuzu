@@ -13,6 +13,7 @@ void Kosuzu::Init() {
 Kosuzu::Kosuzu() {
 	//应该最先初始化，因为其他依赖于这个
 	ConfigPen::Init();
+	HashPen::Init();
 
 	WebPen::Init();
 	RobotPen::Init();
