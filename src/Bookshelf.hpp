@@ -3,7 +3,7 @@
 #include "BambooSlips.h"
 
 /*Put class static;
-* 
+* 请仔细甄别是否有缺失
 */
 
 //Config
@@ -16,3 +16,5 @@ std::unique_ptr<dpp::cluster> RobotSlips::bot;
 
 //Web
 std::string WebSlips::StrTranslationURL = "";
+std::string WebSlips::Token = "";
+std::string WebSlips::APPID = "";

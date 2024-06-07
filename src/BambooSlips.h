@@ -21,4 +21,6 @@ class ConfigSlips {
 		};
 		//存放数据类型
 		static std::string StrTranslationURL;
+		static std::string Token;
+		static std::string APPID;
 };

@@ -16,6 +16,7 @@ class ConfigPen {
 	public:
 		//Pen初始化对应的竹木简牍,从config读取
 		static void Init();
+		static std::string InitPen(std::string ClassName, std::string obtain);
 		static Json::Value ReadFileJson(std::string Path);
 		static Json::Value GetConfigJson();
 };
@@ -32,7 +33,7 @@ class ConfigPen {
 	public:
 		//Pen初始化对应的竹木简牍,从config读取
 		static void Init();
+
 		//web 翻译之类的
-	
 		static std::string TranslationPen(std::string TStr);
 };

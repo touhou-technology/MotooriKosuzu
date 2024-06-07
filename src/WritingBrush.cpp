@@ -12,6 +12,11 @@ void ConfigPen::Init() {
 	ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
 }
 
+//类Init御用（
+std::string ConfigPen::InitPen(std::string ClassName, std::string obtain){
+	return (ConfigPen::GetConfigJson()[ClassName])[obtain].asString();
+}
+
 Json::Value ConfigPen::ReadFileJson(string Path) {
 	ifstream File(Path);
 
@@ -26,8 +31,8 @@ Json::Value ConfigPen::ReadFileJson(string Path) {
 
 	//把文件转变为json对象
 	std::string strerr;
-	bool ok = Json::parseFromStream(ReaderBuilder, File, &root, &strerr);
-	if (!ok) {
+
+	if (!Json::parseFromStream(ReaderBuilder, File, &root, &strerr)) {
 		std::cerr << "json解析错误" << std::endl;
 	}
 
@@ -56,7 +61,9 @@ dpp::cluster* RobotPen::GetBot(){
 }
 
 void WebPen::Init() {
-
+	WebSlips::StrTranslationURL = ConfigPen::InitPen("WebPen", "URL");
+	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
+	WebSlips::APPID = ConfigPen::InitPen("WebPen", "APPID");
 }
 
 std::string WebPen::TranslationPen(std::string TStr) {

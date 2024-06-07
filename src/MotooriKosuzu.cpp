@@ -14,8 +14,8 @@ Kosuzu::Kosuzu() {
 	//应该最先初始化，因为其他依赖于这个
 	ConfigPen::Init();
 
-	RobotPen::Init();
 	WebPen::Init();
+	RobotPen::Init();
 }
 
 Kosuzu::~Kosuzu() {
