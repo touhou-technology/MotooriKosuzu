@@ -13,7 +13,7 @@ void ConfigPen::Init() {
 }
 
 //类Init御用（
-std::string ConfigPen::InitPen(std::string ClassName, std::string obtain){
+std::string ConfigPen::InitPen(std::string ClassName, std::string obtain) {
 	return (ConfigPen::GetConfigJson()[ClassName])[obtain].asString();
 }
 
@@ -44,11 +44,11 @@ Json::Value ConfigPen::GetConfigJson() {
 }
 
 void RobotPen::Init() {
-	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::GetConfigJson()["BotToken"].asString(), dpp::i_default_intents | dpp::i_message_content));
+	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::InitPen("RobotSlips", "Token"), dpp::i_default_intents | dpp::i_message_content));
 }
 
 //start bot(thread wait)
-void RobotPen::Start(){
+void RobotPen::Start() {
 	GetBot()->start(dpp::st_wait);
 }
 
@@ -56,16 +56,24 @@ void RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
 	Fn(&*RobotSlips::bot);
 }
 //Adapt to Lambda
-dpp::cluster* RobotPen::GetBot(){
+dpp::cluster* RobotPen::GetBot() {
 	return &*RobotSlips::bot;
 }
 
 void WebPen::Init() {
-	WebSlips::StrTranslationURL = ConfigPen::InitPen("WebPen", "URL");
+	WebSlips::StrTranslationURL = ConfigPen::InitPen("WebPen", "StrTranslationURL");
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 	WebSlips::APPID = ConfigPen::InitPen("WebPen", "APPID");
+	//use default
+	WebPen::SetTranslator();
+}
+
+void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL){
+
+	WebSlips::Translator.reset(new httplib::Client());
+	std::cout << 
 }
 
 std::string WebPen::TranslationPen(std::string TStr) {
-	return std::string();
+	return std::string(TStr);
 }

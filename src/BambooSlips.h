@@ -1,5 +1,6 @@
 #pragma once
 #include <json/json.h>
+#include <httplib.h>
 #include <memory>
 
 class ConfigSlips {
@@ -19,7 +20,10 @@ class ConfigSlips {
 			TranslationURL = 0,
 			Link
 		};
+
 		//存放数据类型
+		//使用
+		static std::unique_ptr<httplib::Client> Translator;
 		static std::string StrTranslationURL;
 		static std::string Token;
 		static std::string APPID;
