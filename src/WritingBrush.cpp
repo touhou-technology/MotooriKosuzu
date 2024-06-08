@@ -78,7 +78,7 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 }
 
 void WebPen::TranslationPen(dpp::message_create_t event) {
-	event.send("翻译test");
+
 	RobotSlips::bot->message_create(dpp::message(event.msg.content).set_channel_id((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first));
 }
 
