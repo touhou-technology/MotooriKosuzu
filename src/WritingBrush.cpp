@@ -110,6 +110,8 @@ void PlanPen::OnReady() {
 }
 
 void PlanPen::Slashcommand() {
+
+
 	RobotSlips::bot->on_slashcommand([](const dpp::slashcommand_t event) {
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](event);
 		});
