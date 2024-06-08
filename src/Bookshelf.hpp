@@ -13,7 +13,7 @@ Json::Value ConfigSlips::ConfigJson;
 
 //HashSlips
 std::vector<dpp::snowflake*> HashSlips::ChannelSnowflake = std::vector<dpp::snowflake*>(200);
-std::unique_ptr<std::unordered_map<std::string, void(*) (dpp::slashcommand_t)>> HashSlips::SlashcommandFuntion;
+std::unique_ptr<std::unordered_map<std::string, void(*) (dpp::slashcommand_t*)>> HashSlips::SlashcommandFuntion;
 
 
 //Robot

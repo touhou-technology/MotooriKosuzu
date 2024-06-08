@@ -44,7 +44,7 @@ Json::Value ConfigPen::GetConfigJson() {
 }
 
 void HashPen::Init() {
-	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t)>());
+	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>());
 }
 
 void RobotPen::Init() {
@@ -95,7 +95,7 @@ void PlanPen::Init() {
 void PlanPen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		if (dpp::run_once<struct register_bot_commands>()) {
-			RobotSlips::bot->global_bulk_command_delete();
+			//RobotSlips::bot->global_bulk_command_delete();
 			Json::Value ObjectArray;
 			ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
 			std::cout << ObjectArray.size();
@@ -110,15 +110,17 @@ void PlanPen::OnReady() {
 }
 
 void PlanPen::Slashcommand() {
+	SlashcommandHash("ping", [](dpp::slashcommand_t* event)->void {
+		event->reply("OwO");
+		});
 
-
-	RobotSlips::bot->on_slashcommand([](const dpp::slashcommand_t event) {
-		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](event);
+	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
+		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
 }
 
 //建立哈希索引
-void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t)) {
+void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
 	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
 }
 

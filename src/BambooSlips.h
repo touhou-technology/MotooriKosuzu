@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <dpp/dpp.h>
+#include <functional>
 
 class ConfigSlips {
 public:
@@ -18,7 +19,7 @@ public:
 class HashSlips {
 public:
 	static std::vector<dpp::snowflake*> ChannelSnowflake;
-	static std::unique_ptr<std::unordered_map<std::string, void(*)(dpp::slashcommand_t)>>SlashcommandFuntion;
+	static std::unique_ptr<std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>>SlashcommandFuntion;
 };
 
 class RobotSlips {
