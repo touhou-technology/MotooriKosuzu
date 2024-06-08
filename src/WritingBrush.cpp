@@ -77,9 +77,9 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 	//WebSlips::Translator.reset(new httplib::Client(""));
 }
 
-std::string WebPen::TranslationPen(dpp::message_create_t event) {
-
-	return std::string(event.msg.content);
+void WebPen::TranslationPen(dpp::message_create_t event) {
+	event.send("翻译test");
+	RobotSlips::bot->message_create(dpp::message(event.msg.content).set_channel_id((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first));
 }
 
 void WebPen::Webhook() {
@@ -95,22 +95,22 @@ void PlanPen::Init() {
 //读取jsoncpp的
 void PlanPen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
-		//if (dpp::run_once<struct register_bot_commands>()) {
-		Json::Value ObjectArray;
-		ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
-		std::cout << ObjectArray.size();
-		int iter_2 = 1;
-		for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
-			std::cout << ObjectArray[iter].asString() << ":" << ObjectArray[iter_2].asString() << std::endl;
-			RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
-			++++iter_2;
+		if (dpp::run_once<struct register_bot_commands>()) {
+			Json::Value ObjectArray;
+			ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
+			std::cout << ObjectArray.size();
+			int iter_2 = 1;
+			for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
+				std::cout << ObjectArray[iter].asString() << ":" << ObjectArray[iter_2].asString() << std::endl;
+				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
+				++++iter_2;
+			}
+			//先这样，后续升级json的读取（）
+			RobotSlips::bot->global_command_create(dpp::slashcommand("开启翻译", "启动！", RobotSlips::bot->me.id)
+				.add_option(dpp::command_option(dpp::co_channel, "翻译的频道", "输入要翻译的频道（子区）ID", true))
+				.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true))
+			);
 		}
-		//先这样，后续升级json的读取（）
-		RobotSlips::bot->global_command_create(dpp::slashcommand("开启翻译", "启动！", RobotSlips::bot->me.id)
-			.add_option(dpp::command_option(dpp::co_channel, "翻译的频道", "输入要翻译的频道（子区）ID", true))
-			.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true))
-		);
-		//}
 		});
 }
 
@@ -156,6 +156,8 @@ void PlanPen::Message() {
 		});
 
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t event) {
-
+		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id] == std::pair<dpp::snowflake, std::string>())
+			return;
+		WebPen::TranslationPen(event);
 		});
 }
