@@ -106,16 +106,24 @@ void PlanPen::OnReady() {
 			++++iter_2;
 		}
 		//先这样，后续升级json的读取（）
-		RobotSlips::bot->global_command_create(dpp::slashcommand("StartTranslation", "start", RobotSlips::bot->me.id).add_option(dpp::command_option(dpp::co_channel, "ObjChannel", "输入要翻译的对象", false)));
-
-		RobotSlips::bot->global_command_create(dpp::slashcommand("StopTranslation", "start", RobotSlips::bot->me.id).add_option(dpp::command_option(dpp::co_channel, "ObjChannel", "输入要翻译的对象", false)));
+		RobotSlips::bot->global_command_create(dpp::slashcommand("开启翻译", "启动！", RobotSlips::bot->me.id)
+			.add_option(dpp::command_option(dpp::co_channel, "翻译的频道", "输入要翻译的频道（子区）ID", true))
+			.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true))
+		);
 		//}
 		});
 }
 
 void PlanPen::Slashcommand() {
-	SlashcommandHash("StartTranslation", [](dpp::slashcommand_t* event)->void {
+	SlashcommandHash("开启翻译", [](dpp::slashcommand_t* event)->void {
+		dpp::command_interaction cmd_data = event->command.get_command_interaction();
 
+		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻译的频道"));
+		std::string TO = std::get<std::string>(event->get_parameter("翻译至"));;
+
+		//将数据存入哈希表
+		(*HashSlips::ChannelSnowflake)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, TO);
+		event->reply("okey");
 		});
 	SlashcommandHash("StopTranslation", [](dpp::slashcommand_t* event)->void {
 
