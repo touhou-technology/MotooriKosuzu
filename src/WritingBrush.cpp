@@ -44,7 +44,7 @@ Json::Value ConfigPen::GetConfigJson() {
 }
 
 void HashPen::Init() {
-	HashSlips::ChannelSnowflake.reset(new std::unordered_map<dpp::snowflake,dpp::snowflake>());
+	HashSlips::ChannelSnowflake.reset(new std::unordered_map<dpp::snowflake, dpp::snowflake>());
 	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>());
 }
 
@@ -77,7 +77,7 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 	//WebSlips::Translator.reset(new httplib::Client(""));
 }
 
-std::string WebPen::TranslationPen(std::string q, std::string Tolanguage) {
+std::string WebPen::TranslationPen(std::string q, std::string Tolanguage, dpp::snowflake ChannelID) {
 
 	return std::string(q);
 }
@@ -96,7 +96,6 @@ void PlanPen::Init() {
 void PlanPen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		if (dpp::run_once<struct register_bot_commands>()) {
-			//RobotSlips::bot->global_bulk_command_delete();
 			Json::Value ObjectArray;
 			ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
 			std::cout << ObjectArray.size();
@@ -126,6 +125,13 @@ void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcom
 }
 
 void PlanPen::Message() {
+	//同步翻译的
+	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
+		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first == 0)
+			return;
+		WebPen::TranslationPen(event.msg.content, (*HashSlips::ChannelSnowflake)[event.msg.channel_id].second, event.msg.channel_id);
+		});
+
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t event) {
 		if (event.msg.author.id != RobotSlips::bot->me.id)
 			event.reply(event.msg.content);

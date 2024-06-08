@@ -42,7 +42,7 @@ public:
 	static void SetTranslator(std::string URL);
 
 	//web 翻译之类的
-	static std::string TranslationPen(std::string q, std::string Tolanguage);
+	static std::string TranslationPen(std::string q, std::string Tolanguage, dpp::snowflake ChannelID);
 
 	//Webhook
 	static void Webhook();
@@ -55,6 +55,6 @@ public:
 
 	static void OnReady();
 	static void Slashcommand();
-	static void SlashcommandHash(std::string command,void (*Fn)(dpp::slashcommand_t*));
+	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static void Message();
 };
