@@ -86,17 +86,35 @@ void WebPen::Webhook() {
 }
 
 void PlanPen::Init() {
+	OnReady();
 	Slashcommand();
 	Message();
 }
 
+void PlanPen::OnReady() {
+	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
+		if (dpp::run_once<struct register_bot_commands>()) {
+			Json::Value ObjectArray;
+			ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
+			std::cout << ObjectArray.size();
+			int iter_2 = 1;
+			for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
+				std::cout << ObjectArray[iter].asString() << ":" << ObjectArray[iter_2].asString() << std::endl;
+				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
+				++++iter_2;
+			}
+		}
+		});
+}
+
 void PlanPen::Slashcommand() {
+	RobotSlips::bot->on_slashcommand([](const dpp::slashcommand_t event) {
 
-
+		});
 }
 
 void PlanPen::Message() {
-	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
+	RobotSlips::bot->on_message_create([](const dpp::message_create_t event) {
 		if (event.msg.author.id != RobotSlips::bot->me.id)
 			event.reply(event.msg.content);
 		});

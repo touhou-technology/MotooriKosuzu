@@ -53,6 +53,7 @@ class PlanPen {
 public:
 	static void Init();
 
+	static void OnReady();
 	static void Slashcommand();
 	static void Message();
 };
