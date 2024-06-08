@@ -77,9 +77,9 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 	//WebSlips::Translator.reset(new httplib::Client(""));
 }
 
-std::string WebPen::TranslationPen(dpp::message_create_t event) {
-
-	RobotSlips::bot->message_create(dpp::message(event.msg.content).set_channel_id((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first));
+//test需要翻译的文本，To是翻译成什么的
+std::string WebPen::TranslationPen(std::string text, std::string To) {
+	
 }
 
 void WebPen::Webhook() {
@@ -152,12 +152,11 @@ void PlanPen::Message() {
 		//单向翻译（
 		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first == 0)
 			return;
-		WebPen::TranslationPen(event);
-		});
 
-	RobotSlips::bot->on_message_create([](const dpp::message_create_t event) {
-		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id] == std::pair<dpp::snowflake, std::string>())
-			return;
-		WebPen::TranslationPen(event);
+		//测试用，但似乎已经可以用了
+		RobotSlips::bot->message_create(dpp::message(
+			WebPen::TranslationPen(event.msg.content, (*HashSlips::ChannelSnowflake)[event.msg.channel_id].second))
+			.set_channel_id((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first)
+		);
 		});
 }

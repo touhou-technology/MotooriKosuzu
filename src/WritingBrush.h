@@ -42,7 +42,7 @@ public:
 	static void SetTranslator(std::string URL);
 
 	//web 翻译之类的
-	static std::string TranslationPen(dpp::message_create_t event);
+	static std::string TranslationPen(std::string text, std::string To);
 
 	//Webhook
 	static void Webhook();
