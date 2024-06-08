@@ -77,9 +77,9 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 	//WebSlips::Translator.reset(new httplib::Client(""));
 }
 
-std::string WebPen::TranslationPen(std::string q, std::string Tolanguage, dpp::snowflake ChannelID) {
+std::string WebPen::TranslationPen(dpp::message_create_t event) {
 
-	return std::string(q);
+	return std::string(event.msg.content);
 }
 
 void WebPen::Webhook() {
@@ -95,26 +95,40 @@ void PlanPen::Init() {
 //读取jsoncpp的
 void PlanPen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
-		if (dpp::run_once<struct register_bot_commands>()) {
-			Json::Value ObjectArray;
-			ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
-			std::cout << ObjectArray.size();
-			int iter_2 = 1;
-			for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
-				std::cout << ObjectArray[iter].asString() << ":" << ObjectArray[iter_2].asString() << std::endl;
-				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
-				++++iter_2;
-			}
+		//if (dpp::run_once<struct register_bot_commands>()) {
+		Json::Value ObjectArray;
+		ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
+		std::cout << ObjectArray.size();
+		int iter_2 = 1;
+		for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
+			std::cout << ObjectArray[iter].asString() << ":" << ObjectArray[iter_2].asString() << std::endl;
+			RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
+			++++iter_2;
 		}
+		//先这样，后续升级json的读取（）
+		RobotSlips::bot->global_command_create(dpp::slashcommand("StartTranslation", "start", RobotSlips::bot->me.id).add_option(dpp::command_option(dpp::co_channel, "ObjChannel", "输入要翻译的对象", false)));
+
+		RobotSlips::bot->global_command_create(dpp::slashcommand("StopTranslation", "start", RobotSlips::bot->me.id).add_option(dpp::command_option(dpp::co_channel, "ObjChannel", "输入要翻译的对象", false)));
+		//}
 		});
 }
 
 void PlanPen::Slashcommand() {
+	SlashcommandHash("StartTranslation", [](dpp::slashcommand_t* event)->void {
+
+		});
+	SlashcommandHash("StopTranslation", [](dpp::slashcommand_t* event)->void {
+
+		});
+
 	SlashcommandHash("ping", [](dpp::slashcommand_t* event)->void {
 		event->reply("OwO");
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
+		//std::cout << (*HashSlips::SlashcommandFuntion)[event.command.get_command_name()];
+		//if ((*HashSlips::SlashcommandFuntion)[event.command.get_command_name()] = 0)
+		//	return;
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
 }
@@ -127,13 +141,13 @@ void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcom
 void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
+		//单向翻译（
 		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first == 0)
 			return;
-		WebPen::TranslationPen(event.msg.content, (*HashSlips::ChannelSnowflake)[event.msg.channel_id].second, event.msg.channel_id);
+		WebPen::TranslationPen(event);
 		});
 
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t event) {
-		if (event.msg.author.id != RobotSlips::bot->me.id)
-			event.reply(event.msg.content);
+
 		});
 }
