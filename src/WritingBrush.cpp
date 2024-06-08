@@ -111,14 +111,12 @@ void PlanPen::OnReady() {
 
 void PlanPen::Slashcommand() {
 	//其实似乎可以使用哈希表，额也许可以试试，通过加载函数指针的形式
-	RobotSlips::bot->on_slashcommand([](const dpp::slashcommand_t event) {
-		HashSlips::SlashcommandFuntion[event.command.get_command_name()](event);
-		});
+
 }
 
 //建立哈希索引
-void PlanPen::SlashcommandHash(std::string command, void(*Fn)(dpp::slashcommand_t* event)) {
-
+void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t)) {
+	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
 }
 
 void PlanPen::Message() {
