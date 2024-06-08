@@ -91,6 +91,7 @@ void PlanPen::Init() {
 	Message();
 }
 
+//读取jsoncpp的
 void PlanPen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		if (dpp::run_once<struct register_bot_commands>()) {
@@ -108,8 +109,15 @@ void PlanPen::OnReady() {
 }
 
 void PlanPen::Slashcommand() {
+	//其实似乎可以使用哈希表，额也许可以试试，通过加载函数指针的形式
 	RobotSlips::bot->on_slashcommand([](const dpp::slashcommand_t event) {
+		if (event.command.get_command_name() == "ping") {
+			event.reply("Pong!");
+		}
 
+		if (event.command.get_command_name() == "test") {
+			event.reply("OwO");
+		}
 		});
 }
 
