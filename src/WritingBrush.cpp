@@ -44,6 +44,7 @@ Json::Value ConfigPen::GetConfigJson() {
 }
 
 void HashPen::Init() {
+	HashSlips::ChannelSnowflake.reset(new std::unordered_map<dpp::snowflake,dpp::snowflake>());
 	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>());
 }
 
