@@ -18,6 +18,7 @@ public:
 class HashSlips {
 public:
 	static std::vector<dpp::snowflake*> ChannelSnowflake;
+	static std::vector<void* (dpp::slashcommand_t)> SlashcommandFuntion;
 };
 
 class RobotSlips {
