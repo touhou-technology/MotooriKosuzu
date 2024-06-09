@@ -22,4 +22,6 @@ dpp::message_create_t RobotSlips::ObjMsg;
 
 //Web
 std::unique_ptr<httplib::Client> WebSlips::Translator;
-std::string WebSlips::Token;
+std::string WebSlips::StrTranslationURL = "";
+std::string WebSlips::Token = "";
+std::string WebSlips::APPID = "";
