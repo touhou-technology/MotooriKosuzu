@@ -23,8 +23,8 @@ target_link_libraries(${PROJECT_NAME} jsoncpp)
 # Include the DPP directories.
 target_link_libraries(${PROJECT_NAME} ${DPP_LIBRARIES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${DPP_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${DPP_INCLUDE_DIR} pthread)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+  set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20 )
 endif()
