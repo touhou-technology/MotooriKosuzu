@@ -68,20 +68,13 @@ dpp::cluster* RobotPen::GetBot() {
 }
 
 void WebPen::Init() {
-	WebSlips::StrTranslationURL = ConfigPen::InitPen("WebPen", "StrTranslationURL");
-	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
-	WebSlips::APPID = ConfigPen::InitPen("WebPen", " APPID");
-	//use default
-	//WebPen::SetTranslator();
-}
-
-void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
-	//WebSlips::Translator.reset(new httplib::Client(""));
+	//初始令牌
+	WebSlips::Token = ConfigSlips::ConfigJson["WebPen"]["Token"].asString();
 }
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	std::string cmd = "python3.10 API.py " + text + " " + To;
+	std::string cmd = "python3.10 API.py " + text + " " + To + " " + WebSlips::Token;
 
 	char result[10240] = { 0 };
 	char buf[1024] = { 0 };

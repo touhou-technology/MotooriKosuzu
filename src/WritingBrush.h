@@ -39,8 +39,6 @@ public:
 	//Pen初始化对应的竹木简牍,从config读取
 	static void Init();
 
-	static void SetTranslator(std::string URL);
-
 	//web 翻译之类的
 	static std::string TranslationPen(std::string text, std::string To);
 
