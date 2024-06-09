@@ -17,7 +17,7 @@ public:
 
 class HashSlips {
 public:
-	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> ChannelSnowflake;
+	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSnowflakeStr;
 	static std::unique_ptr<std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>>SlashcommandFuntion;
 };
 

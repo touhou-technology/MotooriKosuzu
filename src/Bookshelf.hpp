@@ -12,7 +12,7 @@ std::string ConfigSlips::Path_ = "/home/awalwa/projects/Project/config/ConfigBoo
 Json::Value ConfigSlips::ConfigJson;
 
 //HashSlips
-std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSlips::ChannelSnowflake;
+std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSlips::HashSnowflakeStr;
 std::unique_ptr<std::unordered_map<std::string, void(*) (dpp::slashcommand_t*)>> HashSlips::SlashcommandFuntion;
 
 

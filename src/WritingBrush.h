@@ -57,4 +57,7 @@ public:
 	static void Slashcommand();
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static void Message();
+	static void MessageUpdate();
+	static void MessageDelete();
+	static void WebhookCreate();
 };

@@ -44,7 +44,7 @@ Json::Value ConfigPen::GetConfigJson() {
 }
 
 void HashPen::Init() {
-	HashSlips::ChannelSnowflake.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
+	HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
 	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>());
 }
 
@@ -79,12 +79,12 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-
 	return text;
 }
 
 void WebPen::Webhook() {
-
+	RobotSlips::bot->execute_webhook_sync(dpp::webhook("https://discord.com/api/webhooks/1249226023355023452/0D-dnrqO7xayTDn6tVJ7TdacGc5s_hLClVA4IjRU7beYVm4w8hsWLum8WlDmgqWPakby"),
+		dpp::message("Test"));
 }
 
 void PlanPen::Init() {
@@ -121,7 +121,7 @@ void PlanPen::OnReady() {
 void PlanPen::Slashcommand() {
 	SlashcommandHash("开启翻译", [](dpp::slashcommand_t* event)->void {
 		//将数据存入哈希表
-		if ((*HashSlips::ChannelSnowflake)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
+		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
 			event->reply("Okey");
 		else
 			event->reply("Okey, Redirect Channel");
@@ -132,16 +132,16 @@ void PlanPen::Slashcommand() {
 		std::string To = std::get<std::string>(event->get_parameter("翻译至"));;
 
 
-		(*HashSlips::ChannelSnowflake)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
+		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 		});
 
 	//停下翻译
 	SlashcommandHash("停止翻译", [](dpp::slashcommand_t* event)->void {
-		if ((*HashSlips::ChannelSnowflake)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
+		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
 			event->reply("Refers to channels that have not yet started translation");
 		else {
 			event->reply("okey");
-			(*HashSlips::ChannelSnowflake)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
+			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 		}
 		});
 
@@ -166,13 +166,31 @@ void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
 		//单向翻译（
-		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
+		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
 
 		//测试用，但似乎已经可以用了
 		RobotSlips::bot->message_create(dpp::message(
-			WebPen::TranslationPen(event.msg.content, (*HashSlips::ChannelSnowflake)[event.msg.channel_id].second))
-			.set_channel_id((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first)
+			WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second))
+			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first)
 		);
 		});
+}
+
+void PlanPen::MessageUpdate(){
+	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
+
+		});
+}
+
+void PlanPen::MessageDelete(){
+	RobotSlips::bot->on_message_delete([](const dpp::message_delete_t event) {
+
+		});
+}
+
+
+
+void PlanPen::WebhookCreate() {
+
 }
