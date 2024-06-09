@@ -92,6 +92,7 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
+    <None Include="API.py" />
     <None Include="config\ConfigBook.json" />
   </ItemGroup>
   <ItemGroup>
