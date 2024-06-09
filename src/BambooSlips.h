@@ -24,6 +24,7 @@ public:
 class RobotSlips {
 public:
 	static std::unique_ptr<dpp::cluster> bot;
+	static dpp::message_create_t ObjMsg;
 };
 
 class WebSlips {

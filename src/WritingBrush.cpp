@@ -111,7 +111,11 @@ void WebPen::Webhook() {
 void PlanPen::Init() {
 	OnReady();
 	Slashcommand();
+	AutoComplete();
 	Message();
+	MessageUpdate();
+	MessageDelete();
+	WebhookCreate();
 }
 
 //读取jsoncpp的
@@ -130,7 +134,7 @@ void PlanPen::OnReady() {
 			//先这样，后续升级json的读取（）
 			RobotSlips::bot->global_command_create(dpp::slashcommand("开启翻译", "启动！", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_channel, "翻译的频道", "输入要翻译的频道（子区）ID", true))
-				.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true))
+				.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true).set_auto_complete(true))
 			);
 
 			RobotSlips::bot->global_command_create(dpp::slashcommand("停止翻译", "停下", RobotSlips::bot->me.id)
@@ -183,6 +187,24 @@ void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcom
 	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
 }
 
+void PlanPen::AutoComplete() {
+	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t event) {
+		//if (event.command.get_command_name() != "翻译至")
+		//	return;
+
+		std::cout << event.command.get_command_name() << std::endl;
+
+		dpp::command_option opt = event.options[0];
+
+		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
+
+		for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i)
+			AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+
+		RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
+		});
+}
+
 void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
@@ -190,32 +212,47 @@ void PlanPen::Message() {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
 
-		dpp::message TrText(WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second));
+		std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
+
+		dpp::message TrText(TranslateMsg);
 		TrText.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
 
-		//追加进哈希表，如有一些修改即可同步
-		(*HashSlips::HashSnowflakeStr)[event.msg.id] = std::pair<dpp::snowflake, std::string>(TrText.id, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
+		RobotSlips::ObjMsg = event;
 
 		//测试用，但似乎已经可以用了
 		RobotSlips::bot->message_create(TrText);
+		});
+
+	//检测消息是否于翻译的消息相同
+	RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
+
+		//追加进哈希表，如有一些修改即可同步
+		if (BotMsg.msg.author.id == RobotSlips::bot->me.id)
+			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
+
 		});
 }
 
 void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
-		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
+		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0)
 			return;
+		
+		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second));
 
-		std::cout << (*HashSlips::HashSnowflakeStr)[event.msg.id].first;
+		msg.set_reference((*HashSlips::HashSnowflakeStr)[event.msg.id].first)
+			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
 
-
+		RobotSlips::bot->message_create(msg);
 		});
 }
 
 void PlanPen::MessageDelete() {
 	RobotSlips::bot->on_message_delete([](const dpp::message_delete_t event) {
-		if ((*HashSlips::HashSnowflakeStr)[event.id].first == 0 || (*HashSlips::HashSnowflakeStr)[event.channel_id].first == 0 || event.id == RobotSlips::bot->me.id)
+		if ((*HashSlips::HashSnowflakeStr)[event.id].first == 0)
 			return;
+
+		std::cout << (*HashSlips::HashSnowflakeStr)[event.id].first << std::endl;
 
 		RobotSlips::bot->message_delete((*HashSlips::HashSnowflakeStr)[event.id].first, (*HashSlips::HashSnowflakeStr)[event.channel_id].first);
 

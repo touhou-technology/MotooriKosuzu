@@ -18,6 +18,7 @@ std::unique_ptr<std::unordered_map<std::string, void(*) (dpp::slashcommand_t*)>>
 
 //Robot
 std::unique_ptr<dpp::cluster> RobotSlips::bot;
+dpp::message_create_t RobotSlips::ObjMsg;
 
 //Web
 std::unique_ptr<httplib::Client> WebSlips::Translator;
