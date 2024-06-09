@@ -79,7 +79,8 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	
+
+	return text;
 }
 
 void WebPen::Webhook() {
@@ -110,23 +111,38 @@ void PlanPen::OnReady() {
 				.add_option(dpp::command_option(dpp::co_channel, "翻译的频道", "输入要翻译的频道（子区）ID", true))
 				.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true))
 			);
+
+			RobotSlips::bot->global_command_create(dpp::slashcommand("停止翻译", "停下", RobotSlips::bot->me.id)
+			);
 		}
 		});
 }
 
 void PlanPen::Slashcommand() {
 	SlashcommandHash("开启翻译", [](dpp::slashcommand_t* event)->void {
+		//将数据存入哈希表
+		if ((*HashSlips::ChannelSnowflake)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
+			event->reply("Okey");
+		else
+			event->reply("Okey, Redirect Channel");
+
 		dpp::command_interaction cmd_data = event->command.get_command_interaction();
 
 		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻译的频道"));
-		std::string TO = std::get<std::string>(event->get_parameter("翻译至"));;
+		std::string To = std::get<std::string>(event->get_parameter("翻译至"));;
 
-		//将数据存入哈希表
-		(*HashSlips::ChannelSnowflake)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, TO);
-		event->reply("okey");
+
+		(*HashSlips::ChannelSnowflake)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 		});
-	SlashcommandHash("StopTranslation", [](dpp::slashcommand_t* event)->void {
 
+	//停下翻译
+	SlashcommandHash("停止翻译", [](dpp::slashcommand_t* event)->void {
+		if ((*HashSlips::ChannelSnowflake)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
+			event->reply("Refers to channels that have not yet started translation");
+		else {
+			event->reply("okey");
+			(*HashSlips::ChannelSnowflake)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
+		}
 		});
 
 	SlashcommandHash("ping", [](dpp::slashcommand_t* event)->void {
@@ -150,7 +166,7 @@ void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
 		//单向翻译（
-		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first == 0)
+		if ((*HashSlips::ChannelSnowflake)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
 
 		//测试用，但似乎已经可以用了
