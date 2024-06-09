@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -49,7 +51,7 @@ void HashPen::Init() {
 }
 
 void RobotPen::Init() {
-	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::InitPen("RobotSlips", "Token"), dpp::i_default_intents | dpp::i_message_content));
+	RobotSlips::bot.reset(new dpp::cluster(ConfigPen::InitPen("RobotSlips", "Token"), dpp::i_default_intents | dpp::i_message_content | dpp::i_guild_messages));
 }
 
 //start bot(thread wait)
@@ -68,7 +70,7 @@ dpp::cluster* RobotPen::GetBot() {
 void WebPen::Init() {
 	WebSlips::StrTranslationURL = ConfigPen::InitPen("WebPen", "StrTranslationURL");
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
-	WebSlips::APPID = ConfigPen::InitPen("WebPen", "APPID");
+	WebSlips::APPID = ConfigPen::InitPen("WebPen", " APPID");
 	//use default
 	//WebPen::SetTranslator();
 }
@@ -79,7 +81,26 @@ void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	return text;
+	std::string cmd = "python3.10 API.py " + text + " " + To;
+
+	char result[10240] = { 0 };
+	char buf[1024] = { 0 };
+	FILE* fp = NULL;
+
+	if ((fp = popen(cmd.c_str(), "r")) == NULL) {
+		printf("popen error!\n");
+		return "[error]";
+	}
+
+	//std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+	while (fgets(buf, sizeof(buf), fp)) {
+		strcat(result, buf);
+	}
+
+
+
+	return std::string(result);
 }
 
 void WebPen::Webhook() {
@@ -169,22 +190,36 @@ void PlanPen::Message() {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
 
+		dpp::message TrText(WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second));
+		TrText.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
+
+		//追加进哈希表，如有一些修改即可同步
+		(*HashSlips::HashSnowflakeStr)[event.msg.id] = std::pair<dpp::snowflake, std::string>(TrText.id, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
+
 		//测试用，但似乎已经可以用了
-		RobotSlips::bot->message_create(dpp::message(
-			WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second))
-			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first)
-		);
+		RobotSlips::bot->message_create(TrText);
 		});
 }
 
-void PlanPen::MessageUpdate(){
+void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
+		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
+			return;
+
+		std::cout << (*HashSlips::HashSnowflakeStr)[event.msg.id].first;
+
 
 		});
 }
 
-void PlanPen::MessageDelete(){
+void PlanPen::MessageDelete() {
 	RobotSlips::bot->on_message_delete([](const dpp::message_delete_t event) {
+		if ((*HashSlips::HashSnowflakeStr)[event.id].first == 0 || (*HashSlips::HashSnowflakeStr)[event.channel_id].first == 0 || event.id == RobotSlips::bot->me.id)
+			return;
+
+		RobotSlips::bot->message_delete((*HashSlips::HashSnowflakeStr)[event.id].first, (*HashSlips::HashSnowflakeStr)[event.channel_id].first);
+
+		(*HashSlips::HashSnowflakeStr)[event.id] = std::pair<dpp::snowflake, std::string>();
 
 		});
 }
