@@ -94,6 +94,7 @@
     <None Include=".gitignore" />
     <None Include="API.py" />
     <None Include="config\ConfigBook.json" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
