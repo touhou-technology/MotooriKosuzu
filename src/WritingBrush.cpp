@@ -192,8 +192,6 @@ void PlanPen::AutoComplete() {
 		//if (event.command.get_command_name() != "翻译至")
 		//	return;
 
-		std::cout << event.command.get_command_name() << std::endl;
-
 		dpp::command_option opt = event.options[0];
 
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
@@ -251,8 +249,6 @@ void PlanPen::MessageDelete() {
 	RobotSlips::bot->on_message_delete([](const dpp::message_delete_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.id].first == 0)
 			return;
-
-		std::cout << (*HashSlips::HashSnowflakeStr)[event.id].first << std::endl;
 
 		RobotSlips::bot->message_delete((*HashSlips::HashSnowflakeStr)[event.id].first, (*HashSlips::HashSnowflakeStr)[event.channel_id].first);
 
