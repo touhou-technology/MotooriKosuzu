@@ -2,7 +2,9 @@
 project(MotooriKosuzu)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+
 
 # 将源代码添加到此项目的可执行文件。
 FILE(GLOB_RECURSE SRC_HEADER "src/*.h")
@@ -11,15 +13,21 @@ FILE(GLOB_RECURSE SRC_HPP "src/*.hpp")
 
 add_executable (${PROJECT_NAME}
 	${SRC_HEADER} ${SRC_SOURCE} ${SRC_HPP}
-	)
+)
+
+
+find_package(httplib REQUIRED)
+
 
 # Find our pre-installed DPP package (using FindDPP.cmake).
 find_package(DPP REQUIRED)
 find_package(jsoncpp REQUIRED)
-find_package(pthread REQUIRED)
 
 # Include JSONCPP directories.
-target_link_libraries(${PROJECT_NAME} jsoncpp pthread)
+target_link_libraries(${PROJECT_NAME} jsoncpp)
+
+# Include cpp-httplib directories.
+target_link_libraries(${PROJECT_NAME} httplib)
 
 # Include the DPP directories.
 target_link_libraries(${PROJECT_NAME} ${DPP_LIBRARIES})
