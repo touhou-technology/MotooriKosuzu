@@ -5,7 +5,6 @@
 #include <json/json.h>
 #include <httplib.h>
 #include <dpp/dpp.h>
-#include <openssl/md5.h>
 
 #include <stdio.h>
 #include <stdlib.h>

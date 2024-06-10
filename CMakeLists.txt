@@ -16,14 +16,15 @@ add_executable (${PROJECT_NAME}
 # Find our pre-installed DPP package (using FindDPP.cmake).
 find_package(DPP REQUIRED)
 find_package(jsoncpp REQUIRED)
+find_package(pthread REQUIRED)
 
 # Include JSONCPP directories.
-target_link_libraries(${PROJECT_NAME} jsoncpp)
+target_link_libraries(${PROJECT_NAME} jsoncpp pthread)
 
 # Include the DPP directories.
 target_link_libraries(${PROJECT_NAME} ${DPP_LIBRARIES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${DPP_INCLUDE_DIR} pthread)
+target_include_directories(${PROJECT_NAME} PRIVATE ${DPP_INCLUDE_DIR})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20 )
