@@ -159,9 +159,9 @@ void PlanPen::Slashcommand() {
 
 	SlashcommandHash("翻訳を双方向に開く", [](dpp::slashcommand_t* event)->void {
 		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
-			event->reply("Okey");
+			event->reply("わかった");
 		else {
-			event->reply("Okey, Redirect Channel");
+			event->reply("はい、リダイレクトチャンネル");
 			//将原本的翻译指代空值
 			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
 		}
@@ -182,7 +182,7 @@ void PlanPen::Slashcommand() {
 		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
 			event->reply("翻訳が開始されていないチャンネルのこと");
 		else {
-			event->reply("okey");
+			event->reply("わかった");
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 		}
 		});
@@ -192,7 +192,7 @@ void PlanPen::Slashcommand() {
 			event->reply("翻訳が開始されていないチャンネルのこと");
 		}
 		else {
-			event->reply("okey");
+			event->reply("わかった");
 			RobotSlips::bot->message_create(dpp::message("翻訳を停止する")
 				.set_channel_id((*HashSlips::HashSnowflakeStr)[event->command.channel_id].first));
 
