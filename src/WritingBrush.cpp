@@ -144,9 +144,9 @@ void PlanPen::Slashcommand() {
 	SlashcommandHash("翻訳の開始", [](dpp::slashcommand_t* event)->void {
 		//将数据存入哈希表
 		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
-			event->reply("Okey");
+			event->reply("わかった");
 		else
-			event->reply("Okey, Redirect Channel");
+			event->reply("はい、リダイレクトチャンネル");
 
 		dpp::command_interaction cmd_data = event->command.get_command_interaction();
 
