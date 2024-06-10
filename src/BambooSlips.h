@@ -37,7 +37,5 @@ public:
 	//存放数据类型
 	//使用
 	static std::unique_ptr<httplib::Client> Translator;
-	static std::string StrTranslationURL;
 	static std::string Token;
-	static std::string APPID;
 };

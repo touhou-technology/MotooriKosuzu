@@ -68,20 +68,12 @@ dpp::cluster* RobotPen::GetBot() {
 }
 
 void WebPen::Init() {
-	WebSlips::StrTranslationURL = ConfigPen::InitPen("WebPen", "StrTranslationURL");
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
-	WebSlips::APPID = ConfigPen::InitPen("WebPen", " APPID");
-	//use default
-	//WebPen::SetTranslator();
-}
-
-void WebPen::SetTranslator(std::string URL = WebSlips::StrTranslationURL) {
-	//WebSlips::Translator.reset(new httplib::Client(""));
 }
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	std::string cmd = "python3.10 API.py " + text + " " + To;
+	std::string cmd = "python3.10 API.py " + text + " " + To + " " + WebSlips::Token;
 
 	char result[10240] = { 0 };
 	char buf[1024] = { 0 };
@@ -91,8 +83,6 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 		printf("popen error!\n");
 		return "[error]";
 	}
-
-	//std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	while (fgets(buf, sizeof(buf), fp)) {
 		strcat(result, buf);
@@ -133,12 +123,18 @@ void PlanPen::OnReady() {
 			}
 			//先这样，后续升级json的读取（）
 			RobotSlips::bot->global_command_create(dpp::slashcommand("开启翻译", "启动！", RobotSlips::bot->me.id)
-				.add_option(dpp::command_option(dpp::co_channel, "翻译的频道", "输入要翻译的频道（子区）ID", true))
+				.add_option(dpp::command_option(dpp::co_channel, "翻译到频道", "输入要翻译到的频道（子区）ID", true))
 				.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true).set_auto_complete(true))
 			);
 
-			RobotSlips::bot->global_command_create(dpp::slashcommand("停止翻译", "停下", RobotSlips::bot->me.id)
+			RobotSlips::bot->global_command_create(dpp::slashcommand("开启翻译双向", "一次性开启2个翻译频道", RobotSlips::bot->me.id)
+				.add_option(dpp::command_option(dpp::co_channel, "翻译到频道", "输入要翻译到的频道（子区）ID", true))
+				.add_option(dpp::command_option(dpp::co_string, "翻译", "输入需要翻译的什么语言", true).set_auto_complete(true))
+				.add_option(dpp::command_option(dpp::co_string, "翻译至", "输入需要翻译到什么语言", true).set_auto_complete(true))
 			);
+
+			RobotSlips::bot->global_command_create(dpp::slashcommand("停止翻译", "停下", RobotSlips::bot->me.id));
+			RobotSlips::bot->global_command_create(dpp::slashcommand("停止翻译双向", "停下", RobotSlips::bot->me.id));
 		}
 		});
 }
@@ -153,11 +149,31 @@ void PlanPen::Slashcommand() {
 
 		dpp::command_interaction cmd_data = event->command.get_command_interaction();
 
-		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻译的频道"));
-		std::string To = std::get<std::string>(event->get_parameter("翻译至"));;
+		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻译到频道"));
+		std::string To = std::get<std::string>(event->get_parameter("翻译至"));
 
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
+		});
+
+	SlashcommandHash("开启翻译双向", [](dpp::slashcommand_t* event)->void {
+		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
+			event->reply("Okey");
+		else {
+			event->reply("Okey, Redirect Channel");
+			//将原本的翻译指代空值
+			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
+		}
+
+		dpp::command_interaction cmd_data = event->command.get_command_interaction();
+
+		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻译到频道"));
+		std::string This_channel = std::get<std::string>(event->get_parameter("翻译"));
+		std::string To = std::get<std::string>(event->get_parameter("翻译至"));
+
+		//建立双向链接
+		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
+		(*HashSlips::HashSnowflakeStr)[channel] = std::pair<dpp::snowflake, std::string>(event->command.channel_id, This_channel);
 		});
 
 	//停下翻译
@@ -166,6 +182,21 @@ void PlanPen::Slashcommand() {
 			event->reply("Refers to channels that have not yet started translation");
 		else {
 			event->reply("okey");
+			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
+		}
+		});
+
+	SlashcommandHash("停止翻译双向", [](dpp::slashcommand_t* event)->void {
+		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>() && (*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] == std::pair<dpp::snowflake, std::string>()) {
+			event->reply("Refers to channels that have not yet started translation");
+		}
+		else {
+			event->reply("okey");
+			RobotSlips::bot->message_create(dpp::message("Stop translation")
+				.set_channel_id((*HashSlips::HashSnowflakeStr)[event->command.channel_id].first));
+
+			//后面需要前面的数据
+			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 		}
 		});
@@ -235,7 +266,7 @@ void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0)
 			return;
-		
+
 		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second));
 
 		msg.set_reference((*HashSlips::HashSnowflakeStr)[event.msg.id].first)
