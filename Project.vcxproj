@@ -129,7 +129,7 @@
       <CppLanguageStandard>c++20</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
