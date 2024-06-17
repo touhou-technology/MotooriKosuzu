@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 //Put Slips
 #include "BambooSlips.h"
 
@@ -8,7 +8,7 @@
 
 //Config
 //debug
-std::string ConfigSlips::Path_ = "/home/awalwa/projects/Project/config/ConfigBook.json";
+std::string ConfigSlips::Path_ = "/root/MotooriKosuzu/config/ConfigBook.json";
 Json::Value ConfigSlips::ConfigJson;
 
 //HashSlips

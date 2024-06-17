@@ -1,4 +1,4 @@
-#include "WritingBrush.h"
+﻿#include "WritingBrush.h"
 #include "BambooSlips.h"
 
 #include <iostream>
@@ -75,8 +75,8 @@ void WebPen::Init() {
 std::string WebPen::TranslationPen(std::string text, std::string To) {
 	std::string cmd = "python3.10 API.py " + text + " " + To + " " + WebSlips::Token;
 
-	char result[10240] = { 0 };
-	char buf[1024] = { 0 };
+	static char result[10240] = { 0 };
+	static char buf[1024] = { 0 };
 	FILE* fp = NULL;
 
 	if ((fp = popen(cmd.c_str(), "r")) == NULL) {
