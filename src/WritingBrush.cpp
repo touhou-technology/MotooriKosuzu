@@ -73,7 +73,7 @@ void WebPen::Init() {
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	std::string cmd = "python3.10 API.py " + text + " " + To + " " + WebSlips::Token;
+	std::string cmd = "python3 API.py " + text + " " + To + " " + WebSlips::Token;
 
 	static char result[10240] = { 0 };
 	static char buf[1024] = { 0 };
