@@ -369,4 +369,4 @@ FodyWeavers.xsd
 build/
 
 #local configs. Stuffs such as tokens will not be pushed
-#config/*.json
+config/*.json

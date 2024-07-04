@@ -23,7 +23,7 @@ mkdir /etc/MotooriKosuzu/config
 
 cd /etc/MotooriKosuzu/config
 vim ConfigBook.json
+#The format of ConfigBook.json and config directory should be the same
 
-The format of ConfigBook.json and config directory should be the same
 
 docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/MotooriKosuzu
