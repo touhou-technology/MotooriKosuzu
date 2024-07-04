@@ -14,7 +14,7 @@ WritingBrush.cpp 76行 "python3.10 API.py" 自分の正しい呼び出しAPIコ�
 
 srcディレクトリで使用してください g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp"
 
-# add Docker
+# use Docker
 
 docker pull awalwashig/bureau
 
