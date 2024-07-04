@@ -105,9 +105,6 @@
     <None Include="config\ConfigBook.json" />
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
