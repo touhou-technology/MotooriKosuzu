@@ -24,8 +24,8 @@ deeplの無料APIを持っていることを確認してください（有料の
 
 docker pull awalwashig/bureau
 
-mkdir /etc/MotooriKosuzu
-mkdir /etc/MotooriKosuzu/config
+mkdir /etc/MotooriKosuzu;
+mkdir /etc/MotooriKosuzu/config;
 
 cd /etc/MotooriKosuzu/config
 vim ConfigBook.json
