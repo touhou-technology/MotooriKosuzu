@@ -75,8 +75,8 @@ void WebPen::Init() {
 std::string WebPen::TranslationPen(std::string text, std::string To) {
 	std::string cmd = "python3 API.py " + text + " " + To + " " + WebSlips::Token;
 
-	static char result[10240] = { 0 };
-	static char buf[1024] = { 0 };
+	char result[10240] = { 0 };
+	char buf[1024] = { 0 };
 	FILE* fp = NULL;
 
 	if ((fp = popen(cmd.c_str(), "r")) == NULL) {
