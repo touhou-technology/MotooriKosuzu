@@ -73,10 +73,11 @@ void WebPen::Init() {
 
 //test需要翻译的文本，To是翻译成什么的
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	std::string cmd = "python3 API.py " + text + " " + To + " " + WebSlips::Token;
+	std::string cmd = "python3 API.py "" + text + "" " + To + " " + WebSlips::Token;
 
 	char result[10240] = { 0 };
 	char buf[1024] = { 0 };
+
 	FILE* fp = NULL;
 
 	if ((fp = popen(cmd.c_str(), "r")) == NULL) {
