@@ -74,7 +74,7 @@ void WebPen::Init() {
 //test需要翻译的文本，To是翻译成什么的
 //TODO
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	std::string cmd = "python3 API.py "" + text + "" " + To + " " + WebSlips::Token;
+	std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
 
 	char result[10240] = { 0 };
 	char buf[1024] = { 0 };
@@ -93,11 +93,6 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 
 
 	return std::string(result);
-}
-
-void WebPen::Webhook() {
-	RobotSlips::bot->execute_webhook_sync(dpp::webhook("https://discord.com/api/webhooks/1249226023355023452/0D-dnrqO7xayTDn6tVJ7TdacGc5s_hLClVA4IjRU7beYVm4w8hsWLum8WlDmgqWPakby"),
-		dpp::message("Test"));
 }
 
 void PlanPen::Init() {

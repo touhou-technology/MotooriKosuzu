@@ -41,8 +41,6 @@ public:
 	//web 翻译之类的
 	static std::string TranslationPen(std::string text, std::string To);
 
-	//Webhook
-	static void Webhook();
 };
 
 //运行需要安排的任务
@@ -58,5 +56,8 @@ public:
 	static void Message();
 	static void MessageUpdate();
 	static void MessageDelete();
+
+
+
 	static void WebhookCreate();
 };
