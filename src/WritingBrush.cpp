@@ -72,6 +72,7 @@ void WebPen::Init() {
 }
 
 //test需要翻译的文本，To是翻译成什么的
+//TODO
 std::string WebPen::TranslationPen(std::string text, std::string To) {
 	std::string cmd = "python3 API.py "" + text + "" " + To + " " + WebSlips::Token;
 
@@ -286,7 +287,7 @@ void PlanPen::MessageDelete() {
 		});
 }
 
-
+//TODO:add new Pen
 
 void PlanPen::WebhookCreate() {
 

@@ -53,6 +53,7 @@ public:
 	static void OnReady();
 	static void Slashcommand();
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
+	//TODO:add new register event
 	static void AutoComplete();
 	static void Message();
 	static void MessageUpdate();
