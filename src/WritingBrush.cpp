@@ -317,15 +317,8 @@ void PlanPen::Message() {
 
 		//message_reference
 		if (data["message_reference"]["message_id"] != nullptr) {
-
 			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
-			
-			dpp::snowflake reID(value);
-
-			std::cout << reID << std::endl;
-
-
-			TrText.set_reference((*HashSlips::HashSnowflakeStr)[reID].first);
+			TrText.set_reference((*HashSlips::HashSnowflakeStr)[(dpp::snowflake)value].first);
 		}
 
 
