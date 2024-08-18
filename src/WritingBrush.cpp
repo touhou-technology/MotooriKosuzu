@@ -7,6 +7,7 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <python3.11/Python.h>
 
 using namespace std;
 
@@ -74,25 +75,80 @@ void WebPen::Init() {
 //test需要翻译的文本，To是翻译成什么的
 //TODO
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-	std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
 
-	char result[10240] = { 0 };
-	char buf[1024] = { 0 };
 
-	FILE* fp = NULL;
+	//static std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
+	//static char result[10240];
+	//static char buf[1024];
+	//result[10240] = { 0 };
+	//buf[1024] = { 0 };
+	//FILE* fp = NULL;
 
-	if ((fp = popen(cmd.c_str(), "r")) == NULL) {
-		printf("popen error!\n");
-		return "[error]";
+	//if ((fp = popen(cmd.c_str(), "r")) == NULL) {
+	//	printf("popen error!\n");
+	//	return "[error]";
+	//}
+
+	//while (fgets(buf, sizeof(buf), fp)) {
+	//	strcat(result, buf);
+	//}
+
+	//return std::string(result);
+
+	Py_Initialize();  // Initialize the Python interpreter
+
+	// Add the directory containing your Python script to the Python path
+	PyObject* sys_path = PySys_GetObject("path");
+	PyList_Append(sys_path, PyUnicode_FromString("/home/awalwa/projects/Project/bin/ARM64/Debug")); // 替换为你的目录
+
+	// Import the translation module
+	PyObject* pName = PyUnicode_FromString("deepl_translate"); // 这里只用模块名
+	PyObject* pModule = PyImport_Import(pName);
+	Py_DECREF(pName);
+
+	if (pModule != nullptr) {
+		// Get the translate_text function
+		PyObject* pFunc = PyObject_GetAttrString(pModule, "translate_text");
+
+		if (pFunc && PyCallable_Check(pFunc)) {
+			// Prepare arguments
+			PyObject* pArgs = PyTuple_Pack(3,
+				PyUnicode_FromString(WebSlips::Token.c_str()),
+				PyUnicode_FromString(text.c_str()),
+				PyUnicode_FromString(To.c_str()));
+
+			// Call the function
+			PyObject* pValue = PyObject_CallObject(pFunc, pArgs);
+			Py_DECREF(pArgs);
+
+			if (pValue != nullptr) {
+				// Convert the result to a string
+				std::string result = PyUnicode_AsUTF8(pValue);
+				Py_DECREF(pValue);
+				Py_DECREF(pFunc);
+				Py_DECREF(pModule);
+				Py_Finalize();  // Cleanup the Python interpreter
+				return result;
+			}
+			else {
+				PyErr_Print();
+				std::cerr << "Call failed" << std::endl;
+			}
+		}
+		else {
+			PyErr_Print();
+			std::cerr << "Cannot find function 'translate_text'" << std::endl;
+		}
+		Py_XDECREF(pFunc);
+		Py_DECREF(pModule);
+	}
+	else {
+		PyErr_Print();
+		std::cerr << "Failed to load 'deepl_translate'" << std::endl;
 	}
 
-	while (fgets(buf, sizeof(buf), fp)) {
-		strcat(result, buf);
-	}
-
-
-
-	return std::string(result);
+	Py_Finalize();  // Cleanup the Python interpreter
+	return "";
 }
 
 void PlanPen::Init() {

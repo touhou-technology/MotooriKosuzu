@@ -12,6 +12,7 @@ std::string ConfigSlips::Path_ = "/etc/MotooriKosuzu/config/ConfigBook.json";
 Json::Value ConfigSlips::ConfigJson;
 
 //HashSlips
+//同时保存
 std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSlips::HashSnowflakeStr;
 std::unique_ptr<std::unordered_map<std::string, void(*) (dpp::slashcommand_t*)>> HashSlips::SlashcommandFuntion;
 

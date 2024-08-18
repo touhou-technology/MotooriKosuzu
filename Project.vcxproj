@@ -75,16 +75,16 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <MultiProcNumber>3</MultiProcNumber>
+    <MultiProcNumber>1</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <MultiProcNumber>3</MultiProcNumber>
+    <MultiProcNumber>1</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <MultiProcNumber>3</MultiProcNumber>
+    <MultiProcNumber>1</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <MultiProcNumber>3</MultiProcNumber>
+    <MultiProcNumber>1</MultiProcNumber>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
@@ -103,11 +103,12 @@
     <None Include=".gitignore" />
     <None Include="API.py" />
     <None Include="config\ConfigBook.json" />
+    <None Include="deepl_translate.py" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
     </Link>
     <ClCompile>
       <CppLanguageStandard>c++20</CppLanguageStandard>
@@ -120,7 +121,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -129,7 +130,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp</LibraryDependencies>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -138,7 +139,27 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Link>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <Link>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <Link>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
