@@ -75,7 +75,8 @@ void WebPen::Init() {
 //test需要翻译的文本，To是翻译成什么的
 //TODO
 std::string WebPen::TranslationPen(std::string text, std::string To) {
-
+	if (text == "")
+		return "";
 
 	//static std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
 	//static char result[10240];
@@ -99,7 +100,7 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 
 	// Add the directory containing your Python script to the Python path
 	PyObject* sys_path = PySys_GetObject("path");
-	PyList_Append(sys_path, PyUnicode_FromString("/home/awalwa/projects/Project/bin/ARM64/Debug")); // 替换为你的目录
+	PyList_Append(sys_path, PyUnicode_FromString("/home/awalwa/projects/Project")); // 替换为你的目录
 
 	// Import the translation module
 	PyObject* pName = PyUnicode_FromString("deepl_translate"); // 这里只用模块名
@@ -158,7 +159,6 @@ void PlanPen::Init() {
 	Message();
 	MessageUpdate();
 	MessageDelete();
-	WebhookCreate();
 }
 
 //读取jsoncpp的
@@ -284,22 +284,50 @@ void PlanPen::AutoComplete() {
 		});
 }
 
+//这里是处理发送消息转义的
 void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
-		//单向翻译（
+		//debug
+		std::cout << event.msg.to_json() << std::endl;
+		//build object
+		nlohmann::json data = event.msg.to_json();
+
+		dpp::embed ObjEmbed = dpp::embed()
+			.set_color(dpp::colors::yellow)
+			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
+		
+
+		dpp::message TrText;
+		TrText.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
+
+		//单向翻译监测是否有（
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
 
-		std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
+		//调用翻译
+		ObjEmbed
+			.set_description(
+				//WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
+				event.msg.content
+			);
+		//旧版string创建
+		//std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
 
-		dpp::message TrText(TranslateMsg);
-		TrText.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
+		//TrText.content += TranslateMsg;
 
+		//建立对等链接
 		RobotSlips::ObjMsg = event;
 
-		//测试用，但似乎已经可以用了
+		TrText.add_embed(ObjEmbed);
 		RobotSlips::bot->message_create(TrText);
+
+		//附件
+		for (const auto& obj : data["attachments"]) {
+			TrText.content += obj["url"];
+			RobotSlips::bot->message_create(dpp::message(obj["url"])
+				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
+		}
 		});
 
 	//检测消息是否于翻译的消息相同
@@ -339,7 +367,3 @@ void PlanPen::MessageDelete() {
 }
 
 //TODO:add new Pen
-
-void PlanPen::WebhookCreate() {
-
-}
