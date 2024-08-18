@@ -316,8 +316,18 @@ void PlanPen::Message() {
 		//TrText.content += TranslateMsg;
 
 		//message_reference
-		//for (const auto& obj : data["message_reference"])
-			//TrText.set_reference((*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[data["message_id"]].first].first);
+		if (data["message_reference"]["message_id"] != nullptr) {
+
+			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
+			
+			dpp::snowflake reID(value);
+
+			std::cout << reID << std::endl;
+
+
+			TrText.set_reference((*HashSlips::HashSnowflakeStr)[reID].first);
+		}
+
 
 		//建立对等链接
 		RobotSlips::ObjMsg = event;
@@ -336,15 +346,18 @@ void PlanPen::Message() {
 	//检测消息是否于翻译的消息相同
 	RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
 		//追加进哈希表，如有一些修改即可同步
-		if (BotMsg.msg.author.id == RobotSlips::bot->me.id)
+		if (BotMsg.msg.author.id == RobotSlips::bot->me.id) {
 			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
+
+			(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
+		}
 
 		});
 }
 
 void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
-		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0)
+		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
 			return;
 
 		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second));
