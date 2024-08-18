@@ -296,7 +296,7 @@ void PlanPen::Message() {
 		dpp::embed ObjEmbed = dpp::embed()
 			.set_color(dpp::colors::yellow)
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
-		
+
 
 		dpp::message TrText;
 		TrText.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
@@ -308,13 +308,16 @@ void PlanPen::Message() {
 		//调用翻译
 		ObjEmbed
 			.set_description(
-				//WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
-				event.msg.content
+				WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
 			);
 		//旧版string创建
 		//std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
 
 		//TrText.content += TranslateMsg;
+
+		//message_reference
+		//for (const auto& obj : data["message_reference"])
+			//TrText.set_reference((*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[data["message_id"]].first].first);
 
 		//建立对等链接
 		RobotSlips::ObjMsg = event;
@@ -332,7 +335,6 @@ void PlanPen::Message() {
 
 	//检测消息是否于翻译的消息相同
 	RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
-
 		//追加进哈希表，如有一些修改即可同步
 		if (BotMsg.msg.author.id == RobotSlips::bot->me.id)
 			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
