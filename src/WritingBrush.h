@@ -58,5 +58,5 @@ public:
 	static void MessageDelete();
 
 private:
-	static std::vector<std::string> RegexURL(std::string& input);
+	static std::vector<std::string> RegexTreatment(std::string& input);
 };

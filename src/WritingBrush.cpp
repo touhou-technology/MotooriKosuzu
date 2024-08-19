@@ -274,10 +274,13 @@ void PlanPen::AutoComplete() {
 		//if (event.command.get_command_name() != "翻译至")
 		//	return;
 
+		
+
 		dpp::command_option opt = event.options[0];
 
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
+		//TODO
 		for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i)
 			AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
 
@@ -302,7 +305,7 @@ void PlanPen::Message() {
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
 
-		std::vector<std::string> urls = RegexURL(TextMsg);
+		std::vector<std::string> Treatment = RegexTreatment(TextMsg);
 
 		dpp::embed ObjEmbed = dpp::embed()
 			.set_color(dpp::colors::yellow)
@@ -343,8 +346,8 @@ void PlanPen::Message() {
 		}
 
 		//url
-		for (const auto& url : urls) {
-			RobotSlips::bot->message_create(dpp::message(url)
+		for (const auto& temp : Treatment) {
+			RobotSlips::bot->message_create(dpp::message(temp)
 				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
 
@@ -390,21 +393,52 @@ void PlanPen::MessageDelete() {
 		});
 }
 
-std::vector<std::string> PlanPen::RegexURL(std::string& input) {
-	std::vector<std::string> urls;
-	std::regex url_regex(R"(https?://[^\s/$.?#].[^\s]*)");
-	std::smatch url_match;
+std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
+	std::vector<std::string> treatment;
 
-	// 迭代匹配到的 URL 链接
-	while (std::regex_search(input, url_match, url_regex)) {
-		// 保存匹配到的 URL 链接
-		urls.push_back(url_match.str(0));
+	//std::regex url_regex(R"(https?://[^\s/$.?#].[^\s]*)");
+	//std::smatch url_match;
 
-		// 从原始字符串中去除匹配到的 URL 链接
-		input = input.substr(0, url_match.position()) + input.substr(url_match.position() + url_match.length());
+	//// 迭代匹配到的 URL 链接
+	//while (std::regex_search(input, url_match, url_regex)) {
+	//	// 保存匹配到的 URL 链接
+	//	treatment.push_back(url_match.str(0));
+
+	//	// 从原始字符串中去除匹配到的 URL 链接
+	//	input = input.substr(0, url_match.position()) + input.substr(url_match.position() + url_match.length());
+	//}
+
+	//std::regex pattern(R"(<:([^:]+):([^>]+)>)");
+	//std::smatch matches;
+
+	//while (std::regex_search(input, matches, pattern)) {
+	//	// 保存匹配到的 URL 链接
+	//	treatment.push_back(matches.str(0));
+
+	//	// 从原始字符串中去除匹配到的 URL 链接
+	//	input = input.substr(0, matches.position()) + input.substr(matches.position() + matches.length());
+	//}
+
+
+	std::vector<std::string> RegexStr = {
+		R"(https?://[^\s/$.?#].[^\s]*)",
+		R"(<:([^:]+):([^>]+)>)"
+	};
+
+	for (const std::string& Str : RegexStr) {
+		std::regex pattern(Str);
+		std::smatch matches;
+
+		while (std::regex_search(input, matches, pattern)) {
+			// 保存匹配到的 URL 链接
+			treatment.push_back(matches.str(0));
+
+			// 从原始字符串中去除匹配到的 URL 链接
+			input = input.substr(0, matches.position()) + input.substr(matches.position() + matches.length());
+		}
 	}
 
-	return urls;
+	return treatment;
 }
 
 //TODO:add new Pen
