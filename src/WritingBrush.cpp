@@ -8,6 +8,7 @@
 #include <thread>
 #include <chrono>
 #include <python3.11/Python.h>
+#include <regex>
 
 using namespace std;
 
@@ -290,6 +291,11 @@ void PlanPen::Message() {
 	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
 		//debug
 		std::cout << event.msg.to_json() << std::endl;
+
+		//单向翻译监测是否有
+		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
+			return;
+
 		//build object
 		nlohmann::json data = event.msg.to_json();
 
@@ -297,13 +303,14 @@ void PlanPen::Message() {
 			.set_color(dpp::colors::yellow)
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
+		//create to object
+		dpp::message TrText = dpp::message()
+			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
+			
 
-		dpp::message TrText;
-		TrText.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
+		if () {
 
-		//单向翻译监测是否有（
-		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
-			return;
+		}
 
 		//调用翻译
 		ObjEmbed
