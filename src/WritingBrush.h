@@ -51,12 +51,11 @@ public:
 
 	static void OnReady();
 	static void Slashcommand();
-	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static void AutoComplete();
 	static void Message();
 	static void MessageUpdate();
 	static void MessageDelete();
-
 private:
+	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static std::vector<std::string> RegexTreatment(std::string& input);
 };

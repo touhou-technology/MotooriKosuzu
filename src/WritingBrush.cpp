@@ -274,17 +274,38 @@ void PlanPen::AutoComplete() {
 		//if (event.command.get_command_name() != "翻译至")
 		//	return;
 
-		
 
-		dpp::command_option opt = event.options[0];
+
 
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
-		//TODO
-		for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i)
-			AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+		for (auto& opt : event.options) {
+			if (opt.focused) {
+				std::string uservalue = std::get<std::string>(opt.value);
 
-		RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
+				if (uservalue == "") {
+					for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i) {
+						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+					}
+					RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
+					return;
+				}
+
+				//TODO
+				for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i) {
+					if (ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString().find(uservalue) != -1)
+						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+				}
+				RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
+			}
+		}
+
+		//dpp::command_option opt = event.options[0];
+
+		//for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i)
+		//	AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+
+		//RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 		});
 }
 
@@ -293,7 +314,7 @@ void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 		//debug
-		std::cout << event.msg.to_json() << std::endl;
+		//std::cout << event.msg.to_json() << std::endl;
 
 		//单向翻译监测是否有
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
