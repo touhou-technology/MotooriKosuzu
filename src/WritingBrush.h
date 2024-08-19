@@ -56,4 +56,7 @@ public:
 	static void Message();
 	static void MessageUpdate();
 	static void MessageDelete();
+
+private:
+	static std::vector<std::string> RegexURL(std::string& input);
 };

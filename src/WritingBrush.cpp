@@ -270,7 +270,7 @@ void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcom
 }
 
 void PlanPen::AutoComplete() {
-	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t event) {
+	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
 		//if (event.command.get_command_name() != "翻译至")
 		//	return;
 
@@ -288,7 +288,7 @@ void PlanPen::AutoComplete() {
 //这里是处理发送消息转义的
 void PlanPen::Message() {
 	//同步翻译的
-	RobotSlips::bot->on_message_create([](dpp::message_create_t event) {
+	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 		//debug
 		std::cout << event.msg.to_json() << std::endl;
 
@@ -299,6 +299,11 @@ void PlanPen::Message() {
 		//build object
 		nlohmann::json data = event.msg.to_json();
 
+		//create temp Text url
+		std::string TextMsg = event.msg.content;
+
+		std::vector<std::string> urls = RegexURL(TextMsg);
+
 		dpp::embed ObjEmbed = dpp::embed()
 			.set_color(dpp::colors::yellow)
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
@@ -306,17 +311,15 @@ void PlanPen::Message() {
 		//create to object
 		dpp::message TrText = dpp::message()
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
-			
-
-		if () {
-
-		}
 
 		//调用翻译
 		ObjEmbed
 			.set_description(
-				WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
+				WebPen::TranslationPen(TextMsg, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
 			);
+
+		TrText.add_embed(std::move(ObjEmbed));
+
 		//旧版string创建
 		//std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
 
@@ -328,12 +331,9 @@ void PlanPen::Message() {
 			TrText.set_reference((*HashSlips::HashSnowflakeStr)[(dpp::snowflake)value].first);
 		}
 
-
-		//建立对等链接
-		RobotSlips::ObjMsg = event;
-
-		TrText.add_embed(ObjEmbed);
 		RobotSlips::bot->message_create(TrText);
+
+		//下面为杂项
 
 		//附件
 		for (const auto& obj : data["attachments"]) {
@@ -341,6 +341,15 @@ void PlanPen::Message() {
 			RobotSlips::bot->message_create(dpp::message(obj["url"])
 				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
+
+		//url
+		for (const auto& url : urls) {
+			RobotSlips::bot->message_create(dpp::message(url)
+				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
+		}
+
+		//建立对等链接
+		RobotSlips::ObjMsg = event;
 		});
 
 	//检测消息是否于翻译的消息相同
@@ -379,6 +388,23 @@ void PlanPen::MessageDelete() {
 		(*HashSlips::HashSnowflakeStr)[event.id] = std::pair<dpp::snowflake, std::string>();
 
 		});
+}
+
+std::vector<std::string> PlanPen::RegexURL(std::string& input) {
+	std::vector<std::string> urls;
+	std::regex url_regex(R"(https?://[^\s/$.?#].[^\s]*)");
+	std::smatch url_match;
+
+	// 迭代匹配到的 URL 链接
+	while (std::regex_search(input, url_match, url_regex)) {
+		// 保存匹配到的 URL 链接
+		urls.push_back(url_match.str(0));
+
+		// 从原始字符串中去除匹配到的 URL 链接
+		input = input.substr(0, url_match.position()) + input.substr(url_match.position() + url_match.length());
+	}
+
+	return urls;
 }
 
 //TODO:add new Pen
