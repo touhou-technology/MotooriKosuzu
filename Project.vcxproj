@@ -108,7 +108,7 @@
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
+      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.12</LibraryDependencies>
     </Link>
     <ClCompile>
       <CppLanguageStandard>c++20</CppLanguageStandard>
@@ -130,7 +130,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
+      <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
