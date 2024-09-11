@@ -7,7 +7,6 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
-//#include <python3.12/Python.h>
 #include <regex>
 
 using namespace std;
@@ -79,25 +78,25 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
 
-	//TODO正则表达式处理
+	//TODO:优化使用fork()、pipe()、dup2() 和 execlp() ;
 
-	static std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
-	static char result[10240];
-	static char buf[10240];
-	result[10240] = { 0 };
-	buf[10240] = { 0 };
-	FILE* fp = NULL;
+	//static std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
+	//static char result[10240];
+	//static char buf[10240];
+	//result[10240] = { 0 };
+	//buf[10240] = { 0 };
+	//FILE* fp = NULL;
 
-	if ((fp = popen(cmd.c_str(), "r")) == NULL) {
-		printf("popen error!\n");
-		return "[error]";
-	}
+	//if ((fp = popen(cmd.c_str(), "r")) == NULL) {
+	//	printf("popen error!\n");
+	//	return "[error]";
+	//}
 
-	while (fgets(buf, sizeof(buf), fp)) {
-		strcat(result, buf);
-	}
+	//while (fgets(buf, sizeof(buf), fp)) {
+	//	strcat(result, buf);
+	//}
 
-	return result;
+	//return result;
 
 	//不好用😡😡😡
 	//Py_Initialize();  // Initialize the Python interpreter
@@ -154,6 +153,9 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 
 	//Py_Finalize();  // Cleanup the Python interpreter
 	//return "";
+	
+	static LinuxPen Linux;
+
 }
 
 void PlanPen::Init() {

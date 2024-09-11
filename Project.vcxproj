@@ -130,7 +130,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;</LibraryDependencies>
+      <LibraryDependencies>dpp;pthread;jsoncpp;python3.12</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
