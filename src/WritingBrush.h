@@ -69,5 +69,6 @@ public:
 	LinuxPen();
 
 private:
-
+	//pipe;
+	pid_t pid;
 };

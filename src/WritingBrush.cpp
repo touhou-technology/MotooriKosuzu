@@ -153,9 +153,6 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 
 	//Py_Finalize();  // Cleanup the Python interpreter
 	//return "";
-	
-	static LinuxPen Linux;
-
 }
 
 void PlanPen::Init() {
@@ -181,7 +178,9 @@ void PlanPen::OnReady() {
 				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
 				++++iter_2;
 			}
-			//先这样，后续升级json的读取（）
+
+			/*コマンドを変更せずに解釈を変更してください
+			コマンド変更なのでスラッシュコマンドでは使用できません*/
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の開始", "コマンドで使用されるチャネルメッセージから指定されたチャネルと言語への翻訳", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_channel, "翻至", "翻訳するチャンネル（サブエリア）IDを入力", true))
 				.add_option(dpp::command_option(dpp::co_string, "译至", "入力にはどの言語に翻訳する必要がありますか（どの言語を出力するか）", true).set_auto_complete(true))
@@ -195,6 +194,8 @@ void PlanPen::OnReady() {
 
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
+
+			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id));
 		}
 		});
 }
@@ -261,10 +262,12 @@ void PlanPen::Slashcommand() {
 		}
 		});
 
+	//update
+	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void{
+		
+		});
+
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
-		//std::cout << (*HashSlips::SlashcommandFuntion)[event.command.get_command_name()];
-		//if ((*HashSlips::SlashcommandFuntion)[event.command.get_command_name()] = 0)
-		//	return;
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
 }
@@ -276,12 +279,6 @@ void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcom
 
 void PlanPen::AutoComplete() {
 	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
-		//if (event.command.get_command_name() != "翻译至")
-		//	return;
-
-
-
-
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
 		for (auto& opt : event.options) {
@@ -349,11 +346,6 @@ void PlanPen::Message() {
 
 		TrText.add_embed(std::move(ObjEmbed));
 
-		//旧版string创建
-		//std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
-
-		//TrText.content += TranslateMsg;
-
 		//message_reference
 		if (data["message_reference"]["message_id"] != nullptr) {
 			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
@@ -393,6 +385,7 @@ void PlanPen::Message() {
 		});
 }
 
+//TODO
 void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
@@ -422,30 +415,6 @@ void PlanPen::MessageDelete() {
 std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
-	//std::regex url_regex(R"(https?://[^\s/$.?#].[^\s]*)");
-	//std::smatch url_match;
-
-	//// 迭代匹配到的 URL 链接
-	//while (std::regex_search(input, url_match, url_regex)) {
-	//	// 保存匹配到的 URL 链接
-	//	treatment.push_back(url_match.str(0));
-
-	//	// 从原始字符串中去除匹配到的 URL 链接
-	//	input = input.substr(0, url_match.position()) + input.substr(url_match.position() + url_match.length());
-	//}
-
-	//std::regex pattern(R"(<:([^:]+):([^>]+)>)");
-	//std::smatch matches;
-
-	//while (std::regex_search(input, matches, pattern)) {
-	//	// 保存匹配到的 URL 链接
-	//	treatment.push_back(matches.str(0));
-
-	//	// 从原始字符串中去除匹配到的 URL 链接
-	//	input = input.substr(0, matches.position()) + input.substr(matches.position() + matches.length());
-	//}
-
-
 	std::vector<std::string> RegexStr = {
 		R"(https?://[^\s/$.?#].[^\s]*)",
 		R"(<:([^:]+):([^>]+)>)"
@@ -468,3 +437,7 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 }
 
 //TODO:add new Pen
+LinuxPen::LinuxPen() {
+	pid = fork();
+
+}
