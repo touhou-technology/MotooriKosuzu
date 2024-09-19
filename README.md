@@ -1,4 +1,7 @@
-﻿# 「本居小鈴」Discord translator bot
+﻿# README Some steps have issues
+# Currently repairing
+
+# 「本居小鈴」Discord translator bot
 
 This is a Discord listening channel translation bot (channel monitoring is selected according to commands)
 
