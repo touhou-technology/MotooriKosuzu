@@ -130,7 +130,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;curl</LibraryDependencies>
+      <LibraryDependencies>dpp;pthread;jsoncpp</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">

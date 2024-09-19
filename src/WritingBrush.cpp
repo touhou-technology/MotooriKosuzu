@@ -80,21 +80,21 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 
 	//TODO:优化使用fork()、pipe()、dup2() 和 execlp() ;
 
-	//static std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
+	//static std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
 	//static char result[10240];
 	//static char buf[10240];
 	//result[10240] = { 0 };
 	//buf[10240] = { 0 };
 	//FILE* fp = NULL;
-
 	//if ((fp = popen(cmd.c_str(), "r")) == NULL) {
 	//	printf("popen error!\n");
 	//	return "[error]";
 	//}
-
 	//while (fgets(buf, sizeof(buf), fp)) {
 	//	strcat(result, buf);
 	//}
+
+	//return result;
 
 	//return result;
 
@@ -264,7 +264,7 @@ void PlanPen::Slashcommand() {
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void{
-		
+		system("./update");
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
