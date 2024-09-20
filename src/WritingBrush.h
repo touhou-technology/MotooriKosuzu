@@ -64,12 +64,13 @@ private:
 	static std::vector<std::string> RegexTreatment(std::string& input);
 };
 
-class LinuxPen {
+class Linux_Mailbox {
 public:
-	LinuxPen();
+	Linux_Mailbox();
 
 	static std::string cmd(const char* command);
+	static void reset_pid(pid_t& pid_);
 private:
 	//pipe;
-	pid_t pid;
+	static pid_t pid;
 };

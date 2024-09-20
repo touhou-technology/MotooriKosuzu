@@ -76,7 +76,7 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
 	std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
-	LinuxPen::cmd(cmd.c_str());
+	Linux_Mailbox::cmd(cmd.c_str());
 
 	//static char result[10240];
 	//static char buf[10240];
@@ -261,7 +261,7 @@ void PlanPen::Slashcommand() {
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		LinuxPen update;
+		Linux_Mailbox update;
 
 		if (update.cmd("git pull") == "Already up to date.") {
 			event->reply("Already up to date.");
@@ -436,12 +436,11 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-//TODO:add new Pen
-LinuxPen::LinuxPen() {
+Linux_Mailbox::Linux_Mailbox() {
 
 }
 
-std::string LinuxPen::cmd(const char* command) {
+std::string Linux_Mailbox::cmd(const char* command) {
 	char result[10240] = { 0 };
 	char buf[10240] = { 0 };
 
@@ -455,4 +454,8 @@ std::string LinuxPen::cmd(const char* command) {
 	}
 
 	return result;
+}
+
+void Linux_Mailbox::reset_pid(pid_t& pid_){
+	pid = std::move(pid_);
 }
