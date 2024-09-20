@@ -263,8 +263,6 @@ void PlanPen::Slashcommand() {
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
 		LinuxPen update;
 
-		if(event->command.id == ConfigSlips::ConfigJson["admin"])
-
 		if (update.cmd("git pull") == "Already up to date.") {
 			event->reply("Already up to date.");
 			return;
