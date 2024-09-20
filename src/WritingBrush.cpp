@@ -268,10 +268,10 @@ void PlanPen::Slashcommand() {
 			return;
 		}
 		else
-			event->reply(update.cmd("git pull"));
+			event->reply("okey");
 
 
-	
+
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
