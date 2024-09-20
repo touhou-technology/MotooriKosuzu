@@ -1,7 +1,7 @@
 #include <iostream>
 #include "start.hpp"
 
-int main() {
+int main(int argc, char** argv) {
 	Kosuzu::Init();
 
 	//debug
