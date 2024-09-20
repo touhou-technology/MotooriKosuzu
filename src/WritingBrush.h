@@ -68,6 +68,7 @@ class LinuxPen {
 public:
 	LinuxPen();
 
+	static std::string cmd(const char* command);
 private:
 	//pipe;
 	pid_t pid;

@@ -72,15 +72,12 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 }
 
-//test需要翻译的文本，To是翻译成什么的
-//TODO
 std::string WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
+	std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
+	LinuxPen::cmd(cmd.c_str());
 
-	//TODO:优化使用fork()、pipe()、dup2() 和 execlp() ;
-
-	//static std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
 	//static char result[10240];
 	//static char buf[10240];
 	//result[10240] = { 0 };
@@ -263,8 +260,20 @@ void PlanPen::Slashcommand() {
 		});
 
 	//update
-	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void{
-		system("./update");
+	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
+		LinuxPen update;
+
+		if(event->command.id == ConfigSlips::ConfigJson["admin"])
+
+		if (update.cmd("git pull") == "Already up to date.") {
+			event->reply("Already up to date.");
+			return;
+		}
+		else
+			event->reply(update.cmd("git pull"));
+
+
+	
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -301,13 +310,6 @@ void PlanPen::AutoComplete() {
 				RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 			}
 		}
-
-		//dpp::command_option opt = event.options[0];
-
-		//for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i)
-		//	AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
-
-		//RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 		});
 }
 
@@ -438,6 +440,21 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 
 //TODO:add new Pen
 LinuxPen::LinuxPen() {
-	pid = fork();
 
+}
+
+std::string LinuxPen::cmd(const char* command) {
+	char result[10240] = { 0 };
+	char buf[10240] = { 0 };
+
+	FILE* fp = NULL;
+	if ((fp = popen(command, "r")) == NULL) {
+		printf("popen error!\n");
+		return "[error]";
+	}
+	while (fgets(buf, sizeof(buf), fp)) {
+		strcat(result, buf);
+	}
+
+	return result;
 }
