@@ -457,5 +457,23 @@ std::string Linux_Mailbox::cmd(const char* command) {
 }
 
 void Linux_Mailbox::reset_pid(pid_t& pid_){
-	pid = std::move(pid_);
+	pid = pid_;
+}
+
+void Linux_Mailbox::send_msg(const char* msg){
+	char buffer[256];
+
+	// 向接收者发送初始消息
+	snprintf(buffer, sizeof(buffer), "Sender started with Parent PID: %d", pid);
+	write(STDOUT_FILENO, buffer, strlen(buffer));
+
+	// 发送一些消息
+	const char* messages[] = { "Hello from sender!", "Another message!", "Goodbye from sender!" };
+	for (const auto& msg : messages) {
+		write(STDOUT_FILENO, msg, strlen(msg));
+		sleep(1); // 暂停1秒
+	}
+
+	write(STDOUT_FILENO, msg, strlen(msg));
+
 }

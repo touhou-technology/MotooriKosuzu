@@ -14,6 +14,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <cstring>
+#include <cstdlib>
 
 //配置
 class ConfigPen {
@@ -70,6 +71,7 @@ public:
 
 	static std::string cmd(const char* command);
 	static void reset_pid(pid_t& pid_);
+	static void send_msg(const char* msg);
 private:
 	//pipe;
 	static pid_t pid;
