@@ -263,8 +263,6 @@ void PlanPen::Slashcommand() {
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
 		event->reply("okey");
 
-		Linux_Mailbox::send_msg("update");
-
 		Linux_Mailbox::SetRuning(0);
 
 		});
@@ -449,27 +447,6 @@ std::string Linux_Mailbox::cmd(const char* command) {
 	}
 
 	return result;
-}
-
-void Linux_Mailbox::reset_pid(pid_t& pid_) {
-	pid = pid_;
-}
-
-void Linux_Mailbox::send_msg(const char* msg) {
-	char buffer[256];
-
-	// 向接收者发送初始消息
-	//snprintf(buffer, sizeof(buffer), "Sender started with Parent PID: %d", pid);
-	write(STDOUT_FILENO, buffer, strlen(buffer));
-
-	//const char* messages[] = { "Hello from sender!", "Another message!", "Goodbye from sender!" };
-	//for (const auto& msg : messages) {
-	//	write(STDOUT_FILENO, msg, strlen(msg));
-	//	sleep(1); // 暂停1秒
-	//}
-
-	write(STDOUT_FILENO, msg, strlen(msg));
-
 }
 
 bool Linux_Mailbox::GetRuning(){

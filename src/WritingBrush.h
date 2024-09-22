@@ -70,12 +70,8 @@ public:
 	Linux_Mailbox();
 
 	static std::string cmd(const char* command);
-	static void reset_pid(pid_t& pid_);
-	static void send_msg(const char* msg);
 	static bool GetRuning();
 	static void SetRuning(bool obj);
 private:
-	//pipe;
-	static pid_t pid;
 	static bool runing;
 };
