@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
 
 	Linux_Mailbox::reset_pid(argc);
 
-	Linux_Mailbox::send_msg("hello~");
+	//Linux_Mailbox::send_msg("hello~");
 
 	//debug
 	RobotSlips::bot->on_log(dpp::utility::cout_logger());

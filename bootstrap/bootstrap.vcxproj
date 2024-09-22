@@ -74,8 +74,14 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <OutDir>.\</OutDir>
+  </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="bootstrap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="update.sh" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

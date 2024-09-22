@@ -261,17 +261,11 @@ void PlanPen::Slashcommand() {
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		Linux_Mailbox update;
+		event->reply("okey");
 
-		if (update.cmd("git pull") == "Already up to date.") {
-			event->reply("Already up to date.");
-			return;
-		}
-		else
-			event->reply("okey");
+		Linux_Mailbox::send_msg("update");
 
-
-
+		system("killall Project.out");
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -456,24 +450,27 @@ std::string Linux_Mailbox::cmd(const char* command) {
 	return result;
 }
 
-void Linux_Mailbox::reset_pid(pid_t& pid_){
+void Linux_Mailbox::reset_pid(pid_t& pid_) {
 	pid = pid_;
 }
 
-void Linux_Mailbox::send_msg(const char* msg){
+void Linux_Mailbox::send_msg(const char* msg) {
 	char buffer[256];
 
 	// 向接收者发送初始消息
 	snprintf(buffer, sizeof(buffer), "Sender started with Parent PID: %d", pid);
 	write(STDOUT_FILENO, buffer, strlen(buffer));
 
-	// 发送一些消息
 	const char* messages[] = { "Hello from sender!", "Another message!", "Goodbye from sender!" };
 	for (const auto& msg : messages) {
 		write(STDOUT_FILENO, msg, strlen(msg));
 		sleep(1); // 暂停1秒
 	}
+	for (const auto& msg : messages) {
+		write(STDOUT_FILENO, msg, strlen(msg));
+		sleep(1); // 暂停1秒
+	}
 
-	write(STDOUT_FILENO, msg, strlen(msg));
+	//write(STDOUT_FILENO, msg, strlen(msg));
 
 }

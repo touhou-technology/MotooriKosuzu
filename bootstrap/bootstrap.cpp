@@ -3,6 +3,7 @@
 #include <cstring>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <thread>
 
 int main(int argc, char** argv) {
     int pipe_to_child[2]; // 从接收者到发送者的管道
@@ -36,12 +37,13 @@ int main(int argc, char** argv) {
         perror("execlp");
         exit(EXIT_FAILURE);
     }
-    else { // 父进程 (接收者)
+    else {
         close(pipe_to_child[0]);
         close(pipe_to_parent[1]);
 
         // 从发送者接收消息
         char buffer[256];
+
         while (true) {
             ssize_t n = read(pipe_to_parent[0], buffer, sizeof(buffer) - 1);
             if (n > 0) {
@@ -49,9 +51,9 @@ int main(int argc, char** argv) {
                 std::cout << "Received message: " << buffer << std::endl;
 
                 // 结束接收条件
-                //if (strncmp(buffer, "Goodbye", 7) == 0) {
-                //    break;
-                //}
+                if (strncmp(buffer, "Goodbye", 7) == 0) {
+                    break;
+                }
             }
         }
 

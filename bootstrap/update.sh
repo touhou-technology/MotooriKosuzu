@@ -1,0 +1,1 @@
+killall Project.out
