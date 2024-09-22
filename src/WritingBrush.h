@@ -65,13 +65,8 @@ private:
 	static std::vector<std::string> RegexTreatment(std::string& input);
 };
 
-class Linux_Mailbox {
+class LinuxPen {
 public:
-	Linux_Mailbox();
-
 	static std::string cmd(const char* command);
-	static bool GetRuning();
-	static void SetRuning(bool obj);
-private:
-	static bool runing;
+	static void update();
 };

@@ -10,6 +10,10 @@ class Kosuzu {
 		static void Init();
 		Kosuzu();
 		~Kosuzu();
+
+		static void SetRuning(bool run);
+		static bool GetRuning();
 	private:
 		static std::unique_ptr<Kosuzu> m_Kosuzu;
+		static bool runing;
 };

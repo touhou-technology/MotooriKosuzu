@@ -9,9 +9,9 @@ int main(int argc, char** argv) {
 
 	RobotPen::Start();
 
-	Linux_Mailbox::SetRuning(1);
+	Kosuzu::SetRuning(1);
 
-	while (Linux_Mailbox::GetRuning())
+	while (Kosuzu::GetRuning())
 		sleep(5);
 
 	return 9;

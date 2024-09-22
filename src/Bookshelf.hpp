@@ -24,5 +24,3 @@ dpp::message_create_t RobotSlips::ObjMsg;
 //Web
 std::unique_ptr<httplib::Client> WebSlips::Translator;
 std::string WebSlips::Token = "";
-
-bool Linux_Mailbox::runing = 1;

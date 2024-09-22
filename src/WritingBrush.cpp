@@ -1,5 +1,6 @@
 ﻿#include "WritingBrush.h"
 #include "BambooSlips.h"
+#include "MotooriKosuzu.h"
 
 #include <iostream>
 #include <fstream>
@@ -76,7 +77,7 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
 	std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
-	Linux_Mailbox::cmd(cmd.c_str());
+	LinuxPen::cmd(cmd.c_str());
 
 	//static char result[10240];
 	//static char buf[10240];
@@ -262,9 +263,7 @@ void PlanPen::Slashcommand() {
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
 		event->reply("okey");
-
-		Linux_Mailbox::SetRuning(0);
-
+		LinuxPen::update();
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -429,11 +428,7 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-Linux_Mailbox::Linux_Mailbox() {
-
-}
-
-std::string Linux_Mailbox::cmd(const char* command) {
+std::string LinuxPen::cmd(const char* command) {
 	char result[10240] = { 0 };
 	char buf[10240] = { 0 };
 
@@ -449,10 +444,6 @@ std::string Linux_Mailbox::cmd(const char* command) {
 	return result;
 }
 
-bool Linux_Mailbox::GetRuning(){
-	return runing;
-}
-
-void Linux_Mailbox::SetRuning(bool obj){
-	runing = obj;
+void LinuxPen::update(){
+	Kosuzu::SetRuning(0);
 }
