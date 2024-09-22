@@ -12,5 +12,9 @@ int main(int argc, char** argv) {
 	RobotSlips::bot->on_log(dpp::utility::cout_logger());
 
 	RobotPen::Start();
+
+	while (Linux_Mailbox::GetRuning())
+		sleep(5);
+
 	return 9;
 }

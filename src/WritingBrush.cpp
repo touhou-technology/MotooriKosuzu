@@ -57,7 +57,7 @@ void RobotPen::Init() {
 
 //start bot(thread wait)
 void RobotPen::Start() {
-	GetBot()->start(dpp::st_wait);
+	GetBot()->start(dpp::st_return);
 }
 
 void RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
@@ -265,7 +265,8 @@ void PlanPen::Slashcommand() {
 
 		Linux_Mailbox::send_msg("update");
 
-		system("killall Project.out");
+		Linux_Mailbox::SetRuning(0);
+
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -458,19 +459,23 @@ void Linux_Mailbox::send_msg(const char* msg) {
 	char buffer[256];
 
 	// 向接收者发送初始消息
-	snprintf(buffer, sizeof(buffer), "Sender started with Parent PID: %d", pid);
+	//snprintf(buffer, sizeof(buffer), "Sender started with Parent PID: %d", pid);
 	write(STDOUT_FILENO, buffer, strlen(buffer));
 
-	const char* messages[] = { "Hello from sender!", "Another message!", "Goodbye from sender!" };
-	for (const auto& msg : messages) {
-		write(STDOUT_FILENO, msg, strlen(msg));
-		sleep(1); // 暂停1秒
-	}
-	for (const auto& msg : messages) {
-		write(STDOUT_FILENO, msg, strlen(msg));
-		sleep(1); // 暂停1秒
-	}
+	//const char* messages[] = { "Hello from sender!", "Another message!", "Goodbye from sender!" };
+	//for (const auto& msg : messages) {
+	//	write(STDOUT_FILENO, msg, strlen(msg));
+	//	sleep(1); // 暂停1秒
+	//}
 
-	//write(STDOUT_FILENO, msg, strlen(msg));
+	write(STDOUT_FILENO, msg, strlen(msg));
 
+}
+
+bool Linux_Mailbox::GetRuning(){
+	return runing;
+}
+
+void Linux_Mailbox::SetRuning(bool obj){
+	runing = obj;
 }

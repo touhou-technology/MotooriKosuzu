@@ -27,3 +27,4 @@ std::string WebSlips::Token = "";
 
 //LinuxMailbox
 pid_t Linux_Mailbox::pid = 0;
+bool Linux_Mailbox::runing = 1;
