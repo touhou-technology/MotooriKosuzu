@@ -264,9 +264,9 @@ void PlanPen::Slashcommand() {
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		std::thread([&event]() {
-			LinuxPen::update(event);
-			}).detach();
+
+		LinuxPen::update(event);
+
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
