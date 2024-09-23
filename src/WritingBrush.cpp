@@ -194,7 +194,7 @@ void PlanPen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
 			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
-			.add_option(dpp::command_option(dpp::co_string,"option", "更新作成"))
+				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
 			);
 		}
 		});
@@ -264,7 +264,9 @@ void PlanPen::Slashcommand() {
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		LinuxPen::update(event);
+		std::thread([&event]() {
+			LinuxPen::update(event);
+			}).detach();
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -445,17 +447,27 @@ std::string LinuxPen::cmd(const char* command) {
 	return result;
 }
 
-void LinuxPen::update(dpp::slashcommand_t* event){
-	event->reply("try update");
+void LinuxPen::update(dpp::slashcommand_t* event) {
+	event->reply("更新を試みる");
 
-	
-	if (!32768 == system("git pull"))
+	if (!32768 == system("cd ./MotooriKosuzu;git pull"))
 		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
 	else
 		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-	
-	
+
+	if (!32768 == system("git clone https://github.com/touhou-technology/MotooriKosuzu"))
+		RobotPen::GetBot()->message_create(dpp::message("Github倉庫のクローニング").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	RobotPen::GetBot()->message_create(dpp::message("再コンパイルの開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	if (!32768 == system(R"(cd ./MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -o Project.out)")) {
+		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+		std::cout << system("cp ./MotooriKosuzu/src/Project.out ./") << std::endl;
+	}
+	else
+		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
 
 
-	//RobotSlips::bot.release();
+
+	RobotSlips::bot.release();
 }
