@@ -1,5 +1,6 @@
 ﻿#include "WritingBrush.h"
 #include "BambooSlips.h"
+#include "MotooriKosuzu.h"
 
 #include <iostream>
 #include <fstream>
@@ -7,7 +8,6 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
-#include <python3.11/Python.h>
 #include <regex>
 
 using namespace std;
@@ -73,84 +73,84 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 }
 
-//test需要翻译的文本，To是翻译成什么的
-//TODO
 std::string WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
+	std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
+	return LinuxPen::cmd(cmd.c_str());
 
-	//static std::string cmd = "python3 API.py '" + text + "' " + To + " " + WebSlips::Token;
 	//static char result[10240];
-	//static char buf[1024];
+	//static char buf[10240];
 	//result[10240] = { 0 };
-	//buf[1024] = { 0 };
+	//buf[10240] = { 0 };
 	//FILE* fp = NULL;
-
 	//if ((fp = popen(cmd.c_str(), "r")) == NULL) {
 	//	printf("popen error!\n");
 	//	return "[error]";
 	//}
-
 	//while (fgets(buf, sizeof(buf), fp)) {
 	//	strcat(result, buf);
 	//}
 
-	//return std::string(result);
+	//return result;
 
-	Py_Initialize();  // Initialize the Python interpreter
+	//return result;
 
-	// Add the directory containing your Python script to the Python path
-	PyObject* sys_path = PySys_GetObject("path");
-	PyList_Append(sys_path, PyUnicode_FromString("/home/awalwa/projects/Project")); // 替换为你的目录
+	//不好用😡😡😡
+	//Py_Initialize();  // Initialize the Python interpreter
 
-	// Import the translation module
-	PyObject* pName = PyUnicode_FromString("deepl_translate"); // 这里只用模块名
-	PyObject* pModule = PyImport_Import(pName);
-	Py_DECREF(pName);
+	//// Add the directory containing your Python script to the Python path
+	//PyObject* sys_path = PySys_GetObject("path");
+	//PyList_Append(sys_path, PyUnicode_FromString("/home/awalwa/projects/Project")); // 替换为你的目录
 
-	if (pModule != nullptr) {
-		// Get the translate_text function
-		PyObject* pFunc = PyObject_GetAttrString(pModule, "translate_text");
+	//// Import the translation module
+	//PyObject* pName = PyUnicode_FromString("deepl_translate"); // 这里只用模块名
+	//PyObject* pModule = PyImport_Import(pName);
+	//Py_DECREF(pName);
 
-		if (pFunc && PyCallable_Check(pFunc)) {
-			// Prepare arguments
-			PyObject* pArgs = PyTuple_Pack(3,
-				PyUnicode_FromString(WebSlips::Token.c_str()),
-				PyUnicode_FromString(text.c_str()),
-				PyUnicode_FromString(To.c_str()));
+	//if (pModule != nullptr) {
+	//	// Get the translate_text function
+	//	PyObject* pFunc = PyObject_GetAttrString(pModule, "translate_text");
 
-			// Call the function
-			PyObject* pValue = PyObject_CallObject(pFunc, pArgs);
-			Py_DECREF(pArgs);
+	//	if (pFunc && PyCallable_Check(pFunc)) {
+	//		// Prepare arguments
+	//		PyObject* pArgs = PyTuple_Pack(3,
+	//			PyUnicode_FromString(WebSlips::Token.c_str()),
+	//			PyUnicode_FromString(text.c_str()),
+	//			PyUnicode_FromString(To.c_str()));
 
-			if (pValue != nullptr) {
-				// Convert the result to a string
-				std::string result = PyUnicode_AsUTF8(pValue);
-				Py_DECREF(pValue);
-				Py_DECREF(pFunc);
-				Py_DECREF(pModule);
-				Py_Finalize();  // Cleanup the Python interpreter
-				return result;
-			}
-			else {
-				PyErr_Print();
-				std::cerr << "Call failed" << std::endl;
-			}
-		}
-		else {
-			PyErr_Print();
-			std::cerr << "Cannot find function 'translate_text'" << std::endl;
-		}
-		Py_XDECREF(pFunc);
-		Py_DECREF(pModule);
-	}
-	else {
-		PyErr_Print();
-		std::cerr << "Failed to load 'deepl_translate'" << std::endl;
-	}
+	//		// Call the function
+	//		PyObject* pValue = PyObject_CallObject(pFunc, pArgs);
+	//		Py_DECREF(pArgs);
 
-	Py_Finalize();  // Cleanup the Python interpreter
-	return "";
+	//		if (pValue != nullptr) {
+	//			// Convert the result to a string
+	//			std::string result = PyUnicode_AsUTF8(pValue);
+	//			Py_DECREF(pValue);
+	//			Py_DECREF(pFunc);
+	//			Py_DECREF(pModule);
+	//			Py_Finalize();  // Cleanup the Python interpreter
+	//			return result;
+	//		}
+	//		else {
+	//			PyErr_Print();
+	//			std::cerr << "Call failed" << std::endl;
+	//		}
+	//	}
+	//	else {
+	//		PyErr_Print();
+	//		std::cerr << "Cannot find function 'translate_text'" << std::endl;
+	//	}
+	//	Py_XDECREF(pFunc);
+	//	Py_DECREF(pModule);
+	//}
+	//else {
+	//	PyErr_Print();
+	//	std::cerr << "Failed to load 'deepl_translate'" << std::endl;
+	//}
+
+	//Py_Finalize();  // Cleanup the Python interpreter
+	//return "";
 }
 
 void PlanPen::Init() {
@@ -176,7 +176,9 @@ void PlanPen::OnReady() {
 				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
 				++++iter_2;
 			}
-			//先这样，后续升级json的读取（）
+
+			/*コマンドを変更せずに解釈を変更してください
+			コマンド変更なのでスラッシュコマンドでは使用できません*/
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の開始", "コマンドで使用されるチャネルメッセージから指定されたチャネルと言語への翻訳", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_channel, "翻至", "翻訳するチャンネル（サブエリア）IDを入力", true))
 				.add_option(dpp::command_option(dpp::co_string, "译至", "入力にはどの言語に翻訳する必要がありますか（どの言語を出力するか）", true).set_auto_complete(true))
@@ -190,6 +192,10 @@ void PlanPen::OnReady() {
 
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
+
+			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
+				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
+			);
 		}
 		});
 }
@@ -256,10 +262,14 @@ void PlanPen::Slashcommand() {
 		}
 		});
 
+	//update
+	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
+		std::thread([&event]() {
+			LinuxPen::update(event);
+			}).detach();
+		});
+
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
-		//std::cout << (*HashSlips::SlashcommandFuntion)[event.command.get_command_name()];
-		//if ((*HashSlips::SlashcommandFuntion)[event.command.get_command_name()] = 0)
-		//	return;
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
 }
@@ -271,12 +281,6 @@ void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcom
 
 void PlanPen::AutoComplete() {
 	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
-		//if (event.command.get_command_name() != "翻译至")
-		//	return;
-
-
-
-
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
 		for (auto& opt : event.options) {
@@ -299,13 +303,6 @@ void PlanPen::AutoComplete() {
 				RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 			}
 		}
-
-		//dpp::command_option opt = event.options[0];
-
-		//for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i)
-		//	AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
-
-		//RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 		});
 }
 
@@ -343,11 +340,6 @@ void PlanPen::Message() {
 			);
 
 		TrText.add_embed(std::move(ObjEmbed));
-
-		//旧版string创建
-		//std::string TranslateMsg = event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
-
-		//TrText.content += TranslateMsg;
 
 		//message_reference
 		if (data["message_reference"]["message_id"] != nullptr) {
@@ -388,6 +380,7 @@ void PlanPen::Message() {
 		});
 }
 
+//TODO
 void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
@@ -417,30 +410,6 @@ void PlanPen::MessageDelete() {
 std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
-	//std::regex url_regex(R"(https?://[^\s/$.?#].[^\s]*)");
-	//std::smatch url_match;
-
-	//// 迭代匹配到的 URL 链接
-	//while (std::regex_search(input, url_match, url_regex)) {
-	//	// 保存匹配到的 URL 链接
-	//	treatment.push_back(url_match.str(0));
-
-	//	// 从原始字符串中去除匹配到的 URL 链接
-	//	input = input.substr(0, url_match.position()) + input.substr(url_match.position() + url_match.length());
-	//}
-
-	//std::regex pattern(R"(<:([^:]+):([^>]+)>)");
-	//std::smatch matches;
-
-	//while (std::regex_search(input, matches, pattern)) {
-	//	// 保存匹配到的 URL 链接
-	//	treatment.push_back(matches.str(0));
-
-	//	// 从原始字符串中去除匹配到的 URL 链接
-	//	input = input.substr(0, matches.position()) + input.substr(matches.position() + matches.length());
-	//}
-
-
 	std::vector<std::string> RegexStr = {
 		R"(https?://[^\s/$.?#].[^\s]*)",
 		R"(<:([^:]+):([^>]+)>)"
@@ -462,4 +431,43 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-//TODO:add new Pen
+std::string LinuxPen::cmd(const char* command) {
+	char result[10240] = { 0 };
+	char buf[10240] = { 0 };
+
+	FILE* fp = NULL;
+	if ((fp = popen(command, "r")) == NULL) {
+		printf("popen error!\n");
+		return "[error]";
+	}
+	while (fgets(buf, sizeof(buf), fp)) {
+		strcat(result, buf);
+	}
+
+	return result;
+}
+
+void LinuxPen::update(dpp::slashcommand_t* event) {
+	event->reply("更新を試みる");
+
+	if (!32768 == system("cd ./MotooriKosuzu;git pull"))
+		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+	else
+		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	if (!32768 == system("git clone https://github.com/touhou-technology/MotooriKosuzu"))
+		RobotPen::GetBot()->message_create(dpp::message("Github倉庫のクローニング").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	RobotPen::GetBot()->message_create(dpp::message("再コンパイルの開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	if (!32768 == system(R"(cd ./MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -o Project.out)")) {
+		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+		std::cout << system("cp ./MotooriKosuzu/src/Project.out ./") << std::endl;
+	}
+	else
+		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+
+
+	RobotSlips::bot.release();
+}

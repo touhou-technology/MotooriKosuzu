@@ -35,9 +35,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{df99d716-e9ce-4917-9d9b-e7e1f9c049d6}</ProjectGuid>
+    <ProjectGuid>{ec853aa8-3ac3-42bf-a824-78d8e5895a39}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>Project</RootNamespace>
+    <RootNamespace>bootstrap</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
@@ -74,94 +74,13 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <MultiProcNumber>1</MultiProcNumber>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <MultiProcNumber>1</MultiProcNumber>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <MultiProcNumber>1</MultiProcNumber>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <MultiProcNumber>1</MultiProcNumber>
+    <OutDir>.\</OutDir>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\MotooriKosuzu.cpp" />
-    <ClCompile Include="src\WritingBrush.cpp" />
+    <ClCompile Include="bootstrap.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\BambooSlips.h" />
-    <ClInclude Include="src\Bookshelf.hpp" />
-    <ClInclude Include="src\MotooriKosuzu.h" />
-    <ClInclude Include="src\start.hpp" />
-    <ClInclude Include="src\WritingBrush.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".gitattributes" />
-    <None Include=".gitignore" />
-    <None Include="API.py" />
-    <None Include="config\ConfigBook.json" />
-    <None Include="deepl_translate.py" />
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.12</LibraryDependencies>
-    </Link>
-    <ClCompile>
-      <CppLanguageStandard>c++20</CppLanguageStandard>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <ClCompile>
-      <CppLanguageStandard>c++20</CppLanguageStandard>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <ClCompile>
-      <CppLanguageStandard>c++20</CppLanguageStandard>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-    <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <ClCompile>
-      <CppLanguageStandard>c++20</CppLanguageStandard>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.11</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
+  <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

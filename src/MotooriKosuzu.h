@@ -6,10 +6,12 @@
 //最后交给这个类来进行初始化（也就是app本体？）
 	//本体daze
 class Kosuzu {
-	public:
-		static void Init();
-		Kosuzu();
-		~Kosuzu();
-	private:
-		static std::unique_ptr<Kosuzu> m_Kosuzu;
+public:
+	static void Init();
+	Kosuzu();
+	~Kosuzu();
+
+private:
+	static std::unique_ptr<Kosuzu> m_Kosuzu;
+
 };

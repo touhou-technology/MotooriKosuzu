@@ -10,6 +10,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <cstring>
+#include <cstdlib>
 
 //配置
 class ConfigPen {
@@ -58,4 +63,10 @@ public:
 private:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static std::vector<std::string> RegexTreatment(std::string& input);
+};
+
+class LinuxPen {
+public:
+	static std::string cmd(const char* command);
+	static void update(dpp::slashcommand_t* event);
 };
