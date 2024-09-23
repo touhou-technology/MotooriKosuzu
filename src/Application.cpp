@@ -9,10 +9,5 @@ int main(int argc, char** argv) {
 
 	RobotPen::Start();
 
-	Kosuzu::SetRuning(1);
-
-	while (Kosuzu::GetRuning())
-		sleep(5);
-
 	return 9;
 }

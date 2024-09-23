@@ -68,5 +68,5 @@ private:
 class LinuxPen {
 public:
 	static std::string cmd(const char* command);
-	static void update();
+	static void update(dpp::slashcommand_t* event);
 };

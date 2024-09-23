@@ -24,11 +24,3 @@ Kosuzu::Kosuzu() {
 Kosuzu::~Kosuzu() {
 
 }
-
-void Kosuzu::SetRuning(bool run){
-	runing = run;
-}
-
-bool Kosuzu::GetRuning(){
-	return runing;
-}

@@ -58,7 +58,7 @@ void RobotPen::Init() {
 
 //start bot(thread wait)
 void RobotPen::Start() {
-	GetBot()->start(dpp::st_return);
+	GetBot()->start(dpp::st_wait);
 }
 
 void RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
@@ -77,7 +77,7 @@ std::string WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
 	std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
-	LinuxPen::cmd(cmd.c_str());
+	return LinuxPen::cmd(cmd.c_str());
 
 	//static char result[10240];
 	//static char buf[10240];
@@ -193,7 +193,9 @@ void PlanPen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
-			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id));
+			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
+			.add_option(dpp::command_option(dpp::co_string,"option", "更新作成"))
+			);
 		}
 		});
 }
@@ -262,8 +264,7 @@ void PlanPen::Slashcommand() {
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		event->reply("okey");
-		LinuxPen::update();
+		LinuxPen::update(event);
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -444,6 +445,17 @@ std::string LinuxPen::cmd(const char* command) {
 	return result;
 }
 
-void LinuxPen::update(){
-	Kosuzu::SetRuning(0);
+void LinuxPen::update(dpp::slashcommand_t* event){
+	event->reply("try update");
+
+	
+	if (!32768 == system("git pull"))
+		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+	else
+		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+	
+	
+
+
+	//RobotSlips::bot.release();
 }
