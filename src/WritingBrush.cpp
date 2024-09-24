@@ -462,12 +462,11 @@ void LinuxPen::update(dpp::slashcommand_t* event) {
 
 	if (!32768 == system(R"(cd ./MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -o Project.out)")) {
 		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-		std::cout << system("cp ./MotooriKosuzu/src/Project.out ./") << std::endl;
 	}
 	else
 		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
 
 
-
+	sleep(5);
 	RobotSlips::bot.release();
 }
