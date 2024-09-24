@@ -354,8 +354,8 @@ void PlanPen::Message() {
 		//附件
 		for (const auto& obj : data["attachments"]) {
 			TrText.content += obj["url"];
-			RobotSlips::bot->message_create(dpp::message(obj["url"])
-				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
+			//???
+			RobotSlips::bot->message_create(dpp::message(obj["url"].get<std::string>()).set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
 
 		//url
