@@ -1,38 +1,72 @@
-﻿# README Some steps have issues
-# Currently repairing
-
-# 「本居小鈴」Discord translator bot
+﻿# This is an automatic translation DCbot
+I adopted a method of constructing human behavior(
+> [!IMPORTANT]
+> This is my first time doing this, So there will be some issues*(
 
 This is a Discord listening channel translation bot (channel monitoring is selected according to commands)
+I tried adding a command to enable this program to attempt updating itself
+But the program needs a daemon to replace the original program with an updated one
 
-1. これはbotです
-2. dppを使用した記述 link- https://github.com/brainboxdotcc/DPP
-3. よく考えていない~
-
-# 対応するライブラリをインストールしてください
-1. cpp-httplib
-2. jsoncpp
-3. dpp
-
-# コードを調整することに注意
-Bookshelf.hppで std::string ConfigSlips::Path_ 独自の構成パスを書いてください
-WritingBrush.cpp 76行 "python3 API.py" 自分の正しい呼び出しAPIコマンドを書いて、呼び出し可能な場所にAPIがあることを確認してください
-
-srcディレクトリで使用してください g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp"
-
-deeplAPIを使用した
-deeplの無料APIを持っていることを確認してください（有料の私は試していません）
-
-# use Docker
-
+-------------
+* how use
+```bash
+git clone https://github.com/touhou-technology/MotooriKosuzu
+cd MotooriKosuzu
+mkdir build && cd build
+cmake ..
+```
+ Or in docker
+```bash
 docker pull awalwashig/bureau
-
-mkdir /etc/MotooriKosuzu;
-mkdir /etc/MotooriKosuzu/config;
-
-cd /etc/MotooriKosuzu/config
-vim ConfigBook.json
-#The format of ConfigBook.json and config directory should be the same
+```
 
 
-docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/MotooriKosuzu
+## Disposition
+You need to configure
+```bash
+mkdir -p /etc/MotooriKosuzu/config
+vim /etc/MotooriKosuzu/config/ConfigBook.json
+```
+Enter the token for Discord and translation
+```json
+﻿{
+  "RobotSlips": {
+//Enter your DiscordBot token
+    "Token": ""
+  },
+  "WebPen": {
+//Enter your token (default deepl)
+    "Token": ""
+  },
+  "AutoComplete": {
+    "TranslationTypes": [
+      {
+        "language": "JA",
+        "name": "Japanese",
+        "supports_formality": true
+      },
+      {
+        "language": "EN-GB",
+        "name": "English (British)",
+        "supports_formality": false
+      },
+      {
+        "language": "EN-US",
+        "name": "English (American)",
+        "supports_formality": false
+      },
+      {
+        "language": "ZH",
+        "name": "Chinese (simplified)",
+        "supports_formality": false
+      }
+    ]
+  }
+}
+```
+-------
+## Dependencies
+[deepl-python](https://github.com/DeepLcom/deepl-python)
+* [dpp](https://github.com/brainboxdotcc/DPP);
+* [cpp-httplib](https://github.com/yhirose/cpp-httplib);
+* [json](https://github.com/open-source-parsers/jsoncpp);
