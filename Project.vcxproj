@@ -104,6 +104,7 @@
     <None Include="API.py" />
     <None Include="config\ConfigBook.json" />
     <None Include="deepl_translate.py" />
+    <None Include="install.sh" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
