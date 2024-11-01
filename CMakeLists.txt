@@ -1,35 +1,37 @@
-# ÷∏∂®CMake◊ÓµÕ∞Ê±æ
-cmake_minimum_required(VERSION 3.22)
+Ôªøcmake_minimum_required(VERSION 3.10)
+project(MotooriKosuzu)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-# …Ë÷√œÓƒø√˚≥∆∫Õ∞Ê±æ
-project(Project VERSION 1.0)
+set(CMAKE_CXX_STANDARD 17)
 
-	list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+FILE(GLOB_RECURSE MAIN "src/Application.cpp")
 
-# …Ë÷√C++±Í◊º
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+FILE(GLOB_RECURSE APP_HEADER "src/*.h")
+FILE(GLOB_RECURSE APP_SOURCE "src/*cpp")
+FILE(GLOB_RECURSE APP_HPP "src/*.hpp")
 
-# ÃÌº”ø…÷¥––Œƒº˛
-aux_source_directory(./src SRC_LIST)
+# Â∞ÜÊ∫ê‰ª£Á†ÅÊ∑ªÂä†Âà∞Ê≠§È°πÁõÆÁöÑÂèØÊâßË°åÊñá‰ª∂„ÄÇ
+add_executable (MotooriKosuzu 
+	${MAIN}
+	${APP_HEADER} ${APP_SOURCE} ${APP_HPP}
+	)
 
-add_executable(MotooriKosuzu ${SRC_LIST})
-
-# ≤È’“≤¢¡¥Ω”À˘–Ëµƒø‚
-find_package(Threads REQUIRED)
-
-find_package(httplib REQUIRED)
-find_package(jsoncpp REQUIRED)
+# Find our pre-installed DPP package (using FindDPP.cmake).
+find_package(HTTPLIB REQUIRED)
+find_package(JSONCPP REQUIRED)
 find_package(DPP REQUIRED)
+ 
+# Include the DPP directories.
+target_include_directories(MotooriKosuzu PRIVATE ${DPP_INCLUDE_DIR})
+target_include_directories(MotooriKosuzu PRIVATE ${HTTPLIB_INCLUDE_DIR})
+target_include_directories(MotooriKosuzu PRIVATE ${JSONCPP_INCLUDE_DIR})
 
-target_link_libraries(MotooriKosuzu
-    httplib::httplib
-    jsoncpp_lib
-    ${DPP_LIBRARIES}
+target_link_libraries(MotooriKosuzu 
+${DPP_LIBRARIES} 
+${HTTPLIB_INCLUDE_DIR}
+${JSONCPP_INCLUDE_DIR}
 )
 
-target_include_directories(MotooriKosuzu PRIVATE
-    httplib::httplib
-    jsoncpp_lib
-    ${DPP_INCLUDE_DIR}
-)
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET MotooriKosuzu PROPERTY CXX_STANDARD 20)
+endif()
