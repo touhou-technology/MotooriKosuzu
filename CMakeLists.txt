@@ -32,6 +32,10 @@ ${HTTPLIB_INCLUDE_DIR}
 ${JSONCPP_INCLUDE_DIR}
 )
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
+if (CMAKE_VERSION VERSION_GREATER 3.10)
   set_property(TARGET MotooriKosuzu PROPERTY CXX_STANDARD 20)
+endif()
+
+if(UNIX)
+    target_compile_definitions(MotooriKosuzu PRIVATE USE_UNIX)
 endif()
