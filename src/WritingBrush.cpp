@@ -73,84 +73,78 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 }
 
-std::string WebPen::TranslationPen(std::string text, std::string To) {
+Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 	if (text == "")
 		return "";
-	std::string cmd = "python3 ./API.py '" + text + "' " + To + " " + WebSlips::Token;
-	//return LinuxPen::cmd(cmd.c_str());
 
-	//static char result[10240];
-	//static char buf[10240];
-	//result[10240] = { 0 };
-	//buf[10240] = { 0 };
-	//FILE* fp = NULL;
-	//if ((fp = popen(cmd.c_str(), "r")) == NULL) {
-	//	printf("popen error!\n");
-	//	return "[error]";
-	//}
-	//while (fgets(buf, sizeof(buf), fp)) {
-	//	strcat(result, buf);
-	//}
+	CURL* curl;
+	CURLcode res;
+	std::string readBuffer;
 
-	//return result;
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+	curl = curl_easy_init();
 
-	//return result;
+	if (curl) {
+		// 设置请求URL
+		curl_easy_setopt(curl, CURLOPT_URL, "https://api-free.deepl.com/v2/translate");
 
-	//不好用😡😡😡
-	//Py_Initialize();  // Initialize the Python interpreter
+		// 设置请求头
+		struct curl_slist* headers = NULL;
 
-	//// Add the directory containing your Python script to the Python path
-	//PyObject* sys_path = PySys_GetObject("path");
-	//PyList_Append(sys_path, PyUnicode_FromString("/home/awalwa/projects/Project")); // 替换为你的目录
+		std::string head = "Authorization: DeepL-Auth-Key";
+		head = head + " " + ConfigSlips::ConfigJson["WebPen"]["Token"].asCString();
 
-	//// Import the translation module
-	//PyObject* pName = PyUnicode_FromString("deepl_translate"); // 这里只用模块名
-	//PyObject* pModule = PyImport_Import(pName);
-	//Py_DECREF(pName);
+		headers = curl_slist_append(headers, head.c_str());
+		headers = curl_slist_append(headers, "Content-Type: application/json");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-	//if (pModule != nullptr) {
-	//	// Get the translate_text function
-	//	PyObject* pFunc = PyObject_GetAttrString(pModule, "translate_text");
+		//TODO 设置POST数据
+		const char* postData = R"({"text": ["Hello, world!"], "target_lang": "DE"})";
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
 
-	//	if (pFunc && PyCallable_Check(pFunc)) {
-	//		// Prepare arguments
-	//		PyObject* pArgs = PyTuple_Pack(3,
-	//			PyUnicode_FromString(WebSlips::Token.c_str()),
-	//			PyUnicode_FromString(text.c_str()),
-	//			PyUnicode_FromString(To.c_str()));
+		// 设置回调函数以接收响应数据
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-	//		// Call the function
-	//		PyObject* pValue = PyObject_CallObject(pFunc, pArgs);
-	//		Py_DECREF(pArgs);
+		// 执行请求
+		res = curl_easy_perform(curl);
 
-	//		if (pValue != nullptr) {
-	//			// Convert the result to a string
-	//			std::string result = PyUnicode_AsUTF8(pValue);
-	//			Py_DECREF(pValue);
-	//			Py_DECREF(pFunc);
-	//			Py_DECREF(pModule);
-	//			Py_Finalize();  // Cleanup the Python interpreter
-	//			return result;
-	//		}
-	//		else {
-	//			PyErr_Print();
-	//			std::cerr << "Call failed" << std::endl;
-	//		}
-	//	}
-	//	else {
-	//		PyErr_Print();
-	//		std::cerr << "Cannot find function 'translate_text'" << std::endl;
-	//	}
-	//	Py_XDECREF(pFunc);
-	//	Py_DECREF(pModule);
-	//}
-	//else {
-	//	PyErr_Print();
-	//	std::cerr << "Failed to load 'deepl_translate'" << std::endl;
-	//}
+		// 检查请求是否成功
+		if (res != CURLE_OK) {
+			std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+		}
+		else {
+			// 输出响应数据
+			std::cout << "Response: " << readBuffer << std::endl;
+		}
 
-	//Py_Finalize();  // Cleanup the Python interpreter
-	//return "";
+
+
+		// 清理
+		curl_slist_free_all(headers);
+		curl_easy_cleanup(curl);
+	}
+
+	curl_global_cleanup();
+
+	Json::Value root;
+	Json::Reader reader;
+
+	reader.parse(readBuffer, root);
+
+	return root;
+}
+
+size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s){
+	size_t newLength = size * nmemb;
+	try {
+		s->append((char*)contents, newLength);
+	}
+	catch (std::bad_alloc& e) {
+		// 处理内存不足的情况
+		return 0;
+	}
+	return newLength;
 }
 
 void PlanPen::Init() {
@@ -336,7 +330,7 @@ void PlanPen::Message() {
 		//调用翻译
 		ObjEmbed
 			.set_description(
-				WebPen::TranslationPen(TextMsg, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
+				WebPen::TranslationPen(TextMsg, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString()
 			);
 
 		TrText.add_embed(std::move(ObjEmbed));
@@ -380,13 +374,13 @@ void PlanPen::Message() {
 		});
 }
 
-//TODO
+//TODO:更新用户编辑消息
 void PlanPen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
 			return;
 
-		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second));
+		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString());
 
 		msg.set_reference((*HashSlips::HashSnowflakeStr)[event.msg.id].first)
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);

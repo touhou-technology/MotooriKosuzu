@@ -14,6 +14,8 @@
 #include <cstring>
 #include <cstdlib>
 
+#include <curl/curl.h>
+
 //...
 //#include <../include/unistd.h>
 
@@ -25,10 +27,6 @@ public:
 	static std::string InitPen(std::string ClassName, std::string obtain);
 	static Json::Value ReadFileJson(std::string Path);
 	static Json::Value GetConfigJson();
-};
-
-class Awa : virtual public ConfigPen {
-
 };
 
 class HashPen {
@@ -50,7 +48,8 @@ public:
 	static void Init();
 
 	//web 翻译之类的
-	static std::string TranslationPen(std::string text, std::string To);
+	static Json::Value TranslationPen(std::string text, std::string To);
+	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
 
 };
 

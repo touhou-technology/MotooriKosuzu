@@ -75,7 +75,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <MultiProcNumber>1</MultiProcNumber>
+    <MultiProcNumber>9</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <MultiProcNumber>1</MultiProcNumber>
@@ -101,9 +101,7 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
-    <None Include="API.py" />
     <None Include="config\ConfigBook.json" />
-    <None Include="deepl_translate.py" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -111,7 +109,7 @@
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <LibraryDependencies>dpp;ssl;pthread;jsoncpp;crypto;curl;python3.12</LibraryDependencies>
+      <LibraryDependencies>dpp;pthread;jsoncpp;curl</LibraryDependencies>
     </Link>
     <ClCompile>
       <CppLanguageStandard>c++20</CppLanguageStandard>

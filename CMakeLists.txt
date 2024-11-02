@@ -20,11 +20,13 @@ add_executable (MotooriKosuzu
 find_package(HTTPLIB REQUIRED)
 find_package(JSONCPP REQUIRED)
 find_package(DPP REQUIRED)
+find_package(CURL REQUIRED)
  
 # Include the DPP directories.
 target_include_directories(MotooriKosuzu PRIVATE ${DPP_INCLUDE_DIR})
 target_include_directories(MotooriKosuzu PRIVATE ${HTTPLIB_INCLUDE_DIR})
 target_include_directories(MotooriKosuzu PRIVATE ${JSONCPP_INCLUDE_DIR})
+target_include_directories(MotooriKosuzu PRIVATE ${CURL_INCLUDE_DIR})
 
 target_link_libraries(MotooriKosuzu 
 ${DPP_LIBRARIES} 
