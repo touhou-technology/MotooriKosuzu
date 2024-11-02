@@ -27,6 +27,10 @@ public:
 	static Json::Value GetConfigJson();
 };
 
+class Awa : virtual public ConfigPen {
+
+};
+
 class HashPen {
 public:
 	static void Init();
@@ -71,3 +75,4 @@ private:
 //	static std::string cmd(const char* command);
 //	static void update(dpp::slashcommand_t* event);
 //};
+
