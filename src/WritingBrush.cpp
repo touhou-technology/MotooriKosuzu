@@ -99,8 +99,11 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
 		//TODO 设置POST数据
-		const char* postData = R"({"text": ["Hello, world!"], "target_lang": "DE"})";
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData);
+		std::string postData = R"({"text": [")" + text + R"("], "target_lang": ")" + To + R"("})";
+
+		std::cout << postData << std::endl;
+
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
 
 		// 设置回调函数以接收响应数据
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -135,7 +138,7 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 	return root;
 }
 
-size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s){
+size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {
 	size_t newLength = size * nmemb;
 	try {
 		s->append((char*)contents, newLength);
