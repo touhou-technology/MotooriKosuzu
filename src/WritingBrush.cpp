@@ -85,10 +85,7 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 	curl = curl_easy_init();
 
 	if (curl) {
-		// 设置请求URL
 		curl_easy_setopt(curl, CURLOPT_URL, "https://api-free.deepl.com/v2/translate");
-
-		// 设置请求头
 		struct curl_slist* headers = NULL;
 
 		std::string head = "Authorization: DeepL-Auth-Key";
@@ -98,7 +95,6 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-		//TODO 设置POST数据
 		std::string postData = R"({"text": [")" + text + R"("], "target_lang": ")" + To + R"("})";
 
 		std::cout << postData << std::endl;
@@ -109,21 +105,17 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
-		// 执行请求
 		res = curl_easy_perform(curl);
 
 		// 检查请求是否成功
-		if (res != CURLE_OK) {
-			std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-		}
-		else {
-			// 输出响应数据
-			std::cout << "Response: " << readBuffer << std::endl;
-		}
+		//if (res != CURLE_OK) {
+		//	std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+		//}
+		//else {
+		//	// 输出响应数据
+		//	std::cout << "Response: " << readBuffer << std::endl;
+		//}
 
-
-
-		// 清理
 		curl_slist_free_all(headers);
 		curl_easy_cleanup(curl);
 	}
