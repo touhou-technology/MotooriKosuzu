@@ -108,13 +108,13 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		res = curl_easy_perform(curl);
 
 		// 检查请求是否成功
-		//if (res != CURLE_OK) {
-		//	std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-		//}
-		//else {
-		//	// 输出响应数据
-		//	std::cout << "Response: " << readBuffer << std::endl;
-		//}
+		if (res != CURLE_OK) {
+			std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+		}
+		else {
+			// 输出响应数据
+			std::cout << "Response: " << readBuffer << std::endl;
+		}
 
 		curl_slist_free_all(headers);
 		curl_easy_cleanup(curl);
@@ -322,7 +322,7 @@ void PlanPen::Message() {
 		dpp::message TrText = dpp::message()
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
 
-		//调用翻译
+		//TODO：调用翻译
 		ObjEmbed
 			.set_description(
 				WebPen::TranslationPen(TextMsg, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString()
