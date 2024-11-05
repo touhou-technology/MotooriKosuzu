@@ -14,11 +14,13 @@ using namespace std;
 
 void ConfigPen::Init() {
 	ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
+
+	//TODO
 }
 
 //类Init御用（
 std::string ConfigPen::InitPen(std::string ClassName, std::string obtain) {
-	return ConfigPen::GetConfigJson()[ClassName][obtain].asString();
+	return ConfigSlips::ConfigJson[ClassName][obtain].asString();
 }
 
 Json::Value ConfigPen::ReadFileJson(string Path) {
@@ -43,9 +45,9 @@ Json::Value ConfigPen::ReadFileJson(string Path) {
 	return root;
 }
 
-Json::Value ConfigPen::GetConfigJson() {
-	return ConfigSlips::ConfigJson;
-}
+//Json::Value ConfigPen::GetConfigJson() {
+//	return ConfigSlips::ConfigJson;
+//}
 
 void HashPen::Init() {
 	HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
@@ -74,6 +76,7 @@ void WebPen::Init() {
 }
 
 Json::Value WebPen::TranslationPen(std::string text, std::string To) {
+	//处理其他事件为空的情况下
 	if (text == "")
 		return "";
 
@@ -155,9 +158,10 @@ void PlanPen::Init() {
 void PlanPen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		//RobotSlips::bot->global_bulk_command_delete();
+		//(),需要添加新的解析
 		if (dpp::run_once<struct register_bot_commands>()) {
 			Json::Value ObjectArray;
-			ObjectArray = ConfigPen::GetConfigJson()["slashcommand"];
+			ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
 			std::cout << ObjectArray.size();
 			int iter_2 = 1;
 			for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
@@ -173,8 +177,8 @@ void PlanPen::OnReady() {
 				.add_option(dpp::command_option(dpp::co_string, "译至", "入力にはどの言語に翻訳する必要がありますか（どの言語を出力するか）", true).set_auto_complete(true))
 			);
 
-			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳を双方向に開く", "一次性开启2个翻译频道", RobotSlips::bot->me.id)
-				.add_option(dpp::command_option(dpp::co_channel, "翻至", "输入要翻译到的频道（子区）ID", true))
+			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳を双方向に開く", "2つの翻訳チャンネルを一度にオープン", RobotSlips::bot->me.id)
+				.add_option(dpp::command_option(dpp::co_channel, "翻至", "翻訳するチャンネル（サブエリア）IDを入力", true))
 				.add_option(dpp::command_option(dpp::co_string, "译", "翻訳が必要な言語を入力する（その言語を入力する）", true).set_auto_complete(true))
 				.add_option(dpp::command_option(dpp::co_string, "译至", "入力にはどの言語に翻訳する必要がありますか（どの言語を出力するか）", true).set_auto_complete(true))
 			);
@@ -252,11 +256,11 @@ void PlanPen::Slashcommand() {
 		});
 
 	//update
-	//SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
+	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
 
-	//	//LinuxPen::update(event);
+		LinuxPen::update(event);
 
-	//	});
+		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
@@ -312,23 +316,34 @@ void PlanPen::Message() {
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
 
+		//url做处理
 		std::vector<std::string> Treatment = RegexTreatment(TextMsg);
 
 		dpp::embed ObjEmbed = dpp::embed()
+			.set_description(event.msg.content)
 			.set_color(dpp::colors::yellow)
-			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
+			//???
+			.set_author(event.msg.author.global_name + "[☯](" + event.msg.get_url() + ")", "", event.msg.author.get_avatar_url());
+
+		//处理字符串
+		std::stringstream ss;
+		for (char ch : TextMsg) 
+			if (ch == '"')
+				ss << "\\\"";
+			else if (ch == '\n')
+				ss << "\\n";
+			else
+				ss << ch;
+
+		//TODO：调用翻译
+		for (auto text : WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"])
+			ObjEmbed.add_field("", text["text"].asString());
+
 
 		//create to object
 		dpp::message TrText = dpp::message()
-			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
-
-		//TODO：调用翻译
-		ObjEmbed
-			.set_description(
-				WebPen::TranslationPen(TextMsg, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString()
-			);
-
-		TrText.add_embed(std::move(ObjEmbed));
+			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first)
+			.add_embed(std::move(ObjEmbed));
 
 		//message_reference
 		if (data["message_reference"]["message_id"] != nullptr) {

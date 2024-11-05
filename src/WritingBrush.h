@@ -26,7 +26,7 @@ public:
 	static void Init();
 	static std::string InitPen(std::string ClassName, std::string obtain);
 	static Json::Value ReadFileJson(std::string Path);
-	static Json::Value GetConfigJson();
+	//static Json::Value GetConfigJson();
 };
 
 class HashPen {
