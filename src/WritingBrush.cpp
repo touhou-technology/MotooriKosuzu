@@ -319,15 +319,16 @@ void PlanPen::Message() {
 		//url做处理
 		std::vector<std::string> Treatment = RegexTreatment(TextMsg);
 
+
 		dpp::embed ObjEmbed = dpp::embed()
-			.set_description(event.msg.content)
+			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
 			.set_color(dpp::colors::yellow)
 			//???
-			.set_author(event.msg.author.global_name + "[☯](" + event.msg.get_url() + ")", "", event.msg.author.get_avatar_url());
+			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
 		//处理字符串
 		std::stringstream ss;
-		for (char ch : TextMsg) 
+		for (char ch : TextMsg)
 			if (ch == '"')
 				ss << "\\\"";
 			else if (ch == '\n')
@@ -336,8 +337,7 @@ void PlanPen::Message() {
 				ss << ch;
 
 		//TODO：调用翻译
-		for (auto text : WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"])
-			ObjEmbed.add_field("", text["text"].asString());
+		ObjEmbed.add_field("", WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString());
 
 
 		//create to object
