@@ -69,9 +69,9 @@ private:
 	static std::vector<std::string> RegexTreatment(std::string& input);
 };
 
-//class LinuxPen {
-//public:
-//	static std::string cmd(const char* command);
-//	static void update(dpp::slashcommand_t* event);
-//};
+class LinuxPen {
+public:
+	static std::string cmd(const char* command);
+	static void update(dpp::slashcommand_t* event);
+};
 

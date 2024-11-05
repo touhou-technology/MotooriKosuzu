@@ -420,40 +420,40 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-//std::string LinuxPen::cmd(const char* command) {
-//	//char result[10240] = { 0 };
-//	//char buf[10240] = { 0 };
-//
-//	//FILE* fp = NULL;
-//	//if ((fp = popen(command, "r")) == NULL) {
-//	//	printf("popen error!\n");
-//	//	return "[error]";
-//	//}
-//	//while (fgets(buf, sizeof(buf), fp)) {
-//	//	strcat(result, buf);
-//	//}
-//
-//	//return result;
-//}
+std::string LinuxPen::cmd(const char* command) {
+	char result[10240] = { 0 };
+	char buf[10240] = { 0 };
 
-//void LinuxPen::update(dpp::slashcommand_t* event) {
-//	event->reply("更新を試みる");
-//
-//	if (!32768 == system("cd ./MotooriKosuzu;git pull"))
-//		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-//	else
-//		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-//
-//	if (!32768 == system("git clone https://github.com/touhou-technology/MotooriKosuzu"))
-//		RobotPen::GetBot()->message_create(dpp::message("Github倉庫のクローニング").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-//
-//	RobotPen::GetBot()->message_create(dpp::message("再コンパイルの開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-//
-//	if (!32768 == system(R"(cd ./MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -o Project.out)")) {
-//		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-//	}
-//	else
-//		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-//
-//	RobotSlips::bot.release();
-//}
+	FILE* fp = NULL;
+	if ((fp = popen(command, "r")) == NULL) {
+		printf("popen error!\n");
+		return "[error]";
+	}
+	while (fgets(buf, sizeof(buf), fp)) {
+		strcat(result, buf);
+	}
+
+	return result;
+}
+
+void LinuxPen::update(dpp::slashcommand_t* event) {
+	event->reply("更新を試みる");
+
+	if (!32768 == system("cd ./MotooriKosuzu;git pull"))
+		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+	else
+		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	if (!32768 == system("git clone https://github.com/touhou-technology/MotooriKosuzu"))
+		RobotPen::GetBot()->message_create(dpp::message("Github倉庫のクローニング").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	RobotPen::GetBot()->message_create(dpp::message("再コンパイルの開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	if (!32768 == system(R"(cd ./MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -o Project.out)")) {
+		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+	}
+	else
+		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
+
+	RobotSlips::bot.release();
+}
