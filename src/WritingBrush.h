@@ -67,6 +67,8 @@ public:
 private:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static std::vector<std::string> RegexTreatment(std::string& input);
+
+	static void ChannlConfigBookUpdate();
 };
 
 class LinuxPen {

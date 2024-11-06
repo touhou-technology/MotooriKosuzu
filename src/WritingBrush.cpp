@@ -203,9 +203,6 @@ void PlanPen::OnReady() {
 
 		std::cout << ObjectArray[iter].asInt64() << ":" << channel << ":" << To << std::endl;
 	}
-
-
-
 }
 
 void PlanPen::Slashcommand() {
@@ -223,6 +220,8 @@ void PlanPen::Slashcommand() {
 
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
+
+		ChannlConfigBookUpdate();
 		});
 
 	SlashcommandHash("翻訳を双方向に開く", [](dpp::slashcommand_t* event)->void {
@@ -243,6 +242,8 @@ void PlanPen::Slashcommand() {
 		//建立双向链接
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 		(*HashSlips::HashSnowflakeStr)[channel] = std::pair<dpp::snowflake, std::string>(event->command.channel_id, This_channel);
+
+		ChannlConfigBookUpdate();
 		});
 
 	//停下翻译
@@ -253,6 +254,8 @@ void PlanPen::Slashcommand() {
 			event->reply("わかった");
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 		}
+
+		ChannlConfigBookUpdate();
 		});
 
 	SlashcommandHash("双方向翻訳の停止", [](dpp::slashcommand_t* event)->void {
@@ -266,8 +269,11 @@ void PlanPen::Slashcommand() {
 
 			//后面需要前面的数据
 			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
+
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 		}
+
+		ChannlConfigBookUpdate();
 		});
 
 	//update
@@ -449,6 +455,34 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	}
 
 	return treatment;
+}
+
+
+void PlanPen::ChannlConfigBookUpdate(){
+	Json::Value Channl;
+	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
+		if (Obj.first == NULL)
+			continue;
+		else if (Obj.second.first == NULL)
+			continue;
+		else if (Obj.second.second == "");
+
+		Channl.append((uint64_t)Obj.first);
+		Channl.append((uint64_t)Obj.second.first);
+		Channl.append(Obj.second.second);
+	}
+	
+	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
+
+	std::ofstream outFile(ConfigSlips::Path_, std::ofstream::trunc); // 使用trunc模式覆盖原文件
+	if (!outFile.is_open()) {
+		std::cerr << "Failed to open file for writing" << std::endl;
+	}
+
+	Json::StreamWriterBuilder writerBuilder;
+	std::string jsonString = Json::writeString(writerBuilder, ConfigSlips::ConfigJson);
+	outFile << jsonString;
+	outFile.close();
 }
 
 std::string LinuxPen::cmd(const char* command) {
