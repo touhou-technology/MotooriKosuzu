@@ -156,18 +156,18 @@ void PlanPen::Init() {
 
 //读取jsoncpp的
 void PlanPen::OnReady() {
+	//bot on_read
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		//RobotSlips::bot->global_bulk_command_delete();
 		//(),需要添加新的解析
 		if (dpp::run_once<struct register_bot_commands>()) {
-			Json::Value ObjectArray;
-			ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
+			Json::Value ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
 			std::cout << ObjectArray.size();
-			int iter_2 = 1;
-			for (int iter = 0; iter != ObjectArray.size(); ++++iter) {
-				std::cout << ObjectArray[iter].asString() << ":" << ObjectArray[iter_2].asString() << std::endl;
-				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter].asString(), ObjectArray[iter_2].asString(), RobotSlips::bot->me.id));
-				++++iter_2;
+			int iter_1 = 1;
+			for (int iter_0 = 0; iter_0 != ObjectArray.size(); ++++iter_0) {
+				std::cout << ObjectArray[iter_0].asString() << ":" << ObjectArray[iter_1].asString() << std::endl;
+				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].asString(), ObjectArray[iter_1].asString(), RobotSlips::bot->me.id));
+				++++iter_1;
 			}
 
 			/*コマンドを変更せずに解釈を変更してください
@@ -191,6 +191,21 @@ void PlanPen::OnReady() {
 			);
 		}
 		});
+
+	//
+	Json::Value ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
+	for (int iter = 0; iter < ObjectArray.size(); ++ ++ ++iter) {
+
+		dpp::snowflake  channel = ObjectArray[iter + 1].asInt64();
+		std::string To = ObjectArray[iter + 2].asString();
+
+		(*HashSlips::HashSnowflakeStr)[ObjectArray[iter].asInt64()] = std::pair<dpp::snowflake, std::string>(channel, To);
+
+		std::cout << ObjectArray[iter].asInt64() << ":" << channel << ":" << To << std::endl;
+	}
+
+
+
 }
 
 void PlanPen::Slashcommand() {
@@ -201,7 +216,7 @@ void PlanPen::Slashcommand() {
 		else
 			event->reply("はい、リダイレクトチャンネル");
 
-		dpp::command_interaction cmd_data = event->command.get_command_interaction();
+		//dpp::command_interaction cmd_data = event->command.get_command_interaction();
 
 		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
 		std::string To = std::get<std::string>(event->get_parameter("译至"));
@@ -219,7 +234,7 @@ void PlanPen::Slashcommand() {
 			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
 		}
 
-		dpp::command_interaction cmd_data = event->command.get_command_interaction();
+		//dpp::command_interaction cmd_data = event->command.get_command_interaction();
 
 		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
 		std::string This_channel = std::get<std::string>(event->get_parameter("译"));
@@ -323,7 +338,6 @@ void PlanPen::Message() {
 		dpp::embed ObjEmbed = dpp::embed()
 			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
 			.set_color(dpp::colors::yellow)
-			//???
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
 		//处理字符串
@@ -338,6 +352,8 @@ void PlanPen::Message() {
 
 		//TODO：调用翻译
 		ObjEmbed.add_field("", WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString());
+
+		ObjEmbed.set_timestamp(time(0));
 
 
 		//create to object
