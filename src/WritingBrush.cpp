@@ -77,8 +77,12 @@ void WebPen::Init() {
 
 Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 	//处理其他事件为空的情况下
-	if (text == "")
-		return "";
+	if (text == "") {
+		Json::Value empty;
+		empty["translations"][0]["text"] = "";
+		empty["translations"][0]["detected_source_language"] = "Unknow";
+		return empty;
+	}
 
 	CURL* curl;
 	CURLcode res;
@@ -194,7 +198,7 @@ void PlanPen::OnReady() {
 
 	//
 	Json::Value ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
-	for (int iter = 0; iter < ObjectArray.size(); ++ ++ ++iter) {
+	for (int iter = 0; iter < ObjectArray.size(); ++++ ++iter) {
 
 		dpp::snowflake  channel = ObjectArray[iter + 1].asInt64();
 		std::string To = ObjectArray[iter + 2].asString();
@@ -253,9 +257,10 @@ void PlanPen::Slashcommand() {
 		else {
 			event->reply("わかった");
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
+
+			ChannlConfigBookUpdate();
 		}
 
-		ChannlConfigBookUpdate();
 		});
 
 	SlashcommandHash("双方向翻訳の停止", [](dpp::slashcommand_t* event)->void {
@@ -271,9 +276,10 @@ void PlanPen::Slashcommand() {
 			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
 
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
+
+			ChannlConfigBookUpdate();
 		}
 
-		ChannlConfigBookUpdate();
 		});
 
 	//update
@@ -325,7 +331,7 @@ void PlanPen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 		//debug
-		//std::cout << event.msg.to_json() << std::endl;
+		std::cout << event.msg.to_json() << std::endl;
 
 		//单向翻译监测是否有
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
@@ -340,12 +346,6 @@ void PlanPen::Message() {
 		//url做处理
 		std::vector<std::string> Treatment = RegexTreatment(TextMsg);
 
-
-		dpp::embed ObjEmbed = dpp::embed()
-			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
-			.set_color(dpp::colors::yellow)
-			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
-
 		//处理字符串
 		std::stringstream ss;
 		for (char ch : TextMsg)
@@ -356,8 +356,21 @@ void PlanPen::Message() {
 			else
 				ss << ch;
 
-		//TODO：调用翻译
-		ObjEmbed.add_field("", WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString());
+		auto MessageObj = WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
+
+
+		dpp::embed ObjEmbed = dpp::embed()
+			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
+			.set_color(dpp::colors::yellow)
+			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
+
+
+		ObjEmbed.add_field("", std::move(MessageObj["text"].asString()));
+
+		ObjEmbed.set_footer(
+			dpp::embed_footer()
+			.set_text(std::move("⚝:>" + MessageObj["detected_source_language"].asString()))
+		);
 
 		ObjEmbed.set_timestamp(time(0));
 
@@ -437,8 +450,8 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
 	std::vector<std::string> RegexStr = {
-		R"(https?://[^\s/$.?#].[^\s]*)",
-		R"(<:([^:]+):([^>]+)>)"
+		R"(https?://[^\s/$.?#].[^\s]*)"
+		//R"(<:([^:]+):([^>]+)>)"
 	};
 
 	for (const std::string& Str : RegexStr) {
@@ -458,20 +471,21 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 }
 
 
-void PlanPen::ChannlConfigBookUpdate(){
+void PlanPen::ChannlConfigBookUpdate() {
 	Json::Value Channl;
 	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
 		if (Obj.first == NULL)
 			continue;
 		else if (Obj.second.first == NULL)
 			continue;
-		else if (Obj.second.second == "");
+		else if (Obj.second.second == "")
+			continue;
 
 		Channl.append((uint64_t)Obj.first);
 		Channl.append((uint64_t)Obj.second.first);
 		Channl.append(Obj.second.second);
 	}
-	
+
 	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
 
 	std::ofstream outFile(ConfigSlips::Path_, std::ofstream::trunc); // 使用trunc模式覆盖原文件
