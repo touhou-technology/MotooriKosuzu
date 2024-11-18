@@ -9,6 +9,7 @@ But the program needs a daemon to replace the original program with an updated o
 
 -------------
 * how use
+(I haven't written a cmake yet)
 ```bash
 git clone https://github.com/touhou-technology/MotooriKosuzu
 cd MotooriKosuzu
@@ -17,7 +18,7 @@ cmake ..
 ```
  Or in docker
 ```bash
-docker pull awalwashig/bureau
+sudo docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/bootstrap.out
 ```
 
 
