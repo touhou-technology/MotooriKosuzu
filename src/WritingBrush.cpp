@@ -193,8 +193,10 @@ void PlanPen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
 			);
-		}
-		});
+
+		}//If End;
+
+		});//END
 
 	//
 	Json::Value ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
