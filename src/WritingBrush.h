@@ -3,21 +3,7 @@
 */
 #pragma once
 #include <json/json.h>
-#include <nlohmann/json.hpp>
-#include <httplib.h>
 #include <dpp/dpp.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <cstring>
-#include <cstdlib>
-
-#include <curl/curl.h>
-
-//...
-//#include <../include/unistd.h>
 
 //配置
 class ConfigPen {

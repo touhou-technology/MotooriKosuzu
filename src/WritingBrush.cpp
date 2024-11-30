@@ -1,13 +1,17 @@
-﻿#include "WritingBrush.h"
+﻿/*
+* 这个文件是针对文本处理（也就是IO）的类似思想
+* 因为是 "笔" 嘛.
+*/
+#include "WritingBrush.h"
 #include "BambooSlips.h"
-#include "MotooriKosuzu.h"
+
+#include <httplib.h>
+#include <curl/curl.h>
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <thread>
-#include <chrono>
 #include <regex>
 
 using namespace std;
