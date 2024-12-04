@@ -1,5 +1,6 @@
 #include "MotooriKosuzu.h"
 #include "WritingBrush.h"
+#include "Voice.h"
 
 //类名就是包括该类的作用
 
@@ -10,6 +11,7 @@ void Kosuzu::Init() {
 
 Kosuzu::Kosuzu() {
 	InitPen::Init();
+	InitVoice::Init();
 }
 
 void Kosuzu::Start() {

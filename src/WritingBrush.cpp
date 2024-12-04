@@ -12,6 +12,7 @@
 #include <httplib.h>
 #include <curl/curl.h>
 
+
 //C++ 
 #include <iostream>
 #include <fstream>
@@ -53,7 +54,6 @@ Json::Value ConfigPen::ReadFileJson(string Path) {
 
 	Json::Value root;
 
-	//把文件转变为json对象
 	std::string strerr;
 
 	if (!Json::parseFromStream(ReaderBuilder, File, &root, &strerr)) {
@@ -179,14 +179,14 @@ void PlanPen::OnReady() {
 		//RobotSlips::bot->global_bulk_command_delete();
 		//(),需要添加新的解析
 		if (dpp::run_once<struct register_bot_commands>()) {
-			Json::Value ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
-			std::cout << ObjectArray.size();
-			int iter_1 = 1;
-			for (int iter_0 = 0; iter_0 != ObjectArray.size(); ++++iter_0) {
-				std::cout << ObjectArray[iter_0].asString() << ":" << ObjectArray[iter_1].asString() << std::endl;
-				RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].asString(), ObjectArray[iter_1].asString(), RobotSlips::bot->me.id));
-				++++iter_1;
-			}
+			//Json::Value ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
+			//std::cout << ObjectArray.size();
+			//int iter_1 = 1;
+			//for (int iter_0 = 0; iter_0 != ObjectArray.size(); ++++iter_0) {
+			//	std::cout << ObjectArray[iter_0].asString() << ":" << ObjectArray[iter_1].asString() << std::endl;
+			//	RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].asString(), ObjectArray[iter_1].asString(), RobotSlips::bot->me.id));
+			//	++++iter_1;
+			//}
 
 			/*コマンドを変更せずに解釈を変更してください
 			コマンド変更なのでスラッシュコマンドでは使用できません*/
@@ -209,7 +209,8 @@ void PlanPen::OnReady() {
 			);
 
 			//语言识别
-			RobotSlips::bot->global_bulk_command_create({ dpp::slashcommand("record", "Joins your voice channel and records you.", RobotSlips::bot->me.id) , dpp::slashcommand("stop", "Stops recording you.", RobotSlips::bot->me.id) });
+			RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Joins your voice channel and records you.", RobotSlips::bot->me.id));
+			RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stops recording you.", RobotSlips::bot->me.id));
 
 		}//If End;
 
