@@ -8,8 +8,8 @@
 class Kosuzu {
 public:
 	static void Init();
+	static void Start();
 	Kosuzu();
-	~Kosuzu();
 
 private:
 	static std::unique_ptr<Kosuzu> m_Kosuzu;

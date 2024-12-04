@@ -78,7 +78,11 @@
     <MultiProcNumber>9</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <MultiProcNumber>1</MultiProcNumber>
+    <MultiProcNumber>
+    </MultiProcNumber>
+    <RemoteCppCompileToolExe>g++</RemoteCppCompileToolExe>
+    <RemoteCCompileToolExe>g++</RemoteCCompileToolExe>
+    <RemoteLdToolExe>g++</RemoteLdToolExe>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <MultiProcNumber>1</MultiProcNumber>
@@ -96,6 +100,7 @@
     <ClInclude Include="src\Bookshelf.hpp" />
     <ClInclude Include="src\MotooriKosuzu.h" />
     <ClInclude Include="src\start.hpp" />
+    <ClInclude Include="src\Voice.h" />
     <ClInclude Include="src\WritingBrush.h" />
   </ItemGroup>
   <ItemGroup>
@@ -129,7 +134,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <CppLanguageStandard>c++20</CppLanguageStandard>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <LibraryDependencies>dpp;pthread;jsoncpp;curl</LibraryDependencies>

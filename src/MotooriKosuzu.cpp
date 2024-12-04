@@ -1,7 +1,5 @@
 #include "MotooriKosuzu.h"
-
 #include "WritingBrush.h"
-#include "Bookshelf.hpp"
 
 //类名就是包括该类的作用
 
@@ -11,16 +9,9 @@ void Kosuzu::Init() {
 }
 
 Kosuzu::Kosuzu() {
-	//应该最先初始化，因为其他依赖于这个
-	ConfigPen::Init();
-	HashPen::Init();
-
-	WebPen::Init();
-	//先要写什么再写什么
-	RobotPen::Init();
-	PlanPen::Init();
+	InitPen::Init();
 }
 
-Kosuzu::~Kosuzu() {
-
+void Kosuzu::Start() {
+	RobotPen::Start();
 }

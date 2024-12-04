@@ -6,6 +6,12 @@
 #include <dpp/dpp.h>
 
 //配置
+
+class InitPen {
+public:
+	static void Init();
+};
+
 class ConfigPen {
 public:
 	//Pen初始化对应的竹木简牍,从config读取
@@ -57,9 +63,14 @@ private:
 	static void ChannlConfigBookUpdate();
 };
 
+//????我也不太清楚我要做什么（）
 class LinuxPen {
 public:
 	static std::string cmd(const char* command);
 	static void update(dpp::slashcommand_t* event);
 };
 
+class HeadPen {
+public:
+
+};

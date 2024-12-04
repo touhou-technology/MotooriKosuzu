@@ -11,10 +11,6 @@ public:
 	static Json::Value ConfigJson;
 };
 
-//struct HashIllustion{
-//	dpp::snowflake ObjChannel;
-//};
-
 class HashSlips {
 public:
 	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSnowflakeStr;
@@ -38,4 +34,12 @@ public:
 	//使用
 	static std::unique_ptr<httplib::Client> Translator;
 	static std::string Token;
+};
+
+class VoiceSlips {
+public:
+	enum {
+
+	}Use;
+
 };

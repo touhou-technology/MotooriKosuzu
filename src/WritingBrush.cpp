@@ -4,10 +4,15 @@
 */
 #include "WritingBrush.h"
 #include "BambooSlips.h"
+#include "Voice.h"
+#include "Bookshelf.hpp"
 
+
+//
 #include <httplib.h>
 #include <curl/curl.h>
 
+//C++ 
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,10 +21,19 @@
 
 using namespace std;
 
+void InitPen::Init() {
+	//应该最先初始化，因为其他依赖于这个
+	ConfigPen::Init();
+	HashPen::Init();
+
+	WebPen::Init();
+	//先要写什么再写什么
+	RobotPen::Init();
+	PlanPen::Init();
+}
+
 void ConfigPen::Init() {
 	ConfigSlips::ConfigJson = ReadFileJson(ConfigSlips::Path_);
-
-	//TODO
 }
 
 //类Init御用（
@@ -31,11 +45,11 @@ Json::Value ConfigPen::ReadFileJson(string Path) {
 	ifstream File(Path);
 
 	if (!File.is_open()) {
-		cerr << "cennt open file";
+		cerr << "[ERROR]:Cennt open file";
 	}
 
 	Json::CharReaderBuilder ReaderBuilder;
-	ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会编程\uxxx
+	ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会变成\uxxx
 
 	Json::Value root;
 
@@ -43,15 +57,11 @@ Json::Value ConfigPen::ReadFileJson(string Path) {
 	std::string strerr;
 
 	if (!Json::parseFromStream(ReaderBuilder, File, &root, &strerr)) {
-		std::cerr << "json解析错误" << std::endl;
+		std::cerr << "[ERROR]:json can't read" << std::endl;
 	}
 
 	return root;
 }
-
-//Json::Value ConfigPen::GetConfigJson() {
-//	return ConfigSlips::ConfigJson;
-//}
 
 void HashPen::Init() {
 	HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
@@ -198,6 +208,9 @@ void PlanPen::OnReady() {
 				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
 			);
 
+			//语言识别
+			RobotSlips::bot->global_bulk_command_create({ dpp::slashcommand("record", "Joins your voice channel and records you.", RobotSlips::bot->me.id) , dpp::slashcommand("stop", "Stops recording you.", RobotSlips::bot->me.id) });
+
 		}//If End;
 
 		});//END
@@ -298,11 +311,39 @@ void PlanPen::Slashcommand() {
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
-}
+
+	SlashcommandHash("record", [](dpp::slashcommand_t* event)->void {
+
+
+
+		/* Check which command they ran */
+			/* Get the guild */
+		dpp::guild* g = dpp::find_guild(event->command.guild_id);
+
+		/* Attempt to connect to a voice channel, returns false if we fail to connect. */
+		if (!g->connect_member_voice(event->command.get_issuing_user().id)) {
+			event->reply("You don't seem to be in a voice channel!");
+			return;
+		}
+
+		/* Tell the user we joined their channel. */
+		event->reply("Joined your channel, now recording!");
+		
+		});
+
+	SlashcommandHash("stop", [](dpp::slashcommand_t* event)->void {
+		event->from->disconnect_voice(event->command.guild_id);
+		//fclose(fd);
+
+		event->reply("Stopped recording.");
+		});
+
+}//slashcommand end
 
 //建立哈希索引
 void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
 	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
+
 }
 
 void PlanPen::AutoComplete() {

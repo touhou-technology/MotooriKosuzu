@@ -13,5 +13,10 @@
     //  "type": "docker",
     //  "dockerImage": "mcr.microsoft.com/dotnet/sdk"
     //}
+    {
+      "name": "WSL-Ubuntu",
+      "type": "wsl",
+      "wslDistribution": "Ubuntu"
+    }
   ]
 }
