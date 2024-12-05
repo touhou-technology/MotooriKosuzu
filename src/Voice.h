@@ -3,10 +3,9 @@
 #include <whisper.h>
 
 class InitVoice {
-public: 
+public:
 	static void Init();
 };
 
 class PlanVoice {
-
 };

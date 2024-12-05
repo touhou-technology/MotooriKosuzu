@@ -42,7 +42,6 @@ public:
 	//web 翻译之类的
 	static Json::Value TranslationPen(std::string text, std::string To);
 	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
-
 };
 
 //运行需要安排的任务
@@ -72,5 +71,4 @@ public:
 
 class HeadPen {
 public:
-
 };

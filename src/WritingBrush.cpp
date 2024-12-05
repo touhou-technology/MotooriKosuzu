@@ -7,13 +7,11 @@
 #include "Voice.h"
 #include "Bookshelf.hpp"
 
-
 //
 #include <httplib.h>
 #include <curl/curl.h>
 
-
-//C++ 
+//C++
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -209,17 +207,14 @@ void PlanPen::OnReady() {
 			);
 
 			//语言识别
-			RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Joins your voice channel and records you.", RobotSlips::bot->me.id));
-			RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stops recording you.", RobotSlips::bot->me.id));
-
+			RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Join", RobotSlips::bot->me.id));
+			RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stop	s", RobotSlips::bot->me.id));
 		}//If End;
-
 		});//END
 
 	//
 	Json::Value ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
 	for (int iter = 0; iter < ObjectArray.size(); ++++ ++iter) {
-
 		dpp::snowflake  channel = ObjectArray[iter + 1].asInt64();
 		std::string To = ObjectArray[iter + 2].asString();
 
@@ -241,7 +236,6 @@ void PlanPen::Slashcommand() {
 
 		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
 		std::string To = std::get<std::string>(event->get_parameter("译至"));
-
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 
@@ -280,7 +274,6 @@ void PlanPen::Slashcommand() {
 
 			ChannlConfigBookUpdate();
 		}
-
 		});
 
 	SlashcommandHash("双方向翻訳の停止", [](dpp::slashcommand_t* event)->void {
@@ -299,14 +292,11 @@ void PlanPen::Slashcommand() {
 
 			ChannlConfigBookUpdate();
 		}
-
 		});
 
 	//update
 	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-
 		LinuxPen::update(event);
-
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -314,9 +304,6 @@ void PlanPen::Slashcommand() {
 		});
 
 	SlashcommandHash("record", [](dpp::slashcommand_t* event)->void {
-
-
-
 		/* Check which command they ran */
 			/* Get the guild */
 		dpp::guild* g = dpp::find_guild(event->command.guild_id);
@@ -329,7 +316,6 @@ void PlanPen::Slashcommand() {
 
 		/* Tell the user we joined their channel. */
 		event->reply("Joined your channel, now recording!");
-		
 		});
 
 	SlashcommandHash("stop", [](dpp::slashcommand_t* event)->void {
@@ -338,13 +324,11 @@ void PlanPen::Slashcommand() {
 
 		event->reply("Stopped recording.");
 		});
-
 }//slashcommand end
 
 //建立哈希索引
 void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
 	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
-
 }
 
 void PlanPen::AutoComplete() {
@@ -406,12 +390,10 @@ void PlanPen::Message() {
 
 		auto MessageObj = WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
 
-
 		dpp::embed ObjEmbed = dpp::embed()
 			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
 			.set_color(dpp::colors::yellow)
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
-
 
 		ObjEmbed.add_field("", std::move(MessageObj["text"].asString()));
 
@@ -421,7 +403,6 @@ void PlanPen::Message() {
 		);
 
 		ObjEmbed.set_timestamp(time(0));
-
 
 		//create to object
 		dpp::message TrText = dpp::message()
@@ -463,7 +444,6 @@ void PlanPen::Message() {
 
 			(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
 		}
-
 		});
 }
 
@@ -490,7 +470,6 @@ void PlanPen::MessageDelete() {
 		RobotSlips::bot->message_delete((*HashSlips::HashSnowflakeStr)[event.id].first, (*HashSlips::HashSnowflakeStr)[event.channel_id].first);
 
 		(*HashSlips::HashSnowflakeStr)[event.id] = std::pair<dpp::snowflake, std::string>();
-
 		});
 }
 
@@ -517,7 +496,6 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 
 	return treatment;
 }
-
 
 void PlanPen::ChannlConfigBookUpdate() {
 	Json::Value Channl;

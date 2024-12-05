@@ -16,7 +16,6 @@ Json::Value ConfigSlips::ConfigJson;
 std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSlips::HashSnowflakeStr;
 std::unique_ptr<std::unordered_map<std::string, void(*) (dpp::slashcommand_t*)>> HashSlips::SlashcommandFuntion;
 
-
 //Robot
 std::unique_ptr<dpp::cluster> RobotSlips::bot;
 dpp::message_create_t RobotSlips::ObjMsg;

@@ -1,5 +1,4 @@
 #include "Voice.h"
 
-void InitVoice::Init(){
-
+void InitVoice::Init() {
 }

@@ -12,5 +12,4 @@ public:
 
 private:
 	static std::unique_ptr<Kosuzu> m_Kosuzu;
-
 };

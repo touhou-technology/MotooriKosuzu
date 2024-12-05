@@ -142,8 +142,12 @@
       <LibraryDependencies>dpp;pthread;jsoncpp;curl</LibraryDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>ldconfig /usr/local/lib64</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
+    <RemotePreBuildEvent>
+      <Command>ldconfig /usr/local/lib64</Command>
+    </RemotePreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
