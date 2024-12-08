@@ -38,6 +38,5 @@ public:
 
 class VoiceSlips {
 public:
-	enum {
-	}Use;
+
 };

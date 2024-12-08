@@ -1,13 +1,8 @@
-#include "start.hpp"
-#include "BambooSlips.h"
+#include "MotooriKosuzu.h"
 
 int main(int argc, char** argv) {
-	Kosuzu::Init();
-
-	//debug
-	RobotSlips::bot->on_log(dpp::utility::cout_logger());
-
-	Kosuzu::Start();
+	Kosuzu MotooriKosuzu;
+	MotooriKosuzu.StartDebug().Start();
 
 	return 9;
 }

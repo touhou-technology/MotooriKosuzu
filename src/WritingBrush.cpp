@@ -75,6 +75,10 @@ void RobotPen::Start() {
 	GetBot()->start(dpp::st_wait);
 }
 
+void RobotPen::StartDebug(){
+	RobotSlips::bot->on_log(dpp::utility::cout_logger());
+}
+
 void RobotPen::work(void(*Fn)(dpp::cluster* bot)) {
 	Fn(&*RobotSlips::bot);
 }
@@ -205,10 +209,6 @@ void PlanPen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
 			);
-
-			//语言识别
-			RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Join", RobotSlips::bot->me.id));
-			RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stop	s", RobotSlips::bot->me.id));
 		}//If End;
 		});//END
 

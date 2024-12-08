@@ -99,8 +99,8 @@
   <ItemGroup>
     <ClInclude Include="src\BambooSlips.h" />
     <ClInclude Include="src\Bookshelf.hpp" />
+    <ClInclude Include="src\common.h" />
     <ClInclude Include="src\MotooriKosuzu.h" />
-    <ClInclude Include="src\start.hpp" />
     <ClInclude Include="src\Voice.h" />
     <ClInclude Include="src\WritingBrush.h" />
   </ItemGroup>

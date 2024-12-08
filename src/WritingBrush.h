@@ -30,6 +30,7 @@ class RobotPen {
 public:
 	static void Init();
 	static void Start();
+	static void StartDebug();
 	static void work(void (*Fn)(dpp::cluster* bot));
 	static dpp::cluster* GetBot();
 };
