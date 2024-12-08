@@ -3,7 +3,7 @@
 #include "Voice.h"
 
 Kosuzu::Kosuzu() {
-	InitPen::Init();
+	InitPen::Init	();
 	InitVoice::Init();
 }
 

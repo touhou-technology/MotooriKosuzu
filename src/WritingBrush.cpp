@@ -1,6 +1,7 @@
 ﻿/*
 * 这个文件是针对文本处理（也就是IO）的类似思想
 * 因为是 "笔" 嘛.
+* 其实似乎还是有点抽象了
 */
 #include "WritingBrush.h"
 #include "BambooSlips.h"
