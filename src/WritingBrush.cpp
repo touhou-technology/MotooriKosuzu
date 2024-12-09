@@ -5,7 +5,6 @@
 */
 #include "WritingBrush.h"
 #include "BambooSlips.h"
-#include "Voice.h"
 #include "Bookshelf.hpp"
 
 //
@@ -563,4 +562,41 @@ void LinuxPen::update(dpp::slashcommand_t* event) {
 		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
 
 	RobotSlips::bot.release();
+}
+
+void InitVoice::Init() {
+	S_TranslateVoiceConfig::Init();
+}
+
+void S_TranslateVoiceConfig::Init() {
+	Slashcommand();
+	Voice();
+}
+
+void S_TranslateVoiceConfig::Slashcommand() {
+	//语言识别
+	RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Join", RobotSlips::bot->me.id));
+	RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stops", RobotSlips::bot->me.id));
+}
+
+
+
+void S_TranslateVoiceConfig::Voice() {
+	RobotSlips::bot->on_voice_ready([&](const dpp::voice_ready_t& event) {
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_ready");
+
+		});
+
+	RobotSlips::bot->on_voice_receive([&](const auto& event) {
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_receive");
+
+
+
+		});//end
+
+}//PlanVoice::Voice END
+
+TranslateVoice::TranslateVoice(const Specification& Spec)
+	:m_Speci(Spec) {
+
 }
