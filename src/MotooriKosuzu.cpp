@@ -1,6 +1,5 @@
 #include "MotooriKosuzu.h"
 #include "WritingBrush.h"
-#include "Voice.h"
 
 Kosuzu::Kosuzu() {
 	InitPen::Init	();
