@@ -5,6 +5,11 @@
 #include <json/json.h>
 #include <dpp/dpp.h>
 
+//lib
+#include <httplib.h>
+#include <curl/curl.h>
+#include <whisper.h>
+
 //配置
 
 class InitPen {

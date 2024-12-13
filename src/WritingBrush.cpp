@@ -7,10 +7,6 @@
 #include "BambooSlips.h"
 #include "Bookshelf.hpp"
 
-//
-#include <httplib.h>
-#include <curl/curl.h>
-
 //C++
 #include <iostream>
 #include <fstream>
@@ -28,6 +24,7 @@ void InitPen::Init() {
 	WebPen::Init();
 	//先要写什么再写什么
 	RobotPen::Init();
+	
 	PlanPen::Init();
 }
 
@@ -315,14 +312,14 @@ void PlanPen::Slashcommand() {
 		}
 
 		/* Tell the user we joined their channel. */
-		event->reply("Joined your channel, now recording!");
+		event->reply("Joined");
 		});
 
 	SlashcommandHash("stop", [](dpp::slashcommand_t* event)->void {
 		event->from->disconnect_voice(event->command.guild_id);
 		//fclose(fd);
 
-		event->reply("Stopped recording.");
+		event->reply("Okey~");
 		});
 }//slashcommand end
 
