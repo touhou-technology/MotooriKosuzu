@@ -16,5 +16,3 @@ Kosuzu& Kosuzu::StartDebug(){
 void Kosuzu::Start() {
 	RobotPen::Start();
 }
-
-g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"ssl" -l"pthread" -l"jsoncpp" -l"curl"
