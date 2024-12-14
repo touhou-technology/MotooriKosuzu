@@ -475,6 +475,7 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 
 	std::vector<std::string> RegexStr = {
 		R"(https?://[^\s/$.?#].[^\s]*)"
+		//Discord icon
 		//R"(<:([^:]+):([^>]+)>)"
 	};
 
