@@ -61,6 +61,7 @@ public:
 	static void Message();
 	static void MessageUpdate();
 	static void MessageDelete();
+	static void Extend();
 private:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static std::vector<std::string> RegexTreatment(std::string& input);

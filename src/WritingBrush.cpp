@@ -169,6 +169,7 @@ void PlanPen::Init() {
 	Message();
 	MessageUpdate();
 	MessageDelete();
+	Extend();
 }
 
 //读取jsoncpp的
@@ -470,6 +471,10 @@ void PlanPen::MessageDelete() {
 		});
 }
 
+void PlanPen::Extend(){
+	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(ConfigPen::ReadFileJson("./Cache.json"));
+}
+
 std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
@@ -510,15 +515,15 @@ void PlanPen::ChannlConfigBookUpdate() {
 		Channl.append(Obj.second.second);
 	}
 
-	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
+	ConfigSlips::ConfigJson["HashSlips"]["channl"] = Channl;
 
-	std::ofstream outFile(ConfigSlips::Path_, std::ofstream::trunc); // 使用trunc模式覆盖原文件
+	std::ofstream outFile("./Cache.json", std::ofstream::trunc); // 使用trunc模式覆盖原文件
 	if (!outFile.is_open()) {
 		std::cerr << "Failed to open file for writing" << std::endl;
 	}
 
 	Json::StreamWriterBuilder writerBuilder;
-	std::string jsonString = Json::writeString(writerBuilder, ConfigSlips::ConfigJson);
+	std::string jsonString = Json::writeString(writerBuilder, Channl);
 	outFile << jsonString;
 	outFile.close();
 }
@@ -582,6 +587,7 @@ void S_TranslateVoiceConfig::Slashcommand() {
 void S_TranslateVoiceConfig::Voice() {
 	RobotSlips::bot->on_voice_ready([&](const dpp::voice_ready_t& event) {
 		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_ready");
+
 
 		});
 

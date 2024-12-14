@@ -107,6 +107,7 @@
     <None Include=".gitignore" />
     <None Include="config\ConfigBook.json" />
     <None Include="config\language.json" />
+    <None Include="Dockerfile" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

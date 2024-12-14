@@ -9,7 +9,7 @@ Kosuzu::Kosuzu() {
 Kosuzu& Kosuzu::StartDebug(){
 	//debug
 	RobotPen::StartDebug();
-
+	
 	return *this;
 }
 
