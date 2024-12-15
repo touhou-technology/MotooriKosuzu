@@ -237,7 +237,7 @@ void PlanPen::Slashcommand() {
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 
-		ChannlConfigBookUpdate();
+		//ChannlConfigBookUpdate();
 		});
 
 	SlashcommandHash("翻訳を双方向に開く", [](dpp::slashcommand_t* event)->void {
@@ -259,7 +259,7 @@ void PlanPen::Slashcommand() {
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 		(*HashSlips::HashSnowflakeStr)[channel] = std::pair<dpp::snowflake, std::string>(event->command.channel_id, This_channel);
 
-		ChannlConfigBookUpdate();
+		//ChannlConfigBookUpdate();
 		});
 
 	//停下翻译
@@ -270,7 +270,7 @@ void PlanPen::Slashcommand() {
 			event->reply("わかった");
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 
-			ChannlConfigBookUpdate();
+			//ChannlConfigBookUpdate();
 		}
 		});
 
@@ -288,7 +288,7 @@ void PlanPen::Slashcommand() {
 
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 
-			ChannlConfigBookUpdate();
+			//ChannlConfigBookUpdate();
 		}
 		});
 
@@ -472,7 +472,7 @@ void PlanPen::MessageDelete() {
 }
 
 void PlanPen::Extend(){
-	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(ConfigPen::ReadFileJson("./Cache.json"));
+	//ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(ConfigPen::ReadFileJson("./Cache.json"));
 }
 
 std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
