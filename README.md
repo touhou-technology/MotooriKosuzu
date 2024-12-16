@@ -12,9 +12,9 @@ But the program needs a daemon to replace the original program with an updated o
 (I haven't written a cmake yet)
 ```bash
 git clone https://github.com/touhou-technology/MotooriKosuzu
-cd MotooriKosuzu
-mkdir build && cd build
-cmake ..
+cd MotooriKosuzu/src
+g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h WritingBrush.cpp WritingBrush.h -s
+td=c++20 -l"dpp" -l"ssl" -l"pthread" -l"jsoncpp" -l"curl"
 ```
  Or in docker
 ```bash
