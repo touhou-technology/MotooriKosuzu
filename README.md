@@ -36,7 +36,7 @@ Enter the token for Discord and translation
     "Token": ""
   },
   "WebPen": {
-//Enter your token (default deepl)
+//Enter your token (deepl token(only free token))
     "Token": ""
   },
   "AutoComplete": {
@@ -67,7 +67,9 @@ Enter the token for Discord and translation
 ```
 -------
 ## Dependencies
-[deepl-python](https://github.com/DeepLcom/deepl-python)
 * [dpp](https://github.com/brainboxdotcc/DPP);
 * [cpp-httplib](https://github.com/yhirose/cpp-httplib);
 * [json](https://github.com/open-source-parsers/jsoncpp);
+* [whisper.cpp](https://github.com/ggerganov/whisper.cpp);
+* curl-dev
+* openssl-dev
