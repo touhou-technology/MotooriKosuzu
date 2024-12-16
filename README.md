@@ -12,13 +12,13 @@ But the program needs a daemon to replace the original program with an updated o
 (I haven't written a cmake yet)
 ```bash
 git clone https://github.com/touhou-technology/MotooriKosuzu
-cd MotooriKosuzu
-mkdir build && cd build
-cmake ..
+cd MotooriKosuzu/src
+g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h WritingBrush.cpp WritingBrush.h -s
+td=c++20 -l"dpp" -l"ssl" -l"pthread" -l"jsoncpp" -l"curl"
 ```
  Or in docker
 ```bash
-sudo docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/bootstrap.out
+sudo docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/Project.out
 ```
 
 
@@ -36,7 +36,7 @@ Enter the token for Discord and translation
     "Token": ""
   },
   "WebPen": {
-//Enter your token (default deepl)
+//Enter your token (deepl token(only free token))
     "Token": ""
   },
   "AutoComplete": {
@@ -67,7 +67,9 @@ Enter the token for Discord and translation
 ```
 -------
 ## Dependencies
-[deepl-python](https://github.com/DeepLcom/deepl-python)
 * [dpp](https://github.com/brainboxdotcc/DPP);
 * [cpp-httplib](https://github.com/yhirose/cpp-httplib);
 * [json](https://github.com/open-source-parsers/jsoncpp);
+* [whisper.cpp](https://github.com/ggerganov/whisper.cpp);
+* curl-dev
+* openssl-dev
