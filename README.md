@@ -18,7 +18,7 @@ cmake ..
 ```
  Or in docker
 ```bash
-sudo docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/bootstrap.out
+sudo docker run -d --name TranslationDC -v /etc/MotooriKosuzu/config/:/etc/MotooriKosuzu/config/ awalwashig/bureau /root/Project.out
 ```
 
 
