@@ -1,5 +1,5 @@
 #pragma once
-#include <json/json.h>
+//#include <json/json.h>
 #include <httplib.h>
 #include <unordered_map>
 #include <memory>
@@ -8,7 +8,7 @@
 class ConfigSlips {
 public:
 	static std::string Path_;
-	static Json::Value ConfigJson;
+	static nlohmann::json ConfigJson;
 };
 
 class HashSlips {

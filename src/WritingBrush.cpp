@@ -7,7 +7,12 @@
 #include "BambooSlips.h"
 #include "Bookshelf.hpp"
 
-//C++
+//lib
+#include <httplib.h>
+#include <curl/curl.h>
+#include <whisper.h>
+
+//STD
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -24,7 +29,7 @@ void InitPen::Init() {
 	WebPen::Init();
 	//先要写什么再写什么
 	RobotPen::Init();
-	
+
 	PlanPen::Init();
 }
 
@@ -34,28 +39,22 @@ void ConfigPen::Init() {
 
 //类Init御用（
 std::string ConfigPen::InitPen(std::string ClassName, std::string obtain) {
-	return ConfigSlips::ConfigJson[ClassName][obtain].asString();
+	return ConfigSlips::ConfigJson[ClassName][obtain].get<std::string>();
 }
 
-Json::Value ConfigPen::ReadFileJson(string Path) {
+nlohmann::json ConfigPen::ReadFileJson(std::string& Path) {
 	ifstream File(Path);
 
 	if (!File.is_open()) {
 		cerr << "[ERROR]:Cennt open file";
 	}
-
-	Json::CharReaderBuilder ReaderBuilder;
-	ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会变成\uxxx
-
-	Json::Value root;
-
-	std::string strerr;
-
-	if (!Json::parseFromStream(ReaderBuilder, File, &root, &strerr)) {
-		std::cerr << "[ERROR]:json can't read" << std::endl;
+	else {
+		nlohmann::json root;
+		File >> root;
+		return root;
 	}
 
-	return root;
+	return nlohmann::json();
 }
 
 void HashPen::Init() {
@@ -72,7 +71,7 @@ void RobotPen::Start() {
 	GetBot()->start(dpp::st_wait);
 }
 
-void RobotPen::StartDebug(){
+void RobotPen::StartDebug() {
 	RobotSlips::bot->on_log(dpp::utility::cout_logger());
 }
 
@@ -88,12 +87,12 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 }
 
-Json::Value WebPen::TranslationPen(std::string text, std::string To) {
+nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 	//处理其他事件为空的情况下
 	if (text == "") {
-		Json::Value empty;
+		nlohmann::json empty;
 		empty["translations"][0]["text"] = "";
-		empty["translations"][0]["detected_source_language"] = "Unknow";
+		empty["translations"][0]["detected_source_language"] = "empty";
 		return empty;
 	}
 
@@ -109,7 +108,7 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		struct curl_slist* headers = NULL;
 
 		std::string head = "Authorization: DeepL-Auth-Key";
-		head = head + " " + ConfigSlips::ConfigJson["WebPen"]["Token"].asCString();
+		head = head + " " + ConfigSlips::ConfigJson["WebPen"]["Token"].get<std::string>();
 
 		headers = curl_slist_append(headers, head.c_str());
 		headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -142,11 +141,8 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 
 	curl_global_cleanup();
 
-	Json::Value root;
-	Json::Reader reader;
 
-	reader.parse(readBuffer, root);
-
+	nlohmann::json root = nlohmann::json::parse(readBuffer);
 	return root;
 }
 
@@ -182,8 +178,8 @@ void PlanPen::OnReady() {
 			//std::cout << ObjectArray.size();
 			//int iter_1 = 1;
 			//for (int iter_0 = 0; iter_0 != ObjectArray.size(); ++++iter_0) {
-			//	std::cout << ObjectArray[iter_0].asString() << ":" << ObjectArray[iter_1].asString() << std::endl;
-			//	RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].asString(), ObjectArray[iter_1].asString(), RobotSlips::bot->me.id));
+			//	std::cout << ObjectArray[iter_0].get<std::string>() << ":" << ObjectArray[iter_1].get<std::string>() << std::endl;
+			//	RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].get<std::string>(), ObjectArray[iter_1].get<std::string>(), RobotSlips::bot->me.id));
 			//	++++iter_1;
 			//}
 
@@ -210,14 +206,14 @@ void PlanPen::OnReady() {
 		});//END
 
 	//
-	Json::Value ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
+	nlohmann::json ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
 	for (int iter = 0; iter < ObjectArray.size(); ++++ ++iter) {
-		dpp::snowflake  channel = ObjectArray[iter + 1].asInt64();
-		std::string To = ObjectArray[iter + 2].asString();
+		dpp::snowflake  channel = ObjectArray[iter + 1].get<dpp::snowflake>();
+		std::string To = ObjectArray[iter + 2].get<std::string>();
 
-		(*HashSlips::HashSnowflakeStr)[ObjectArray[iter].asInt64()] = std::pair<dpp::snowflake, std::string>(channel, To);
+		(*HashSlips::HashSnowflakeStr)[ObjectArray[iter].get<dpp::snowflake>()] = std::pair<dpp::snowflake, std::string>(channel, To);
 
-		std::cout << ObjectArray[iter].asInt64() << ":" << channel << ":" << To << std::endl;
+		std::cout << ObjectArray[iter].get<dpp::snowflake>() << ":" << channel << ":" << To << std::endl;
 	}
 }
 
@@ -338,7 +334,7 @@ void PlanPen::AutoComplete() {
 
 				if (uservalue == "") {
 					for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i) {
-						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].get<std::string>(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].get<std::string>()));
 					}
 					RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 					return;
@@ -346,8 +342,8 @@ void PlanPen::AutoComplete() {
 
 				//TODO
 				for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i) {
-					if (ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString().find(uservalue) != -1)
-						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+					if (ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].get<std::string>().find(uservalue) != -1)
+						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].get<std::string>(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].get<std::string>()));
 				}
 				RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 			}
@@ -392,11 +388,11 @@ void PlanPen::Message() {
 			.set_color(dpp::colors::yellow)
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
-		ObjEmbed.add_field("", std::move(MessageObj["text"].asString()));
+		ObjEmbed.add_field("", std::move(MessageObj["text"].get<std::string>()));
 
 		ObjEmbed.set_footer(
 			dpp::embed_footer()
-			.set_text(std::move("⚝:>" + MessageObj["detected_source_language"].asString()))
+			.set_text(std::move("⚝:>" + MessageObj["detected_source_language"].get<std::string>()))
 		);
 
 		ObjEmbed.set_timestamp(time(0));
@@ -450,7 +446,7 @@ void PlanPen::MessageUpdate() {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
 			return;
 
-		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString());
+		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].get<std::string>());
 
 		msg.set_reference((*HashSlips::HashSnowflakeStr)[event.msg.id].first)
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
@@ -474,8 +470,8 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
 	std::vector<std::string> RegexStr = {
-		R"(https?://[^\s/$.?#].[^\s]*)"
-		//R"(<:([^:]+):([^>]+)>)"
+		R"(https?://[^\s/$.?#].[^\s]*)",
+		R"(<:([^:]+):([^>]+)>)"
 	};
 
 	for (const std::string& Str : RegexStr) {
@@ -495,7 +491,7 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 }
 
 void PlanPen::ChannlConfigBookUpdate() {
-	Json::Value Channl;
+	nlohmann::json Channl;
 	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
 		if (Obj.first == NULL)
 			continue;
@@ -504,9 +500,9 @@ void PlanPen::ChannlConfigBookUpdate() {
 		else if (Obj.second.second == "")
 			continue;
 
-		Channl.append((uint64_t)Obj.first);
-		Channl.append((uint64_t)Obj.second.first);
-		Channl.append(Obj.second.second);
+		Channl.push_back((uint64_t)Obj.first);
+		Channl.push_back((uint64_t)Obj.second.first);
+		Channl.push_back(Obj.second.second);
 	}
 
 	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
@@ -516,9 +512,7 @@ void PlanPen::ChannlConfigBookUpdate() {
 		std::cerr << "Failed to open file for writing" << std::endl;
 	}
 
-	Json::StreamWriterBuilder writerBuilder;
-	std::string jsonString = Json::writeString(writerBuilder, ConfigSlips::ConfigJson);
-	outFile << jsonString;
+	outFile << ConfigSlips::ConfigJson.dump(4);
 	outFile.close();
 }
 

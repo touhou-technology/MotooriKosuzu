@@ -9,7 +9,7 @@
 //Config
 //debug
 std::string ConfigSlips::Path_ = "/etc/MotooriKosuzu/config/ConfigBook.json";
-Json::Value ConfigSlips::ConfigJson;
+nlohmann::json ConfigSlips::ConfigJson;
 
 //HashSlips
 //同时保存

@@ -113,7 +113,7 @@
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <LibraryDependencies>dpp;pthread;jsoncpp;curl</LibraryDependencies>
+      <LibraryDependencies>dpp;pthread;curl</LibraryDependencies>
     </Link>
     <ClCompile>
       <CppLanguageStandard>c++20</CppLanguageStandard>

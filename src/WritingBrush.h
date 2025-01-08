@@ -2,12 +2,8 @@
 * 作为书记更改
 */
 #pragma once
-#include <json/json.h>
+//#include <json/json.h>
 #include <dpp/dpp.h>
-
-//lib
-#include <httplib.h>
-#include <curl/curl.h>
 #include <whisper.h>
 
 //配置
@@ -22,7 +18,7 @@ public:
 	//Pen初始化对应的竹木简牍,从config读取
 	static void Init();
 	static std::string InitPen(std::string ClassName, std::string obtain);
-	static Json::Value ReadFileJson(std::string Path);
+	static nlohmann::json ReadFileJson(std::string& Path);
 	//static Json::Value GetConfigJson();
 };
 
@@ -46,7 +42,7 @@ public:
 	static void Init();
 
 	//web 翻译之类的
-	static Json::Value TranslationPen(std::string text, std::string To);
+	static nlohmann::json TranslationPen(std::string text, std::string To);
 	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
 };
 
@@ -101,6 +97,10 @@ public:
 	};
 
 	TranslateVoice(const Specification& Spec);
+
+	struct promise_type {
+
+	};
 
 private:
 	Specification m_Speci;
