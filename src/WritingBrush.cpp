@@ -18,6 +18,7 @@
 #include <string>
 #include <sstream>
 #include <regex>
+#include <random>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ void InitPen::Init() {
 	//先要写什么再写什么
 	RobotPen::Init();
 
-	PlanPen::Init();
+	UsePen::Init();
 }
 
 void ConfigPen::Init() {
@@ -158,7 +159,7 @@ size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::str
 	return newLength;
 }
 
-void PlanPen::Init() {
+void UsePen::Init() {
 	OnReady();
 	Slashcommand();
 	AutoComplete();
@@ -168,7 +169,7 @@ void PlanPen::Init() {
 }
 
 //读取jsoncpp的
-void PlanPen::OnReady() {
+void UsePen::OnReady() {
 	//bot on_read
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		//RobotSlips::bot->global_bulk_command_delete();
@@ -216,7 +217,7 @@ void PlanPen::OnReady() {
 	}
 }
 
-void PlanPen::Slashcommand() {
+void UsePen::Slashcommand() {
 	SlashcommandHash("翻訳の開始", [](dpp::slashcommand_t* event)->void {
 		//将数据存入哈希表
 		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
@@ -319,11 +320,11 @@ void PlanPen::Slashcommand() {
 }//slashcommand end
 
 //建立哈希索引
-void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
+void UsePen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
 	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
 }
 
-void PlanPen::AutoComplete() {
+void UsePen::AutoComplete() {
 	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
@@ -351,7 +352,7 @@ void PlanPen::AutoComplete() {
 }
 
 //这里是处理发送消息转义的
-void PlanPen::Message() {
+void UsePen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 		//debug
@@ -382,7 +383,7 @@ void PlanPen::Message() {
 
 		//set base
 		dpp::embed ObjEmbed = dpp::embed()
-			.set_color(dpp::colors::yellow)
+			.set_color(ColorPen(event.msg.guild_id, event.msg.channel_id))
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
 		//get
@@ -394,7 +395,7 @@ void PlanPen::Message() {
 				.add_field("", std::move(MessageObj["text"].get<std::string>()))
 				.set_footer(
 					dpp::embed_footer()
-					.set_text("⚝:>" + (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second + "->" + MessageObj["detected_source_language"].get<std::string>())
+					.set_text("⚝:>" + MessageObj["detected_source_language"].get<std::string>() + "->" + (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
 				).set_timestamp(time(0));
 		}
 
@@ -442,7 +443,7 @@ void PlanPen::Message() {
 }
 
 //TODO:更新用户编辑消息
-void PlanPen::MessageUpdate() {
+void UsePen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
 			return;
@@ -456,7 +457,7 @@ void PlanPen::MessageUpdate() {
 		});
 }
 
-void PlanPen::MessageDelete() {
+void UsePen::MessageDelete() {
 	RobotSlips::bot->on_message_delete([](const dpp::message_delete_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.id].first == 0)
 			return;
@@ -467,7 +468,7 @@ void PlanPen::MessageDelete() {
 		});
 }
 
-std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
+std::vector<std::string> UsePen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
 	std::vector<std::string> RegexStr = {
@@ -491,7 +492,14 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-void PlanPen::ChannlConfigBookUpdate() {
+uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id){
+	std::mt19937 rng(static_cast<uint32_t>(guild_id));
+	rng.discard(channel_id % 100);
+	std::uniform_int_distribution<std::mt19937::result_type> disk(0, 0xFFFFFF);
+	return disk(rng);
+}
+
+void UsePen::ChannlConfigBookUpdate() {
 	nlohmann::json Channl;
 	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
 		if (Obj.first == NULL)
@@ -590,5 +598,9 @@ void S_TranslateVoiceConfig::Voice() {
 
 TranslateVoice::TranslateVoice(const Specification& Spec)
 	:m_Speci(Spec) {
+
+}
+
+TranslateVoice::TranslateVoice(){
 
 }

@@ -2,9 +2,8 @@
 * 作为书记更改
 */
 #pragma once
-//#include <json/json.h>
 #include <dpp/dpp.h>
-#include <whisper.h>
+#include <coroutine>
 
 //配置
 
@@ -47,7 +46,7 @@ public:
 };
 
 //运行需要安排的任务
-class PlanPen {
+class UsePen {
 public:
 	static void Init();
 
@@ -61,6 +60,7 @@ private:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 	static std::vector<std::string> RegexTreatment(std::string& input);
 
+	static uint32_t ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id);
 	static void ChannlConfigBookUpdate();
 };
 
@@ -98,10 +98,25 @@ public:
 
 	TranslateVoice(const Specification& Spec);
 
-	struct promise_type {
+	TranslateVoice();
 
+	struct promise_type {
+		std::suspend_never initial_suspend() {
+			return{};
+		}
+
+		std::suspend_never final_suspend() noexcept {
+			return{};
+		}
+
+		TranslateVoice get_return_object() {
+			return TranslateVoice{};
+		}
+
+		void return_void() {};
 	};
 
 private:
 	Specification m_Speci;
+	std::coroutine_handle<promise_type> handle;
 };
