@@ -182,7 +182,6 @@ void PlanPen::OnReady() {
 			//	RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].get<std::string>(), ObjectArray[iter_1].get<std::string>(), RobotSlips::bot->me.id));
 			//	++++iter_1;
 			//}
-
 			/*コマンドを変更せずに解釈を変更してください
 			コマンド変更なのでスラッシュコマンドでは使用できません*/
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の開始", "コマンドで使用されるチャネルメッセージから指定されたチャネルと言語への翻訳", RobotSlips::bot->me.id)
@@ -381,23 +380,24 @@ void PlanPen::Message() {
 			else
 				ss << ch;
 
-		auto MessageObj = WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
-
+		//set base
 		dpp::embed ObjEmbed = dpp::embed()
-			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
 			.set_color(dpp::colors::yellow)
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
-		ObjEmbed.add_field("", std::move(MessageObj["text"].get<std::string>()));
+		//get
+		auto MessageObj = WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
 
-		ObjEmbed.set_footer(
-			dpp::embed_footer()
-			.set_text(std::move("⚝:>" + MessageObj["detected_source_language"].get<std::string>()))
-		);
+		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+			ObjEmbed
+				.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
+				.add_field("", std::move(MessageObj["text"].get<std::string>()))
+				.set_footer(
+					dpp::embed_footer()
+					.set_text("⚝:>" + (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second + "->" + MessageObj["detected_source_language"].get<std::string>())
+				).set_timestamp(time(0));
+		}
 
-		ObjEmbed.set_timestamp(time(0));
-
-		//create to object
 		dpp::message TrText = dpp::message()
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first)
 			.add_embed(std::move(ObjEmbed));
@@ -415,7 +415,6 @@ void PlanPen::Message() {
 		//附件
 		for (const auto& obj : data["attachments"]) {
 			TrText.content += obj["url"];
-			//???
 			RobotSlips::bot->message_create(dpp::message(obj["url"].get<std::string>()).set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
 
@@ -424,6 +423,8 @@ void PlanPen::Message() {
 			RobotSlips::bot->message_create(dpp::message(temp)
 				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
+
+		//std::cout << event.msg << std::endl;
 
 		//建立对等链接
 		RobotSlips::ObjMsg = event;
