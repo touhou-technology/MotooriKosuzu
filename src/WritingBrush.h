@@ -71,34 +71,19 @@ public:
 	static void update(dpp::slashcommand_t* event);
 };
 
-class HeadPen {
-public:
-};
-
 class InitVoice {
 public:
 	static void Init();
 };
 
-class S_TranslateVoiceConfig {
-public:
-	static void Init();
-
-
-	static void Slashcommand();
-	static void Voice();
-};
-
+//static(Not Pen)之后考虑移出
 class TranslateVoice {
 public:
 	struct Specification {
 		std::string language;
 		std::string model;
+		dpp::snowflake ID;
 	};
-
-	TranslateVoice(const Specification& Spec);
-
-	TranslateVoice();
 
 	struct promise_type {
 		std::suspend_never initial_suspend() {
@@ -109,14 +94,31 @@ public:
 			return{};
 		}
 
+		std::suspend_always await() {
+
+		}
+
 		TranslateVoice get_return_object() {
-			return TranslateVoice{};
+			return TranslateVoice{ std::coroutine_handle<promise_type>::from_promise(*this) };
 		}
 
 		void return_void() {};
 	};
 
+	TranslateVoice(std::coroutine_handle<promise_type> handle_) :handle(handle_) {};
+
+	void Send(const dpp::voice_receive_t& event);
+
 private:
 	Specification m_Speci;
 	std::coroutine_handle<promise_type> handle;
+};
+
+class S_TranslateVoiceConfig {
+public:
+	static void Init();
+
+private:
+	static void Slashcommand();
+	static void Voice();
 };

@@ -23,3 +23,6 @@ dpp::message_create_t RobotSlips::ObjMsg;
 //Web
 std::unique_ptr<httplib::Client> WebSlips::Translator;
 std::string WebSlips::Token = "";
+
+//VoiceSlips
+std::unique_ptr<TranslateVoice> VoiceSlips::S_TranslateVoice;
