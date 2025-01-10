@@ -7,8 +7,23 @@ void InitVoice::Init() {
 }
 
 void TranslateVoice::send(const dpp::voice_receive_t& event) {
-	//co_yield event;
+	//std::move(event.audio_data);
 	handle.resume();
+}
+
+char* TranslateVoice::get() {
+	return handle.promise().return_data_;
+}
+
+void TranslateVoice::reset_handle(std::coroutine_handle<promise_type> new_handle) {
+	//std::lock_guard<std::mutex> lock(handle_mutex); 
+	if (handle) { handle.destroy(); } 
+	handle = new_handle;
+}
+
+void TranslateVoice::test_move_next() {
+	if (handle && !handle.done()) { handle.resume(); }
+	else { std::cerr << "Invalid coroutine handle or coroutine already done." << std::endl; }
 }
 
 TranslateVoice::Specification& TranslateVoice::Specification_Reset() {
@@ -24,6 +39,13 @@ void S_TranslateVoiceConfig::Init() {
 	Slashcommand();
 	Voice();
 	AutoComplete();
+}
+
+TranslateVoice A() {
+	co_yield "1";
+	co_yield "2";
+	co_yield "3";
+	co_return "0";
 }
 
 void S_TranslateVoiceConfig::Slashcommand() {
@@ -49,13 +71,16 @@ void S_TranslateVoiceConfig::Slashcommand() {
 			return;
 		}
 
-		//TranslateVoice TranslateVoiceObj{};
+		VoiceSlips::S_TranslateVoice.reset(std::move(&TranslateVoice(A())));
 
-		//TranslateVoice::Specification Specification{ "","",1 };
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
 
-		//TranslateVoiceObj.Specification_Reset(Specification);
+		VoiceSlips::S_TranslateVoice->test_move_next();
 
-		//VoiceSlips::S_TranslateVoice.reset(std::move(&TranslateVoiceObj));
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
+
+
 
 		event->reply("Okey~");
 		});//End
@@ -63,7 +88,8 @@ void S_TranslateVoiceConfig::Slashcommand() {
 	UsePen::SlashcommandHash("音声入力終了", [](dpp::slashcommand_t* event)->void {
 		event->from->disconnect_voice(event->command.guild_id);
 
-		VoiceSlips::S_TranslateVoice.reset();
+		//VoiceSlips::S_TranslateVoice.reset();
+
 
 		event->reply("Okey~");
 		});//End
@@ -78,7 +104,6 @@ void S_TranslateVoiceConfig::Voice() {
 		});
 
 	RobotSlips::bot->on_voice_receive([&](const dpp::voice_receive_t& event) {
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_receive");
 
 		VoiceSlips::S_TranslateVoice->send(event);
 
