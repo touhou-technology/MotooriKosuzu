@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <dpp/dpp.h>
+#include "Dictation.h"
 
 class ConfigSlips {
 public:

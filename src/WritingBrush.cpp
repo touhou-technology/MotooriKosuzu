@@ -117,7 +117,7 @@ nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 
 		std::string postData = R"({"text": [")" + text + R"("], "target_lang": ")" + To + R"("})";
 
-		std::cout << postData << std::endl;
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), postData);
 
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
 
@@ -133,7 +133,8 @@ nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 		}
 		else {
 			// 输出响应数据
-			std::cout << "Response: " << readBuffer << std::endl;
+			RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), readBuffer);
+
 		}
 
 		curl_slist_free_all(headers);
@@ -174,7 +175,7 @@ void UsePen::OnReady() {
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
 		//RobotSlips::bot->global_bulk_command_delete();
 		//(),需要添加新的解析
-		if (dpp::run_once<struct register_bot_commands>()) {
+		//if (dpp::run_once<struct register_bot_commands>()) {
 			//Json::Value ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
 			//std::cout << ObjectArray.size();
 			//int iter_1 = 1;
@@ -202,7 +203,7 @@ void UsePen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
 			);
-		}//If End;
+		//}//If End;
 		});//END
 
 	//
@@ -295,28 +296,6 @@ void UsePen::Slashcommand() {
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
-
-	SlashcommandHash("record", [](dpp::slashcommand_t* event)->void {
-		/* Check which command they ran */
-			/* Get the guild */
-		dpp::guild* g = dpp::find_guild(event->command.guild_id);
-
-		/* Attempt to connect to a voice channel, returns false if we fail to connect. */
-		if (!g->connect_member_voice(event->command.get_issuing_user().id)) {
-			event->reply("You don't seem to be in a voice channel!");
-			return;
-		}
-
-		/* Tell the user we joined their channel. */
-		event->reply("Joined");
-		});
-
-	SlashcommandHash("stop", [](dpp::slashcommand_t* event)->void {
-		event->from->disconnect_voice(event->command.guild_id);
-		//fclose(fd);
-
-		event->reply("Okey~");
-		});
 }//slashcommand end
 
 //建立哈希索引
@@ -326,6 +305,12 @@ void UsePen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcomm
 
 void UsePen::AutoComplete() {
 	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
+
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), event.name);
+
+		if (event.name != "翻訳を双方向に開く" && event.name != "翻訳の開始")
+			return;
+
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
 		for (auto& opt : event.options) {
@@ -356,7 +341,7 @@ void UsePen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 		//debug
-		std::cout << event.msg.to_json() << std::endl;
+		//std::cout << event.msg.to_json() << std::endl;
 
 		//单向翻译监测是否有
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
@@ -564,40 +549,3 @@ void LinuxPen::update(dpp::slashcommand_t* event) {
 	RobotSlips::bot.release();
 }
 
-void InitVoice::Init() {
-	S_TranslateVoiceConfig::Init();
-}
-
-void TranslateVoice::Send(const dpp::voice_receive_t& event){
-	
-	handle.resume();
-}
-
-void S_TranslateVoiceConfig::Init() {
-	Slashcommand();
-	Voice();
-}
-
-void S_TranslateVoiceConfig::Slashcommand() {
-	//语言识别
-	RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Join", RobotSlips::bot->me.id));
-	RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stops", RobotSlips::bot->me.id));
-	//other
-	RobotSlips::bot->global_command_create(dpp::slashcommand("launch", "Stops", RobotSlips::bot->me.id));
-}
-
-void S_TranslateVoiceConfig::Voice() {
-	RobotSlips::bot->on_voice_ready([&](const dpp::voice_ready_t& event) {
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_ready");
-		RobotSlips::bot->message_create(dpp::message("voice_ready").set_channel_id(event.voice_channel_id));
-
-		});
-
-	RobotSlips::bot->on_voice_receive([&](const dpp::voice_receive_t& event) {
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_receive");
-
-		VoiceSlips::S_TranslateVoice->Send(event);
-
-		});//end
-
-}//PlanVoice::Voice END

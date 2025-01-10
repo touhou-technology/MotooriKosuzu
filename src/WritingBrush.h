@@ -56,8 +56,9 @@ public:
 	static void Message();
 	static void MessageUpdate();
 	static void MessageDelete();
-private:
+public:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
+private:
 	static std::vector<std::string> RegexTreatment(std::string& input);
 
 	static uint32_t ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id);
@@ -69,56 +70,4 @@ class LinuxPen {
 public:
 	static std::string cmd(const char* command);
 	static void update(dpp::slashcommand_t* event);
-};
-
-class InitVoice {
-public:
-	static void Init();
-};
-
-//static(Not Pen)之后考虑移出
-class TranslateVoice {
-public:
-	struct Specification {
-		std::string language;
-		std::string model;
-		dpp::snowflake ID;
-	};
-
-	struct promise_type {
-		std::suspend_never initial_suspend() {
-			return{};
-		}
-
-		std::suspend_never final_suspend() noexcept {
-			return{};
-		}
-
-		std::suspend_always await() {
-
-		}
-
-		TranslateVoice get_return_object() {
-			return TranslateVoice{ std::coroutine_handle<promise_type>::from_promise(*this) };
-		}
-
-		void return_void() {};
-	};
-
-	TranslateVoice(std::coroutine_handle<promise_type> handle_) :handle(handle_) {};
-
-	void Send(const dpp::voice_receive_t& event);
-
-private:
-	Specification m_Speci;
-	std::coroutine_handle<promise_type> handle;
-};
-
-class S_TranslateVoiceConfig {
-public:
-	static void Init();
-
-private:
-	static void Slashcommand();
-	static void Voice();
 };

@@ -1,8 +1,10 @@
 #include "MotooriKosuzu.h"
 #include "WritingBrush.h"
+#include "Dictation.h"
 
+//×¢ÒâË³Ðò
 Kosuzu::Kosuzu() {
-	InitPen::Init	();
+	InitPen::Init();
 	InitVoice::Init();
 }
 
