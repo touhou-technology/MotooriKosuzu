@@ -61,13 +61,6 @@ public:
 private:
 	static std::vector<std::string> RegexTreatment(std::string& input);
 
-	static uint32_t ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id);
+	inline static uint32_t ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id);
 	static void ChannlConfigBookUpdate();
-};
-
-//????我也不太清楚我要做什么（）
-class LinuxPen {
-public:
-	static std::string cmd(const char* command);
-	static void update(dpp::slashcommand_t* event);
 };

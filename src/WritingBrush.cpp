@@ -88,6 +88,7 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 }
 
+[[nodiscard]]
 nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 	//处理其他事件为空的情况下
 	if (text == "") {
@@ -148,6 +149,7 @@ nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 	return root;
 }
 
+[[nodiscard]]
 size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {
 	size_t newLength = size * nmemb;
 	try {
@@ -200,9 +202,7 @@ void UsePen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
-			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
-				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
-			);
+			);//End
 		//}//If End;
 		});//END
 
@@ -286,11 +286,6 @@ void UsePen::Slashcommand() {
 
 			ChannlConfigBookUpdate();
 		}
-		});
-
-	//update
-	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		LinuxPen::update(event);
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
@@ -477,7 +472,8 @@ std::vector<std::string> UsePen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id){
+[[nodiscard]]
+inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id){
 	std::mt19937 rng(static_cast<uint32_t>(guild_id));
 	rng.discard(channel_id % 100);
 	std::uniform_int_distribution<std::mt19937::result_type> disk(0, 0xFFFFFF);
@@ -508,44 +504,5 @@ void UsePen::ChannlConfigBookUpdate() {
 
 	outFile << ConfigSlips::ConfigJson.dump(4);
 	outFile.close();
-}
-
-std::string LinuxPen::cmd(const char* command) {
-	char result[10240] = { 0 };
-	char buf[10240] = { 0 };
-
-	FILE* fp = NULL;
-	if ((fp = popen(command, "r")) == NULL) {
-		printf("popen error!\n");
-		return "[error]";
-	}
-	while (fgets(buf, sizeof(buf), fp)) {
-		strcat(result, buf);
-	}
-
-	return result;
-}
-
-void LinuxPen::update(dpp::slashcommand_t* event) {
-	event->reply("更新を試みる");
-
-	if (!32768 == system("cd ./MotooriKosuzu;git pull"))
-		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-	else
-		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	if (!32768 == system("git clone https://github.com/touhou-technology/MotooriKosuzu"))
-		RobotPen::GetBot()->message_create(dpp::message("Github倉庫のクローニング").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	RobotPen::GetBot()->message_create(dpp::message("再コンパイルの開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	//docker
-	if (!32768 == system(R"(cd /root/MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -l"curl" -o Project.out)")) {
-		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-	}
-	else
-		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	RobotSlips::bot.release();
 }
 

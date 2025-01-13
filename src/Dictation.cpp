@@ -41,13 +41,6 @@ void S_TranslateVoiceConfig::Init() {
 	AutoComplete();
 }
 
-TranslateVoice A() {
-	co_yield "1";
-	co_yield "2";
-	co_yield "3";
-	co_return "0";
-}
-
 void S_TranslateVoiceConfig::Slashcommand() {
 	//语言识别
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
@@ -71,16 +64,18 @@ void S_TranslateVoiceConfig::Slashcommand() {
 			return;
 		}
 
-		VoiceSlips::S_TranslateVoice.reset(std::move(&TranslateVoice(A())));
-
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
-
-		VoiceSlips::S_TranslateVoice->test_move_next();
-
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
 
 
+		//VoiceSlips::S_TranslateVoice.reset(std::move(&TranslateVoice([]() constexpr {};)));
+
+		//RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
+		//RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
+
+		//VoiceSlips::S_TranslateVoice->test_move_next();
+
+		//RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), VoiceSlips::S_TranslateVoice->get());
+
+		
 
 		event->reply("Okey~");
 		});//End
@@ -93,7 +88,6 @@ void S_TranslateVoiceConfig::Slashcommand() {
 
 		event->reply("Okey~");
 		});//End
-
 }//End Slahcommd
 
 void S_TranslateVoiceConfig::Voice() {
