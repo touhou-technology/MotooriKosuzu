@@ -93,6 +93,10 @@ void TranslateVoice::DelUser(dpp::snowflake obj){
 	m_object[obj] = std::move(user_params());
 }
 
+void TranslateVoice::SetFlag(){
+	flag = false;
+}
+
 TranslateVoice::TranslateVoice(){
 
 }
