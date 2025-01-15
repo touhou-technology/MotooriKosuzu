@@ -44,9 +44,7 @@ void S_TranslateVoiceConfig::Voice() {
 		});
 
 	RobotSlips::bot->on_voice_receive([&](const dpp::voice_receive_t& event) {
-		VoiceSlips::S_TranslateVoice->SetFlag();
-
-
+		VoiceSlips::S_TranslateVoice->SendVC(event);
 		});//end
 
 }
@@ -90,13 +88,32 @@ void TranslateVoice::AddUser(dpp::snowflake obj, user_params&& params){
 }
 
 void TranslateVoice::DelUser(dpp::snowflake obj){
-	m_object[obj] = std::move(user_params());
+	fclose(m_object[obj].record);
+	m_object.erase(obj);
+}
+
+//处理语言
+void TranslateVoice::SendVC(const dpp::voice_receive_t& event){
+
 }
 
 void TranslateVoice::SetFlag(){
 	flag = false;
 }
 
-TranslateVoice::TranslateVoice(){
+void TranslateVoice::Understand() {
+	for (auto obj: m_object) {
 
+	}
+}
+
+TranslateVoice::TranslateVoice(){
+	std::thread([&] {
+		static auto a = 9;
+		while (1) {
+			Understand();
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		}
+
+		}).detach();//End
 }

@@ -197,6 +197,7 @@ void UsePen::OnReady() {
 				.add_option(dpp::command_option(dpp::co_string, "language", "", true).set_auto_complete(true))
 				.add_option(dpp::command_option(dpp::co_string, "model", "", true).set_auto_complete(true))
 				.add_option(dpp::command_option(dpp::co_user, "ID", "", true))
+				.add_option(dpp::command_option(dpp::co_string, "time", "", true))
 			);
 			//other
 			RobotSlips::bot->global_command_create(dpp::slashcommand("音声入力終了", "结束", RobotSlips::bot->me.id));
