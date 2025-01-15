@@ -44,6 +44,8 @@ void S_TranslateVoiceConfig::Voice() {
 		});
 
 	RobotSlips::bot->on_voice_receive([&](const dpp::voice_receive_t& event) {
+		VoiceSlips::S_TranslateVoice->SetFlag();
+
 
 		});//end
 
@@ -78,3 +80,19 @@ void S_TranslateVoiceConfig::AutoComplete() {
 		});//End
 }
 //PlanVoice::Voice END
+
+void TranslateVoice::AddUser(dpp::snowflake obj, user_params params){
+	m_object[obj] = params;
+}
+
+void TranslateVoice::AddUser(dpp::snowflake obj, user_params&& params){
+	m_object[obj] = std::move(params);
+}
+
+void TranslateVoice::DelUser(dpp::snowflake obj){
+	m_object[obj] = std::move(user_params());
+}
+
+TranslateVoice::TranslateVoice(){
+
+}
