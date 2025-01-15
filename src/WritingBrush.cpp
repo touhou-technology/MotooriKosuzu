@@ -163,7 +163,7 @@ size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::str
 }
 
 void UsePen::Init() {
-	OnReady();
+	//OnReady();
 	Slashcommand();
 	AutoComplete();
 	Message();
@@ -175,17 +175,7 @@ void UsePen::Init() {
 void UsePen::OnReady() {
 	//bot on_read
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
-		//RobotSlips::bot->global_bulk_command_delete();
-		//(),需要添加新的解析
 		//if (dpp::run_once<struct register_bot_commands>()) {
-			//Json::Value ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
-			//std::cout << ObjectArray.size();
-			//int iter_1 = 1;
-			//for (int iter_0 = 0; iter_0 != ObjectArray.size(); ++++iter_0) {
-			//	std::cout << ObjectArray[iter_0].get<std::string>() << ":" << ObjectArray[iter_1].get<std::string>() << std::endl;
-			//	RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].get<std::string>(), ObjectArray[iter_1].get<std::string>(), RobotSlips::bot->me.id));
-			//	++++iter_1;
-			//}
 			/*コマンドを変更せずに解釈を変更してください
 			コマンド変更なのでスラッシュコマンドでは使用できません*/
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の開始", "コマンドで使用されるチャネルメッセージから指定されたチャネルと言語への翻訳", RobotSlips::bot->me.id)
@@ -202,7 +192,18 @@ void UsePen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
-			);//End
+			RobotSlips::bot->global_command_create(
+				dpp::slashcommand("音声入力開始", "同声传译(ASR)", RobotSlips::bot->me.id)
+				.add_option(dpp::command_option(dpp::co_string, "language", "", true).set_auto_complete(true))
+				.add_option(dpp::command_option(dpp::co_string, "model", "", true).set_auto_complete(true))
+				.add_option(dpp::command_option(dpp::co_user, "ID", "", true))
+			);
+			//other
+			RobotSlips::bot->global_command_create(dpp::slashcommand("音声入力終了", "结束", RobotSlips::bot->me.id));
+			//other
+			RobotSlips::bot->global_command_create(dpp::slashcommand("launch", "Launch Realms of Wumpus", RobotSlips::bot->me.id));
+
+			//);//End
 		//}//If End;
 		});//END
 
