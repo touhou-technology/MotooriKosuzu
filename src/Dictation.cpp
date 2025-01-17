@@ -13,6 +13,8 @@ void S_TranslateVoiceConfig::Init() {
 }
 
 void S_TranslateVoiceConfig::Slashcommand() {
+
+
 	UsePen::SlashcommandHash("音声入力開始", [](dpp::slashcommand_t* event)->void {
 		dpp::guild* g = dpp::find_guild(event->command.guild_id);
 
@@ -22,15 +24,15 @@ void S_TranslateVoiceConfig::Slashcommand() {
 			return;
 		}
 
+		VoiceSlips::S_TranslateVoice->test_add_instance();
+
 		event->reply("Okey~");
 		});//End
 
 	UsePen::SlashcommandHash("音声入力終了", [](dpp::slashcommand_t* event)->void {
 		event->from->disconnect_voice(event->command.guild_id);
 
-		//VoiceSlips::S_TranslateVoice.reset();
-		RobotSlips::bot->global_bulk_command_delete();
-
+		VoiceSlips::S_TranslateVoice.reset();
 
 		event->reply("Okey~");
 		});//End
@@ -79,41 +81,60 @@ void S_TranslateVoiceConfig::AutoComplete() {
 }
 //PlanVoice::Voice END
 
-void TranslateVoice::AddUser(dpp::snowflake obj, user_params params){
-	m_object[obj] = params;
+void TranslateVoice::AddUser(user_params params) {
+	params.vc_record = fopen(std::to_string(params.ID).c_str(), "wb");
+	m_object[params.ID] = params;
 }
 
-void TranslateVoice::AddUser(dpp::snowflake obj, user_params&& params){
-	m_object[obj] = std::move(params);
-}
-
-void TranslateVoice::DelUser(dpp::snowflake obj){
-	fclose(m_object[obj].record);
+void TranslateVoice::DelUser(dpp::snowflake obj) {
+	fclose(m_object[obj].vc_record);
 	m_object.erase(obj);
 }
 
 //处理语言
-void TranslateVoice::SendVC(const dpp::voice_receive_t& event){
+void TranslateVoice::SendVC(const dpp::voice_receive_t& event) {
+	if (m_object[event.user_id].ID != event.user_id)
+		return;
 
+	fwrite((char*)event.audio, 1, event.audio_size, m_object[event.user_id].vc_record);
 }
 
-void TranslateVoice::SetFlag(){
-	flag = false;
+void TranslateVoice::ResetFlag(){
+	
 }
 
-void TranslateVoice::Understand() {
-	for (auto obj: m_object) {
+void TranslateVoice::Suitable() {
+	for (auto object : m_object) {
+		object.second.flag += time;
+		if (object.second.flag < object.second.time) {
+			return;
+		}
 
+		object.second.flag = std::chrono::milliseconds(0);	
+
+		std::thread([&] {
+			Understand(object.second);
+			}).detach();
 	}
 }
 
-TranslateVoice::TranslateVoice(){
-	std::thread([&] {
-		static auto a = 9;
+void TranslateVoice::Understand(user_params& user) {
+	//debug
+	std::cout << "开始处理" << std::endl;
+}
+
+TranslateVoice::TranslateVoice() {
+	a = std::thread([&] {
 		while (1) {
-			Understand();
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+			Suitable();
+			std::this_thread::sleep_for(time);
 		}
 
-		}).detach();//End
+		});//End
+	a.detach();
+}
+
+void TranslateVoice::test_add_instance(){
+	TranslateVoice::user_params a;
+	VoiceSlips::S_TranslateVoice->AddUser(a);
 }
