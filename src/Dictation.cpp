@@ -181,19 +181,22 @@ void TranslateVoice::SendVC(const dpp::voice_receive_t& event) {
 	if (m_object[event.user_id].id != event.user_id || (&m_object[event.user_id]) == nullptr || event.user_id == 0)
 		return;
 
-	std::cout << m_object[event.user_id].id << "\n" << event.user_id << std::endl;
+	VoiceSlips::S_TranslateVoice->ResetFlag();
 
-	Suitable();
-
-	//fwrite((char*)event.audio, 1, event.audio_size, m_object[event.user_id].vc_record);
+	fwrite((char*)event.audio, 1, event.audio_size, m_object[event.user_id].vc_record);
 }
 
 void TranslateVoice::ResetFlag() {
-
+	for (auto& object : m_object) {
+		object.second.flag = std::chrono::milliseconds(0);
+	}
 }
 
 void TranslateVoice::Suitable() {
-	for (auto object : m_object) {
+
+	std::cout << "ping" << std::endl;
+
+	for (auto& object : m_object) {
 		object.second.flag += time;
 		if (object.second.flag < object.second.time) {
 			return;
@@ -210,20 +213,21 @@ void TranslateVoice::Suitable() {
 void TranslateVoice::Understand(user_params& user) {
 	//debug
 	std::cout << "开始处理" << std::endl;
+
+
 }
 
 TranslateVoice::TranslateVoice() {
-	a = std::thread([&] {
+	std::thread([&] {
 		while (1) {
+			if (VoiceSlips::S_TranslateVoice == nullptr) {
+				std::cout << "终止" << std::endl;
+				return;
+			}
+
 			Suitable();
 			std::this_thread::sleep_for(time);
 		}
 
-		});//End
-	a.detach();
-}
-
-void TranslateVoice::test_add_instance() {
-	TranslateVoice::user_params a;
-	VoiceSlips::S_TranslateVoice->AddUser(a);
+		}).detach();
 }

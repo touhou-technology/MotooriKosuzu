@@ -29,7 +29,7 @@ public:
 		FILE* vc_record;
 	private:
 		friend TranslateVoice;
-		std::chrono::milliseconds flag;
+		std::chrono::milliseconds flag = std::chrono::milliseconds(0);
 	};
 public:
 	//kay -> user_params
@@ -45,16 +45,9 @@ public:
 
 public:
 	TranslateVoice();
-
-	//debug
-	void test_add_instance();
-public:
-	
-
 private:
-	std::unordered_map <dpp::snowflake, user_params> m_object;
+	std::unordered_map<dpp::snowflake, user_params> m_object;
 	//thread
 	std::chrono::milliseconds time = std::chrono::milliseconds(500);
-	std::thread a;
 };
 
