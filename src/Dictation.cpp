@@ -25,6 +25,7 @@ void S_TranslateVoiceConfig::OnReady() {
 				.add_option(dpp::command_option(dpp::co_string, "language", "设置语言", true).set_auto_complete(true))
 				.add_option(dpp::command_option(dpp::co_string, "model", "设置模型", true).set_auto_complete(true))
 				.add_option(dpp::command_option(dpp::co_user, "id", "选择用户(Obj)", true))
+				.add_option(dpp::command_option(dpp::co_channel, "channel", "选择输出(Obj)", true))
 				.add_option(dpp::command_option(dpp::co_number, "time", "设置时间(milliseconds)"))
 			);
 			//other
@@ -44,7 +45,6 @@ void S_TranslateVoiceConfig::Slashcommand() {
 		}
 
 		VoiceSlips::S_TranslateVoice.reset(new TranslateVoice());
-
 		event->reply("Okey~");
 		});
 
@@ -58,7 +58,7 @@ void S_TranslateVoiceConfig::Slashcommand() {
 		TranslateVoice::user_params params;
 
 		for (auto obj : std::get<dpp::command_interaction>(event->command.data).options) {
-				
+
 			std::cout << obj.name << std::endl;
 
 			if (obj.name == "language") {
@@ -71,6 +71,10 @@ void S_TranslateVoiceConfig::Slashcommand() {
 
 			if (obj.name == "id") {
 				params.id = std::get<dpp::snowflake>(obj.value);
+			}
+
+			if (obj.name == "channel") {
+				VoiceSlips::S_TranslateVoice->SetCout(std::get<dpp::snowflake>(obj.value));
 			}
 
 			if (obj.name == "time") {
@@ -166,13 +170,17 @@ void S_TranslateVoiceConfig::AutoComplete() {
 //PlanVoice::Voice END
 
 void TranslateVoice::AddUser(user_params params) {
-	params.vc_record = fopen(std::to_string(params.id).c_str(), "wb");
+	params.vc_record = fopen((std::to_string(params.id) + ".pcm").c_str(), "wb");
 	m_object[params.id] = params;
 }
 
 void TranslateVoice::DelUser(dpp::snowflake obj) {
 	fclose(m_object[obj].vc_record);
 	m_object.erase(obj);
+}
+
+void TranslateVoice::SetCout(dpp::snowflake obj){
+	ObjCout = obj;
 }
 
 //处理语言
@@ -190,11 +198,13 @@ void TranslateVoice::ResetFlag() {
 	for (auto& object : m_object) {
 		object.second.flag = std::chrono::milliseconds(0);
 	}
+
+	flag = true;
 }
 
 void TranslateVoice::Suitable() {
 
-	std::cout << "ping" << std::endl;
+	//std::cout << "ping" << std::endl;
 
 	for (auto& object : m_object) {
 		object.second.flag += time;
@@ -212,13 +222,90 @@ void TranslateVoice::Suitable() {
 
 void TranslateVoice::Understand(user_params& user) {
 	//debug
-	std::cout << "开始处理" << std::endl;
+	if (flag) {
+		flag = false;
+	}
+	else {
+		return;
+	}
 
+	std::string FileName = std::to_string(user.id);
 
+	fclose(user.vc_record);
+	system(("mv ./" + FileName + ".pcm " + FileName + "tmp.pcm").c_str());
+	user.vc_record = fopen((std::to_string(user.id) + ".pcm").c_str(), "wb");
+
+	system(("ffmpeg -f s16le -ar 96000 -i ./" + FileName + +"tmp.pcm -ac 2 -ar 16000 " + FileName + ".wav -y").c_str());
+
+	std::string ASR = performInference(("./" + FileName + ".wav").c_str())["text"].get<std::string>();
+
+	std::cout << ASR << std::endl;
+
+	RobotSlips::bot->message_create(dpp::message(ASR).set_channel_id(ObjCout));
+}
+
+size_t TranslateVoice::WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+	((std::string*)userp)->append((char*)contents, size * nmemb);
+	return size * nmemb;
+}
+
+nlohmann::json TranslateVoice::performInference(const std::string& filePath) {
+	CURL* curl;
+	CURLcode res;
+	curl_mime* form = nullptr;
+	curl_mimepart* field = nullptr;
+	std::string readBuffer;
+
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+	if (curl) {
+		form = curl_mime_init(curl);
+
+		// Add file field
+		field = curl_mime_addpart(form);
+		curl_mime_name(field, "file");
+		curl_mime_filedata(field, filePath.c_str());
+
+		// Add temperature field
+		field = curl_mime_addpart(form);
+		curl_mime_name(field, "temperature");
+		curl_mime_data(field, "0.0", CURL_ZERO_TERMINATED);
+
+		// Add temperature_inc field
+		field = curl_mime_addpart(form);
+		curl_mime_name(field, "temperature_inc");
+		curl_mime_data(field, "0.2", CURL_ZERO_TERMINATED);
+
+		// Add response_format field
+		field = curl_mime_addpart(form);
+		curl_mime_name(field, "response_format");
+		curl_mime_data(field, "json", CURL_ZERO_TERMINATED);
+
+		curl_easy_setopt(curl, CURLOPT_URL, "http://127.0.0.1:8080/inference");
+		curl_easy_setopt(curl, CURLOPT_MIMEPOST, form);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK) {
+			std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+		}
+
+		curl_mime_free(form);
+		curl_easy_cleanup(curl);
+	}
+	curl_global_cleanup();
+
+	// Parse the JSON response
+	nlohmann::json jsonResponse = nlohmann::json::parse(readBuffer);
+	return jsonResponse;
 }
 
 TranslateVoice::TranslateVoice() {
 	std::thread([&] {
+
+		std::this_thread::sleep_for(std::chrono::seconds(3));
+
 		while (1) {
 			if (VoiceSlips::S_TranslateVoice == nullptr) {
 				std::cout << "终止" << std::endl;

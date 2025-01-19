@@ -144,9 +144,7 @@ nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 
 	curl_global_cleanup();
 
-
-	nlohmann::json root = nlohmann::json::parse(readBuffer);
-	return root;
+	return nlohmann::json::parse(readBuffer);
 }
 
 [[nodiscard]]

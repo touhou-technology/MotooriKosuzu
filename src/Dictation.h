@@ -2,6 +2,7 @@
 #include <dpp/dpp.h>
 #include <unordered_map>
 #include <chrono>
+#include <curl/curl.h>
 
 class InitVoice {
 public:
@@ -35,6 +36,7 @@ public:
 	//kay -> user_params
 	void AddUser(user_params params);
 	void DelUser(dpp::snowflake obj);
+	void SetCout(dpp::snowflake obj);
 
 	void SendVC(const dpp::voice_receive_t& event);
 	void ResetFlag();
@@ -43,11 +45,15 @@ public:
 	//
 	void Understand(user_params& user);
 
+	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
+	static nlohmann::json performInference(const std::string& filePath);
 public:
 	TranslateVoice();
 private:
 	std::unordered_map<dpp::snowflake, user_params> m_object;
+	//判断是否有人说话了
+	bool flag = false;
 	//thread
 	std::chrono::milliseconds time = std::chrono::milliseconds(500);
+	dpp::snowflake ObjCout;
 };
-
