@@ -17,7 +17,7 @@ void S_TranslateVoiceConfig::OnReady() {
 	RobotSlips::bot->on_ready([&](dpp::ready_t event) {
 		if (dpp::run_once<struct register_bot_commands>()) {
 			RobotSlips::bot->global_command_create(
-				dpp::slashcommand("VCに参加する", "Join VC", RobotSlips::bot->me.id)
+				dpp::slashcommand("vcに参加する", "Join VC", RobotSlips::bot->me.id)
 			);
 
 			RobotSlips::bot->global_command_create(
@@ -34,7 +34,7 @@ void S_TranslateVoiceConfig::OnReady() {
 }
 
 void S_TranslateVoiceConfig::Slashcommand() {
-	UsePen::SlashcommandHash("VCに参加する", [](dpp::slashcommand_t* event) {
+	UsePen::SlashcommandHash("vcに参加する", [](dpp::slashcommand_t* event) {
 		dpp::guild* g = dpp::find_guild(event->command.guild_id);
 
 		/* Attempt to connect to a voice channel, returns false if we fail to connect. */
@@ -49,13 +49,16 @@ void S_TranslateVoiceConfig::Slashcommand() {
 		});
 
 	UsePen::SlashcommandHash("音声入力開始", [](dpp::slashcommand_t* event)->void {
-
+		if (VoiceSlips::S_TranslateVoice == nullptr) {
+			event->reply("未找到实例可能是没有加入VC");
+			return;
+		};
 
 		//std::cout << event->raw_event << std::endl;
 		TranslateVoice::user_params params;
 
 		for (auto obj : std::get<dpp::command_interaction>(event->command.data).options) {
-
+				
 			std::cout << obj.name << std::endl;
 
 			if (obj.name == "language") {
@@ -174,10 +177,15 @@ void TranslateVoice::DelUser(dpp::snowflake obj) {
 
 //处理语言
 void TranslateVoice::SendVC(const dpp::voice_receive_t& event) {
-	if (m_object[event.user_id].id != event.user_id)
+	//开始的时候用户数值是0
+	if (m_object[event.user_id].id != event.user_id || (&m_object[event.user_id]) == nullptr || event.user_id == 0)
 		return;
 
-	fwrite((char*)event.audio, 1, event.audio_size, m_object[event.user_id].vc_record);
+	std::cout << m_object[event.user_id].id << "\n" << event.user_id << std::endl;
+
+	Suitable();
+
+	//fwrite((char*)event.audio, 1, event.audio_size, m_object[event.user_id].vc_record);
 }
 
 void TranslateVoice::ResetFlag() {
