@@ -13,6 +13,7 @@ public:
 	static void Init();
 
 private:
+	static void OnReady();
 	static void Slashcommand();
 	static void Voice();
 	static void AutoComplete();
@@ -24,9 +25,11 @@ public:
 		std::string language;
 		std::string model;
 		dpp::snowflake ID;
-		std::chrono::milliseconds flag;
-		std::chrono::milliseconds time;
+		std::chrono::milliseconds time = std::chrono::milliseconds(1500);
 		FILE* vc_record;
+	private:
+		friend TranslateVoice;
+		std::chrono::milliseconds flag;
 	};
 public:
 	//kay -> user_params

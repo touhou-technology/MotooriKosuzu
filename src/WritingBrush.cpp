@@ -175,7 +175,7 @@ void UsePen::Init() {
 void UsePen::OnReady() {
 	//bot on_read
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
-		//if (dpp::run_once<struct register_bot_commands>()) {
+		if (dpp::run_once<struct register_bot_commands>()) {
 			/*コマンドを変更せずに解釈を変更してください
 			コマンド変更なのでスラッシュコマンドでは使用できません*/
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の開始", "コマンドで使用されるチャネルメッセージから指定されたチャネルと言語への翻訳", RobotSlips::bot->me.id)
@@ -192,20 +192,8 @@ void UsePen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
-			RobotSlips::bot->global_command_create(
-				dpp::slashcommand("音声入力開始", "同声传译(ASR)", RobotSlips::bot->me.id)
-				.add_option(dpp::command_option(dpp::co_string, "language", "", true).set_auto_complete(true))
-				.add_option(dpp::command_option(dpp::co_string, "model", "", true).set_auto_complete(true))
-				.add_option(dpp::command_option(dpp::co_user, "ID", "", true))
-				.add_option(dpp::command_option(dpp::co_string, "time", "", true))
-			);
-			//other
-			RobotSlips::bot->global_command_create(dpp::slashcommand("音声入力終了", "结束", RobotSlips::bot->me.id));
-			//other
-			RobotSlips::bot->global_command_create(dpp::slashcommand("launch", "Launch Realms of Wumpus", RobotSlips::bot->me.id));
-
 			//);//End
-		//}//If End;
+		}//If End;
 		});//END
 
 	//
@@ -302,11 +290,10 @@ void UsePen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcomm
 
 void UsePen::AutoComplete() {
 	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
-
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), event.name);
-
 		if (event.name != "翻訳を双方向に開く" && event.name != "翻訳の開始")
 			return;
+
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), event.name);
 
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
@@ -337,12 +324,11 @@ void UsePen::AutoComplete() {
 void UsePen::Message() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
-		//debug
-		//std::cout << event.msg.to_json() << std::endl;
-
 		//单向翻译监测是否有
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
+
+		//开始建立翻译
 
 		//build object
 		nlohmann::json data = event.msg.to_json();
