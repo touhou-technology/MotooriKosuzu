@@ -24,8 +24,8 @@ void S_TranslateVoiceConfig::OnReady() {
 				dpp::slashcommand("音声入力開始", "同声传译(ASR)", RobotSlips::bot->me.id)
 				.add_option(dpp::command_option(dpp::co_string, "language", "设置语言", true).set_auto_complete(true))
 				.add_option(dpp::command_option(dpp::co_string, "model", "设置模型", true).set_auto_complete(true))
-				.add_option(dpp::command_option(dpp::co_user, "id", "选择用户", true))
-				.add_option(dpp::command_option(dpp::co_string, "time", "设置时间", true))
+				.add_option(dpp::command_option(dpp::co_user, "id", "选择用户(Obj)", true))
+				.add_option(dpp::command_option(dpp::co_number, "time", "设置时间(milliseconds)"))
 			);
 			//other
 			RobotSlips::bot->global_command_create(dpp::slashcommand("音声入力終了", "结束", RobotSlips::bot->me.id));
@@ -50,6 +50,35 @@ void S_TranslateVoiceConfig::Slashcommand() {
 
 	UsePen::SlashcommandHash("音声入力開始", [](dpp::slashcommand_t* event)->void {
 
+
+		//std::cout << event->raw_event << std::endl;
+		TranslateVoice::user_params params;
+
+		for (auto obj : std::get<dpp::command_interaction>(event->command.data).options) {
+
+			std::cout << obj.name << std::endl;
+
+			if (obj.name == "language") {
+				params.language = std::get<std::string>(obj.value);
+			}
+
+			if (obj.name == "model") {
+				params.model = std::get<std::string>(obj.value);
+			}
+
+			if (obj.name == "id") {
+				params.id = std::get<dpp::snowflake>(obj.value);
+			}
+
+			if (obj.name == "time") {
+				//TODO
+				//params.time = std::chrono::milliseconds(std::get<int>(obj.value));
+			}
+		}//for End
+
+		VoiceSlips::S_TranslateVoice->AddUser(std::move(params));
+
+		event->reply("OwO");
 
 		});//End
 
@@ -134,8 +163,8 @@ void S_TranslateVoiceConfig::AutoComplete() {
 //PlanVoice::Voice END
 
 void TranslateVoice::AddUser(user_params params) {
-	params.vc_record = fopen(std::to_string(params.ID).c_str(), "wb");
-	m_object[params.ID] = params;
+	params.vc_record = fopen(std::to_string(params.id).c_str(), "wb");
+	m_object[params.id] = params;
 }
 
 void TranslateVoice::DelUser(dpp::snowflake obj) {
@@ -145,7 +174,7 @@ void TranslateVoice::DelUser(dpp::snowflake obj) {
 
 //处理语言
 void TranslateVoice::SendVC(const dpp::voice_receive_t& event) {
-	if (m_object[event.user_id].ID != event.user_id)
+	if (m_object[event.user_id].id != event.user_id)
 		return;
 
 	fwrite((char*)event.audio, 1, event.audio_size, m_object[event.user_id].vc_record);

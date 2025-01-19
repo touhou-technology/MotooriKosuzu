@@ -24,7 +24,7 @@ public:
 	struct user_params {
 		std::string language;
 		std::string model;
-		dpp::snowflake ID;
+		dpp::snowflake id;
 		std::chrono::milliseconds time = std::chrono::milliseconds(1500);
 		FILE* vc_record;
 	private:
