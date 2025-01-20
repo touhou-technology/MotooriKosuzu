@@ -25,8 +25,9 @@ public:
 	struct user_params {
 		std::string language;
 		std::string model;
+		std::string name;
 		dpp::snowflake id;
-		std::chrono::milliseconds time = std::chrono::milliseconds(1500);
+		std::chrono::milliseconds time = std::chrono::milliseconds(1000);
 		FILE* vc_record;
 	private:
 		friend TranslateVoice;
@@ -46,7 +47,9 @@ public:
 	void Understand(user_params& user);
 
 	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp);
-	static nlohmann::json performInference(const std::string& filePath);
+
+	static void loadModel(const std::string& modelPath);
+	static nlohmann::json performInference(const std::string& filePath, const std::string& language);
 public:
 	TranslateVoice();
 private:
