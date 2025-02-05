@@ -212,11 +212,9 @@ void UsePen::Slashcommand() {
 		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
 			event->reply("わかった");
 		else
-			event->reply("はい、リダイレクトチャンネル");
+			event->reply("はい、リダイレクトチャンネル");;
 
-		//dpp::command_interaction cmd_data = event->command.get_command_interaction();
-
-		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
+		dpp::snowflake channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
 		std::string To = std::get<std::string>(event->get_parameter("译至"));
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
@@ -331,6 +329,24 @@ void UsePen::Message() {
 		//build object
 		nlohmann::json data = event.msg.to_json();
 
+		//message_referencea
+		dpp::snowflake re = NULL;
+
+		if (data["message_reference"]["message_id"] != nullptr) {
+			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
+
+			dpp::message tmp;
+
+			RobotSlips::bot->message_get(
+				event.msg.message_reference.message_id,
+				event.msg.channel_id,
+				[&](const dpp::confirmation_callback_t& event) {
+					std::get<dpp::message>(event.value).build_json();
+
+				}
+			);
+		}
+
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
 
@@ -369,10 +385,9 @@ void UsePen::Message() {
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first)
 			.add_embed(std::move(ObjEmbed));
 
-		//message_reference
-		if (data["message_reference"]["message_id"] != nullptr) {
-			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
-			TrText.set_reference((*HashSlips::HashSnowflakeStr)[(dpp::snowflake)value].first);
+		//引用
+		if (re != NULL) {
+			TrText.set_reference(re);
 		}
 
 		RobotSlips::bot->message_create(TrText);
@@ -397,15 +412,16 @@ void UsePen::Message() {
 		RobotSlips::ObjMsg = event;
 		});
 
+	//TODO:将存放hash变更为查询
 	//检测消息是否于翻译的消息相同
-	RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
-		//追加进哈希表，如有一些修改即可同步
-		if (BotMsg.msg.author.id == RobotSlips::bot->me.id) {
-			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
+	//RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
+	//	//追加进哈希表，如有一些修改即可同步
+	//	if (BotMsg.msg.author.id == RobotSlips::bot->me.id) {
+	//		(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
 
-			(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
-		}
-		});
+	//		(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
+	//	}
+	//	});
 }
 
 //TODO:更新用户编辑消息
@@ -459,7 +475,7 @@ std::vector<std::string> UsePen::RegexTreatment(std::string& input) {
 }
 
 [[nodiscard]]
-inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id){
+inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id) {
 	std::mt19937 rng(static_cast<uint32_t>(guild_id));
 	rng.discard(channel_id % 100);
 	std::uniform_int_distribution<std::mt19937::result_type> disk(0, 0xFFFFFF);
