@@ -10,20 +10,16 @@
 #include "Bookshelf.hpp"
 #include "Stickers.h"
 
-//lib
 #include <httplib.h>
 #include <curl/curl.h>
 #include <whisper.h>
 
-//STD
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <regex>
 #include <random>
-
-using namespace std;
 
 void InitPen::Init() {
 	//应该最先初始化，因为其他依赖于这个
@@ -47,10 +43,10 @@ std::string ConfigPen::InitPen(std::string ClassName, std::string obtain) {
 }
 
 nlohmann::json ConfigPen::ReadFileJson(std::string& Path) {
-	ifstream File(Path);
+	std::ifstream File(Path);
 
 	if (!File.is_open()) {
-		cerr << "[ERROR]:Cennt open file";
+		std::cerr << "[ERROR]:Cennt open file";
 	}
 	else {
 		nlohmann::json root;
