@@ -101,6 +101,7 @@
     <ClInclude Include="src\Bookshelf.hpp" />
     <ClInclude Include="src\Dictation.h" />
     <ClInclude Include="src\MotooriKosuzu.h" />
+    <ClInclude Include="src\Stickers.h" />
     <ClInclude Include="src\WritingBrush.h" />
   </ItemGroup>
   <ItemGroup>
