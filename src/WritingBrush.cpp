@@ -345,7 +345,6 @@ void UsePen::Message() {
 
 			dpp::message tmp;
 
-			//TODO: 正则表达式匹配对应的源消息
 			RobotSlips::bot->message_get(
 				event.msg.message_reference.message_id,
 				event.msg.channel_id,
