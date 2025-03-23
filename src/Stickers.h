@@ -7,14 +7,22 @@
 
 #include <dpp/dpp.h>
 
-//
-class Obj{
+//随着时间小时的键值对应的消息映射
+class {
+
+};
+
+//贴纸-存放翻译频道对象(信息队列，消息映射)
+class test {
 public:
-	Obj();
+	test();
 
-	~Obj() = default;
+	~test() = default;
+public:
+
+
 private:
-
+	std::unordered_map<dpp::snowflake, dpp::snowflake> Link;
 };
 
 //webhook version
@@ -27,5 +35,7 @@ public:
 
 
 private:
-	dpp::webhook WebHook;
+	std::pair<dpp::snowflake, dpp::webhook> Send;
+
+	std::unordered_map<dpp::snowflake, dpp::snowflake> Link;
 };

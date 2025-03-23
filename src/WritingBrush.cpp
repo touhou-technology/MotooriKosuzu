@@ -160,7 +160,7 @@ size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::str
 }
 
 void UsePen::Init() {
-	//OnReady();
+	OnReady();
 	Slashcommand();
 	AutoComplete();
 	Message();
@@ -317,11 +317,20 @@ void UsePen::AutoComplete() {
 
 //这里是处理发送消息转义的
 void UsePen::Message() {
+	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
+
+
+
+		});
+
+
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
+
 		//单向翻译监测是否有
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
+
 
 		//开始建立翻译
 

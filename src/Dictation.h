@@ -1,3 +1,8 @@
+/*
+* 实验性功能
+* 不稳定
+* 
+*/
 #pragma once
 #include <dpp/dpp.h>
 #include <unordered_map>

@@ -5,6 +5,7 @@
 #include <memory>
 #include <dpp/dpp.h>
 #include "Dictation.h"
+#include "Stickers.h"
 
 class ConfigSlips {
 public:
@@ -16,6 +17,8 @@ class HashSlips {
 public:
 	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSnowflakeStr;
 	static std::unique_ptr<std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>>SlashcommandFuntion;
+	//Stickers，终究是要贴在上面（）
+	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::vector<test>>> Stickers;
 };
 
 class RobotSlips {
