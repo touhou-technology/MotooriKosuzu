@@ -24,6 +24,7 @@ public:
 class HashPen {
 public:
 	static void Init();
+	static void HaseCacheDelete();
 };
 
 class RobotPen {

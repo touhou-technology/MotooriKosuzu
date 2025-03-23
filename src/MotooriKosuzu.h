@@ -4,9 +4,10 @@
 	//本体daze
 class Kosuzu {
 public:
-	void Start();
-
 	Kosuzu();
 public:
+
+	Kosuzu& Start();
+	
 	Kosuzu& StartDebug();
 };

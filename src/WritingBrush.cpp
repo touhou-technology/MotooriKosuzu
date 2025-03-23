@@ -17,6 +17,7 @@
 #include <sstream>
 #include <regex>
 #include <random>
+#include <chrono>
 
 void InitPen::Init() {
 	//应该最先初始化，因为其他依赖于这个
@@ -57,6 +58,16 @@ nlohmann::json ConfigPen::ReadFileJson(std::string& Path) {
 void HashPen::Init() {
 	HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
 	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>());
+}
+
+//Hash life cycle
+void HashPen::HaseCacheDelete(){
+	std::thread([]() {
+		while (1) {
+			std::this_thread::sleep_for(std::chrono::days(1));
+			HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
+		}
+		}).detach();
 }
 
 void RobotPen::Init() {
@@ -314,13 +325,6 @@ void UsePen::AutoComplete() {
 
 //这里是处理发送消息转义的
 void UsePen::Message() {
-	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
-
-
-
-		});
-
-
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 
@@ -419,14 +423,13 @@ void UsePen::Message() {
 
 	//TODO:将存放hash变更为查询
 	//检测消息是否于翻译的消息相同
-	//RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
-	//	//追加进哈希表，如有一些修改即可同步
-	//	if (BotMsg.msg.author.id == RobotSlips::bot->me.id) {
-	//		(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
-
-	//		(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
-	//	}
-	//	});
+	RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
+		//追加进哈希表，如有一些修改即可同步
+		if (BotMsg.msg.author.id == RobotSlips::bot->me.id) {
+			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
+			(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
+		}
+		});
 }
 
 //TODO:更新用户编辑消息

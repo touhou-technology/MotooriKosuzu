@@ -15,6 +15,6 @@ Kosuzu& Kosuzu::StartDebug(){
 	return *this;
 }
 
-void Kosuzu::Start() {
+Kosuzu& Kosuzu::Start() {
 	RobotPen::Start();
 }
