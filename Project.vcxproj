@@ -94,7 +94,6 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Dictation.cpp" />
     <ClCompile Include="src\MotooriKosuzu.cpp" />
-    <ClCompile Include="src\Stickers.cpp" />
     <ClCompile Include="src\WritingBrush.cpp" />
   </ItemGroup>
   <ItemGroup>
