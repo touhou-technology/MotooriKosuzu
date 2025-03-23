@@ -9,5 +9,7 @@ public:
 
 	Kosuzu& Start();
 	
+	Kosuzu& WriteStone();
+
 	Kosuzu& StartDebug();
 };
