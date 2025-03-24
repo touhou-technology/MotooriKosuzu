@@ -177,5 +177,18 @@
         "supports_formality": false
       }
     ]
+  },
+  "webhook": {
+    "ChannelWebhook": [
+      "https://discord.com/api/webhooks", //英文
+      "https://discord.com/api/webhooks", //日文
+      "https://discord.com/api/webhooks" //主_中文
+    ],
+    "ChannelKey": [
+      [ 0, 2, "CH" ],
+      [ 1, 2, "CH" ],
+      [ 2, 0, "JA" ],
+      [ 2, 1, "EN-US" ]
+    ]
   }
 }
