@@ -12,7 +12,12 @@ public:
 	~StoneTranslationObj() = default;
 public:
 	void ChangeWrie(nlohmann::json& tmp);
-
+	
+	void Stone();
 private:
-	nlohmann::json Write = ConfigSlips::ConfigJson;
+	void WebhookSend(std::string_view& webhook,const dpp::message_create_t& event);
+
+	nlohmann::json Write;
+	std::vector<dpp::snowflake> Channel;
 };
+
