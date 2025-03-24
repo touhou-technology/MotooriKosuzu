@@ -456,35 +456,6 @@ inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel
 	return disk(rng);
 }
 
-
-//由于石头的存在，可以废除这个函数了
-//void UsePen::ChannlConfigBookUpdate() {
-//	nlohmann::json Channl;
-//	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
-//		if (Obj.first == NULL)
-//			continue;
-//		else if (Obj.second.first == NULL)
-//			continue;
-//		else if (Obj.second.second == "")
-//			continue;
-//
-//		Channl.push_back((uint64_t)Obj.first);
-//		Channl.push_back((uint64_t)Obj.second.first);
-//		Channl.push_back(Obj.second.second);
-//	}
-//
-//	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
-//
-//	std::ofstream outFile(ConfigSlips::Path_, std::ofstream::trunc); // 使用trunc模式覆盖原文件
-//	if (!outFile.is_open()) {
-//		std::cerr << "Failed to open file for writing" << std::endl;
-//	}
-//
-//	outFile << ConfigSlips::ConfigJson.dump(4);
-//	outFile.close();
-//}
-
-
 std::vector<std::string> StringPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
