@@ -2,13 +2,8 @@
 * 作为书记更改
 */
 #pragma once
-#include <json/json.h>
 #include <dpp/dpp.h>
-
-//lib
-#include <httplib.h>
-#include <curl/curl.h>
-#include <whisper.h>
+#include <coroutine>
 
 //配置
 
@@ -22,13 +17,14 @@ public:
 	//Pen初始化对应的竹木简牍,从config读取
 	static void Init();
 	static std::string InitPen(std::string ClassName, std::string obtain);
-	static Json::Value ReadFileJson(std::string Path);
+	static nlohmann::json ReadFileJson(std::string& Path);
 	//static Json::Value GetConfigJson();
 };
 
 class HashPen {
 public:
 	static void Init();
+	static void HaseCacheDelete();
 };
 
 class RobotPen {
@@ -46,62 +42,30 @@ public:
 	static void Init();
 
 	//web 翻译之类的
-	static Json::Value TranslationPen(std::string text, std::string To);
+	static nlohmann::json TranslationPen(std::string text, std::string To);
 	static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s);
 };
 
 //运行需要安排的任务
-class PlanPen {
+class UsePen {
 public:
 	static void Init();
 
 	static void OnReady();
 	static void Slashcommand();
 	static void AutoComplete();
-	static void Message();
+	static void MessageCreate();
 	static void MessageUpdate();
 	static void MessageDelete();
-private:
+public:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
-	static std::vector<std::string> RegexTreatment(std::string& input);
-
-	static void ChannlConfigBookUpdate();
-};
-
-//????我也不太清楚我要做什么（）
-class LinuxPen {
-public:
-	static std::string cmd(const char* command);
-	static void update(dpp::slashcommand_t* event);
-};
-
-class HeadPen {
-public:
-};
-
-class InitVoice {
-public:
-	static void Init();
-};
-
-class S_TranslateVoiceConfig {
-public:
-	static void Init();
-
-
-	static void Slashcommand();
-	static void Voice();
-};
-
-class TranslateVoice {
-public:
-	struct Specification {
-		std::string language;
-		std::string model;
-	};
-
-	TranslateVoice(const Specification& Spec);
-
 private:
-	Specification m_Speci;
+
+	inline static uint32_t ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id);
+};
+
+class StringPen {
+public:
+	static std::vector<std::string> RegexTreatment(std::string& input);
+	static std::string CompatibleURL(std::string& Obj);
 };

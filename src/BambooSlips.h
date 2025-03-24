@@ -1,14 +1,15 @@
 #pragma once
-#include <json/json.h>
+//#include <json/json.h>
 #include <httplib.h>
 #include <unordered_map>
 #include <memory>
 #include <dpp/dpp.h>
+#include "Dictation.h"
 
 class ConfigSlips {
 public:
 	static std::string Path_;
-	static Json::Value ConfigJson;
+	static nlohmann::json ConfigJson;
 };
 
 class HashSlips {
@@ -38,5 +39,5 @@ public:
 
 class VoiceSlips {
 public:
-
+	static std::unique_ptr<TranslateVoice> S_TranslateVoice;
 };

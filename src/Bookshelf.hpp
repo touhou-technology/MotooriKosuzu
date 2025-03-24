@@ -9,7 +9,7 @@
 //Config
 //debug
 std::string ConfigSlips::Path_ = "/etc/MotooriKosuzu/config/ConfigBook.json";
-Json::Value ConfigSlips::ConfigJson;
+nlohmann::json ConfigSlips::ConfigJson;
 
 //HashSlips
 //同时保存
@@ -23,3 +23,6 @@ dpp::message_create_t RobotSlips::ObjMsg;
 //Web
 std::unique_ptr<httplib::Client> WebSlips::Translator;
 std::string WebSlips::Token = "";
+
+//VoiceSlips
+std::unique_ptr<TranslateVoice> VoiceSlips::S_TranslateVoice;

@@ -7,14 +7,17 @@
 #include "BambooSlips.h"
 #include "Bookshelf.hpp"
 
-//C++
+#include <httplib.h>
+#include <curl/curl.h>
+#include <whisper.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <regex>
-
-using namespace std;
+#include <random>
+#include <chrono>
 
 void InitPen::Init() {
 	//应该最先初始化，因为其他依赖于这个
@@ -24,8 +27,8 @@ void InitPen::Init() {
 	WebPen::Init();
 	//先要写什么再写什么
 	RobotPen::Init();
-	
-	PlanPen::Init();
+
+	UsePen::Init();
 }
 
 void ConfigPen::Init() {
@@ -34,33 +37,37 @@ void ConfigPen::Init() {
 
 //类Init御用（
 std::string ConfigPen::InitPen(std::string ClassName, std::string obtain) {
-	return ConfigSlips::ConfigJson[ClassName][obtain].asString();
+	return ConfigSlips::ConfigJson[ClassName][obtain].get<std::string>();
 }
 
-Json::Value ConfigPen::ReadFileJson(string Path) {
-	ifstream File(Path);
+nlohmann::json ConfigPen::ReadFileJson(std::string& Path) {
+	std::ifstream File(Path);
 
 	if (!File.is_open()) {
-		cerr << "[ERROR]:Cennt open file";
+		std::cerr << "[ERROR]:Cennt open file";
+	}
+	else {
+		nlohmann::json root;
+		File >> root;
+		return root;
 	}
 
-	Json::CharReaderBuilder ReaderBuilder;
-	ReaderBuilder["emitUTF8"] = true;//utf8支持，不加这句，utf8的中文字符会变成\uxxx
-
-	Json::Value root;
-
-	std::string strerr;
-
-	if (!Json::parseFromStream(ReaderBuilder, File, &root, &strerr)) {
-		std::cerr << "[ERROR]:json can't read" << std::endl;
-	}
-
-	return root;
+	return nlohmann::json();
 }
 
 void HashPen::Init() {
 	HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
 	HashSlips::SlashcommandFuntion.reset(new std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>());
+}
+
+//Hash life cycle
+void HashPen::HaseCacheDelete(){
+	std::thread([]() {
+		while (1) {
+			std::this_thread::sleep_for(std::chrono::days(1));
+			HashSlips::HashSnowflakeStr.reset(new std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>());
+		}
+		}).detach();
 }
 
 void RobotPen::Init() {
@@ -72,7 +79,7 @@ void RobotPen::Start() {
 	GetBot()->start(dpp::st_wait);
 }
 
-void RobotPen::StartDebug(){
+void RobotPen::StartDebug() {
 	RobotSlips::bot->on_log(dpp::utility::cout_logger());
 }
 
@@ -88,12 +95,13 @@ void WebPen::Init() {
 	WebSlips::Token = ConfigPen::InitPen("WebPen", "Token");
 }
 
-Json::Value WebPen::TranslationPen(std::string text, std::string To) {
+[[nodiscard]]
+nlohmann::json WebPen::TranslationPen(std::string text, std::string To) {
 	//处理其他事件为空的情况下
 	if (text == "") {
-		Json::Value empty;
+		nlohmann::json empty;
 		empty["translations"][0]["text"] = "";
-		empty["translations"][0]["detected_source_language"] = "Unknow";
+		empty["translations"][0]["detected_source_language"] = "empty";
 		return empty;
 	}
 
@@ -109,7 +117,7 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		struct curl_slist* headers = NULL;
 
 		std::string head = "Authorization: DeepL-Auth-Key";
-		head = head + " " + ConfigSlips::ConfigJson["WebPen"]["Token"].asCString();
+		head = head + " " + ConfigSlips::ConfigJson["WebPen"]["Token"].get<std::string>();
 
 		headers = curl_slist_append(headers, head.c_str());
 		headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -117,7 +125,7 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 
 		std::string postData = R"({"text": [")" + text + R"("], "target_lang": ")" + To + R"("})";
 
-		std::cout << postData << std::endl;
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), postData);
 
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
 
@@ -133,7 +141,8 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 		}
 		else {
 			// 输出响应数据
-			std::cout << "Response: " << readBuffer << std::endl;
+			RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), readBuffer);
+
 		}
 
 		curl_slist_free_all(headers);
@@ -142,14 +151,10 @@ Json::Value WebPen::TranslationPen(std::string text, std::string To) {
 
 	curl_global_cleanup();
 
-	Json::Value root;
-	Json::Reader reader;
-
-	reader.parse(readBuffer, root);
-
-	return root;
+	return nlohmann::json::parse(readBuffer);
 }
 
+[[nodiscard]]
 size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::string* s) {
 	size_t newLength = size * nmemb;
 	try {
@@ -162,31 +167,20 @@ size_t WebPen::WriteCallback(void* contents, size_t size, size_t nmemb, std::str
 	return newLength;
 }
 
-void PlanPen::Init() {
+void UsePen::Init() {
 	OnReady();
 	Slashcommand();
 	AutoComplete();
-	Message();
+	MessageCreate();
 	MessageUpdate();
 	MessageDelete();
 }
 
 //读取jsoncpp的
-void PlanPen::OnReady() {
+void UsePen::OnReady() {
 	//bot on_read
 	RobotSlips::bot->on_ready([](const dpp::ready_t event) {
-		//RobotSlips::bot->global_bulk_command_delete();
-		//(),需要添加新的解析
 		if (dpp::run_once<struct register_bot_commands>()) {
-			//Json::Value ObjectArray = ConfigSlips::ConfigJson["slashcommand"];
-			//std::cout << ObjectArray.size();
-			//int iter_1 = 1;
-			//for (int iter_0 = 0; iter_0 != ObjectArray.size(); ++++iter_0) {
-			//	std::cout << ObjectArray[iter_0].asString() << ":" << ObjectArray[iter_1].asString() << std::endl;
-			//	RobotSlips::bot->global_command_create(dpp::slashcommand(ObjectArray[iter_0].asString(), ObjectArray[iter_1].asString(), RobotSlips::bot->me.id));
-			//	++++iter_1;
-			//}
-
 			/*コマンドを変更せずに解釈を変更してください
 			コマンド変更なのでスラッシュコマンドでは使用できません*/
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の開始", "コマンドで使用されるチャネルメッセージから指定されたチャネルと言語への翻訳", RobotSlips::bot->me.id)
@@ -203,40 +197,36 @@ void PlanPen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
-			RobotSlips::bot->global_command_create(dpp::slashcommand("update", "プログラム更新の起動", RobotSlips::bot->me.id)
-				.add_option(dpp::command_option(dpp::co_string, "option", "更新作成"))
-			);
+			//);//End
 		}//If End;
 		});//END
 
 	//
-	Json::Value ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
+	nlohmann::json ObjectArray = ConfigSlips::ConfigJson["HashSlips"]["channl"];
 	for (int iter = 0; iter < ObjectArray.size(); ++++ ++iter) {
-		dpp::snowflake  channel = ObjectArray[iter + 1].asInt64();
-		std::string To = ObjectArray[iter + 2].asString();
+		dpp::snowflake  channel = ObjectArray[iter + 1].get<dpp::snowflake>();
+		std::string To = ObjectArray[iter + 2].get<std::string>();
 
-		(*HashSlips::HashSnowflakeStr)[ObjectArray[iter].asInt64()] = std::pair<dpp::snowflake, std::string>(channel, To);
+		(*HashSlips::HashSnowflakeStr)[ObjectArray[iter].get<dpp::snowflake>()] = std::pair<dpp::snowflake, std::string>(channel, To);
 
-		std::cout << ObjectArray[iter].asInt64() << ":" << channel << ":" << To << std::endl;
+		std::cout << ObjectArray[iter].get<dpp::snowflake>() << ":" << channel << ":" << To << std::endl;
 	}
 }
 
-void PlanPen::Slashcommand() {
+void UsePen::Slashcommand() {
 	SlashcommandHash("翻訳の開始", [](dpp::slashcommand_t* event)->void {
 		//将数据存入哈希表
 		if ((*HashSlips::HashSnowflakeStr)[event->command.channel_id] == std::pair<dpp::snowflake, std::string>())
 			event->reply("わかった");
 		else
-			event->reply("はい、リダイレクトチャンネル");
+			event->reply("はい、リダイレクトチャンネル");;
 
-		//dpp::command_interaction cmd_data = event->command.get_command_interaction();
-
-		dpp::snowflake  channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
+		dpp::snowflake channel = std::get<dpp::snowflake>(event->get_parameter("翻至"));
 		std::string To = std::get<std::string>(event->get_parameter("译至"));
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 
-		ChannlConfigBookUpdate();
+		//ChannlConfigBookUpdate();
 		});
 
 	SlashcommandHash("翻訳を双方向に開く", [](dpp::slashcommand_t* event)->void {
@@ -258,7 +248,7 @@ void PlanPen::Slashcommand() {
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 		(*HashSlips::HashSnowflakeStr)[channel] = std::pair<dpp::snowflake, std::string>(event->command.channel_id, This_channel);
 
-		ChannlConfigBookUpdate();
+		//ChannlConfigBookUpdate();
 		});
 
 	//停下翻译
@@ -269,7 +259,7 @@ void PlanPen::Slashcommand() {
 			event->reply("わかった");
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 
-			ChannlConfigBookUpdate();
+			//ChannlConfigBookUpdate();
 		}
 		});
 
@@ -287,49 +277,27 @@ void PlanPen::Slashcommand() {
 
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
 
-			ChannlConfigBookUpdate();
+			//ChannlConfigBookUpdate();
 		}
-		});
-
-	//update
-	SlashcommandHash("update", [](dpp::slashcommand_t* event) -> void {
-		LinuxPen::update(event);
 		});
 
 	RobotSlips::bot->on_slashcommand([](dpp::slashcommand_t event) {
 		(*HashSlips::SlashcommandFuntion)[event.command.get_command_name()](&event);
 		});
-
-	SlashcommandHash("record", [](dpp::slashcommand_t* event)->void {
-		/* Check which command they ran */
-			/* Get the guild */
-		dpp::guild* g = dpp::find_guild(event->command.guild_id);
-
-		/* Attempt to connect to a voice channel, returns false if we fail to connect. */
-		if (!g->connect_member_voice(event->command.get_issuing_user().id)) {
-			event->reply("You don't seem to be in a voice channel!");
-			return;
-		}
-
-		/* Tell the user we joined their channel. */
-		event->reply("Joined");
-		});
-
-	SlashcommandHash("stop", [](dpp::slashcommand_t* event)->void {
-		event->from->disconnect_voice(event->command.guild_id);
-		//fclose(fd);
-
-		event->reply("Okey~");
-		});
 }//slashcommand end
 
 //建立哈希索引
-void PlanPen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
+void UsePen::SlashcommandHash(std::string command, void(*Funtion)(dpp::slashcommand_t*)) {
 	(*HashSlips::SlashcommandFuntion)[command] = Funtion;
 }
 
-void PlanPen::AutoComplete() {
+void UsePen::AutoComplete() {
 	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t& event) {
+		if (event.name != "翻訳を双方向に開く" && event.name != "翻訳の開始")
+			return;
+
+		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), event.name);
+
 		dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
 
 		for (auto& opt : event.options) {
@@ -338,7 +306,7 @@ void PlanPen::AutoComplete() {
 
 				if (uservalue == "") {
 					for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i) {
-						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].get<std::string>(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].get<std::string>()));
 					}
 					RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 					return;
@@ -346,8 +314,8 @@ void PlanPen::AutoComplete() {
 
 				//TODO
 				for (int i = 0; i != ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"].size(); ++i) {
-					if (ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString().find(uservalue) != -1)
-						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].asString(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].asString()));
+					if (ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].get<std::string>().find(uservalue) != -1)
+						AutoType.add_autocomplete_choice(dpp::command_option_choice(ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["name"].get<std::string>(), ConfigSlips::ConfigJson["AutoComplete"]["TranslationTypes"][i]["language"].get<std::string>()));
 				}
 				RobotSlips::bot->interaction_response_create(event.command.id, event.command.token, AutoType);
 			}
@@ -356,60 +324,69 @@ void PlanPen::AutoComplete() {
 }
 
 //这里是处理发送消息转义的
-void PlanPen::Message() {
+void UsePen::MessageCreate() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
-		//debug
-		std::cout << event.msg.to_json() << std::endl;
 
 		//单向翻译监测是否有
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first == 0 || event.msg.author.id == RobotSlips::bot->me.id)
 			return;
 
+
+		//开始建立翻译
+
 		//build object
 		nlohmann::json data = event.msg.to_json();
+
+		//message_referencea
+		dpp::snowflake re = NULL;
+
+		//if (data["message_reference"]["message_id"] != nullptr) {
+		//	uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
+
+		//	dpp::message tmp;
+
+		//	RobotSlips::bot->message_get(
+		//		event.msg.message_reference.message_id,
+		//		event.msg.channel_id,
+		//		[&](const dpp::confirmation_callback_t& event) {
+		//			std::get<dpp::message>(event.value).build_json();
+
+		//		}
+		//	);
+		//}
 
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
 
 		//url做处理
-		std::vector<std::string> Treatment = RegexTreatment(TextMsg);
+		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
-		//处理字符串
-		std::stringstream ss;
-		for (char ch : TextMsg)
-			if (ch == '"')
-				ss << "\\\"";
-			else if (ch == '\n')
-				ss << "\\n";
-			else
-				ss << ch;
-
-		auto MessageObj = WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
-
+		//set base
 		dpp::embed ObjEmbed = dpp::embed()
-			.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
-			.set_color(dpp::colors::yellow)
+			.set_color(ColorPen(event.msg.guild_id, event.msg.channel_id))
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
-		ObjEmbed.add_field("", std::move(MessageObj["text"].asString()));
+		//get
+		auto MessageObj = WebPen::TranslationPen(StringPen::CompatibleURL(TextMsg), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
 
-		ObjEmbed.set_footer(
-			dpp::embed_footer()
-			.set_text(std::move("⚝:>" + MessageObj["detected_source_language"].asString()))
-		);
+		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+			ObjEmbed
+				.set_description(event.msg.content + "\n[☯](" + event.msg.get_url() + ")")
+				.add_field("", std::move(MessageObj["text"].get<std::string>()))
+				.set_footer(
+					dpp::embed_footer()
+					.set_text("⚝:>" + MessageObj["detected_source_language"].get<std::string>() + "->" + (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)
+				).set_timestamp(time(0));
+		}
 
-		ObjEmbed.set_timestamp(time(0));
-
-		//create to object
 		dpp::message TrText = dpp::message()
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first)
 			.add_embed(std::move(ObjEmbed));
 
-		//message_reference
-		if (data["message_reference"]["message_id"] != nullptr) {
-			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
-			TrText.set_reference((*HashSlips::HashSnowflakeStr)[(dpp::snowflake)value].first);
+		//引用
+		if (re != NULL) {
+			TrText.set_reference(re);
 		}
 
 		RobotSlips::bot->message_create(TrText);
@@ -419,7 +396,6 @@ void PlanPen::Message() {
 		//附件
 		for (const auto& obj : data["attachments"]) {
 			TrText.content += obj["url"];
-			//???
 			RobotSlips::bot->message_create(dpp::message(obj["url"].get<std::string>()).set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
 
@@ -429,28 +405,30 @@ void PlanPen::Message() {
 				.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first));
 		}
 
+		//std::cout << event.msg << std::endl;
+
 		//建立对等链接
 		RobotSlips::ObjMsg = event;
 		});
 
+	//TODO:将存放hash变更为查询
 	//检测消息是否于翻译的消息相同
 	RobotSlips::bot->on_message_create([](dpp::message_create_t BotMsg) {
 		//追加进哈希表，如有一些修改即可同步
 		if (BotMsg.msg.author.id == RobotSlips::bot->me.id) {
 			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
-
 			(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
 		}
 		});
 }
 
 //TODO:更新用户编辑消息
-void PlanPen::MessageUpdate() {
+void UsePen::MessageUpdate() {
 	RobotSlips::bot->on_message_update([](const dpp::message_update_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.msg.id].first == 0 || event.msg.author.global_name == "")
 			return;
 
-		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].asString());
+		dpp::message msg(event.msg.author.global_name + ":" + WebPen::TranslationPen(event.msg.content, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0]["text"].get<std::string>());
 
 		msg.set_reference((*HashSlips::HashSnowflakeStr)[event.msg.id].first)
 			.set_channel_id((*HashSlips::HashSnowflakeStr)[event.msg.channel_id].first);
@@ -459,7 +437,7 @@ void PlanPen::MessageUpdate() {
 		});
 }
 
-void PlanPen::MessageDelete() {
+void UsePen::MessageDelete() {
 	RobotSlips::bot->on_message_delete([](const dpp::message_delete_t event) {
 		if ((*HashSlips::HashSnowflakeStr)[event.id].first == 0)
 			return;
@@ -470,13 +448,49 @@ void PlanPen::MessageDelete() {
 		});
 }
 
-std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
+[[nodiscard]]
+inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id) {
+	std::mt19937 rng(static_cast<uint32_t>(guild_id));
+	rng.discard(channel_id % 100);
+	std::uniform_int_distribution<std::mt19937::result_type> disk(0, 0xFFFFFF);
+	return disk(rng);
+}
+
+
+//由于石头的存在，可以废除这个函数了
+//void UsePen::ChannlConfigBookUpdate() {
+//	nlohmann::json Channl;
+//	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
+//		if (Obj.first == NULL)
+//			continue;
+//		else if (Obj.second.first == NULL)
+//			continue;
+//		else if (Obj.second.second == "")
+//			continue;
+//
+//		Channl.push_back((uint64_t)Obj.first);
+//		Channl.push_back((uint64_t)Obj.second.first);
+//		Channl.push_back(Obj.second.second);
+//	}
+//
+//	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
+//
+//	std::ofstream outFile(ConfigSlips::Path_, std::ofstream::trunc); // 使用trunc模式覆盖原文件
+//	if (!outFile.is_open()) {
+//		std::cerr << "Failed to open file for writing" << std::endl;
+//	}
+//
+//	outFile << ConfigSlips::ConfigJson.dump(4);
+//	outFile.close();
+//}
+
+
+std::vector<std::string> StringPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
 	std::vector<std::string> RegexStr = {
-		R"(https?://[^\s/$.?#].[^\s]*)"
-		//Discord icon
-		//R"(<:([^:]+):([^>]+)>)"
+		R"(https?://[^\s/$.?#].[^\s]*)",
+		R"(<:([^:]+):([^>]+)>)"
 	};
 
 	for (const std::string& Str : RegexStr) {
@@ -495,106 +509,14 @@ std::vector<std::string> PlanPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-void PlanPen::ChannlConfigBookUpdate() {
-	Json::Value Channl;
-	for (auto Obj : (*HashSlips::HashSnowflakeStr)) {
-		if (Obj.first == NULL)
-			continue;
-		else if (Obj.second.first == NULL)
-			continue;
-		else if (Obj.second.second == "")
-			continue;
-
-		Channl.append((uint64_t)Obj.first);
-		Channl.append((uint64_t)Obj.second.first);
-		Channl.append(Obj.second.second);
-	}
-
-	ConfigSlips::ConfigJson["HashSlips"]["channl"] = std::move(Channl);
-
-	std::ofstream outFile(ConfigSlips::Path_, std::ofstream::trunc); // 使用trunc模式覆盖原文件
-	if (!outFile.is_open()) {
-		std::cerr << "Failed to open file for writing" << std::endl;
-	}
-
-	Json::StreamWriterBuilder writerBuilder;
-	std::string jsonString = Json::writeString(writerBuilder, ConfigSlips::ConfigJson);
-	outFile << jsonString;
-	outFile.close();
-}
-
-std::string LinuxPen::cmd(const char* command) {
-	char result[10240] = { 0 };
-	char buf[10240] = { 0 };
-
-	FILE* fp = NULL;
-	if ((fp = popen(command, "r")) == NULL) {
-		printf("popen error!\n");
-		return "[error]";
-	}
-	while (fgets(buf, sizeof(buf), fp)) {
-		strcat(result, buf);
-	}
-
-	return result;
-}
-
-void LinuxPen::update(dpp::slashcommand_t* event) {
-	event->reply("更新を試みる");
-
-	if (!32768 == system("cd ./MotooriKosuzu;git pull"))
-		RobotPen::GetBot()->message_create(dpp::message("更新開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-	else
-		RobotPen::GetBot()->message_create(dpp::message("更新は存在しません\nプログラムの更新を試みる").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	if (!32768 == system("git clone https://github.com/touhou-technology/MotooriKosuzu"))
-		RobotPen::GetBot()->message_create(dpp::message("Github倉庫のクローニング").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	RobotPen::GetBot()->message_create(dpp::message("再コンパイルの開始").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	//docker
-	if (!32768 == system(R"(cd /root/MotooriKosuzu/src;g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h start.hpp WritingBrush.cpp WritingBrush.h -std=c++20 -l"dpp" -l"pthread" -l"jsoncpp" -l"curl" -o Project.out)")) {
-		RobotPen::GetBot()->message_create(dpp::message("プログラムの再コンパイルが完了しました").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-	}
-	else
-		RobotPen::GetBot()->message_create(dpp::message("いや、インクがひっくり返った").set_channel_id(event->command.channel_id).set_guild_id(event->command.guild_id));
-
-	RobotSlips::bot.release();
-}
-
-void InitVoice::Init() {
-	S_TranslateVoiceConfig::Init();
-}
-
-void S_TranslateVoiceConfig::Init() {
-	Slashcommand();
-	Voice();
-}
-
-void S_TranslateVoiceConfig::Slashcommand() {
-	//语言识别
-	RobotSlips::bot->global_command_create(dpp::slashcommand("record", "Join", RobotSlips::bot->me.id));
-	RobotSlips::bot->global_command_create(dpp::slashcommand("stop", "Stops", RobotSlips::bot->me.id));
-}
-
-
-
-void S_TranslateVoiceConfig::Voice() {
-	RobotSlips::bot->on_voice_ready([&](const dpp::voice_ready_t& event) {
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_ready");
-
-		});
-
-	RobotSlips::bot->on_voice_receive([&](const auto& event) {
-		RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), "voice_receive");
-
-
-
-		});//end
-
-}//PlanVoice::Voice END
-
-TranslateVoice::TranslateVoice(const Specification& Spec)
-	:m_Speci(Spec) {
-
+std::string StringPen::CompatibleURL(std::string& Obj) {
+	std::stringstream ss;
+	for (char ch : Obj)
+		if (ch == '"')
+			ss << "\\\"";
+		else if (ch == '\n')
+			ss << "\\n";
+		else
+			ss << ch;
+	return ss.str();
 }

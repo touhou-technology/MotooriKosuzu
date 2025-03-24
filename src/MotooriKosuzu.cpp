@@ -1,8 +1,13 @@
 #include "MotooriKosuzu.h"
 #include "WritingBrush.h"
+#include "Dictation.h"
+#include "Stone.h"
 
+std::unique_ptr<StoneTranslationObj> StoneTranslationObj::m_instance;
+
+//×¢ÒâË³Ðò
 Kosuzu::Kosuzu() {
-	InitPen::Init	();
+	InitPen::Init();
 	InitVoice::Init();
 }
 
@@ -13,6 +18,15 @@ Kosuzu& Kosuzu::StartDebug(){
 	return *this;
 }
 
-void Kosuzu::Start() {
+Kosuzu& Kosuzu::WriteStone(){
+	StoneTranslationObj::m_instance.reset(new StoneTranslationObj);
+
+	return *this;
+}
+
+
+Kosuzu& Kosuzu::Start() {
 	RobotPen::Start();
+
+	return *this;
 }
