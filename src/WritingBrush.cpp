@@ -341,26 +341,26 @@ void UsePen::Message() {
 		//message_referencea
 		dpp::snowflake re = NULL;
 
-		if (data["message_reference"]["message_id"] != nullptr) {
-			uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
+		//if (data["message_reference"]["message_id"] != nullptr) {
+		//	uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
 
-			dpp::message tmp;
+		//	dpp::message tmp;
 
-			RobotSlips::bot->message_get(
-				event.msg.message_reference.message_id,
-				event.msg.channel_id,
-				[&](const dpp::confirmation_callback_t& event) {
-					std::get<dpp::message>(event.value).build_json();
+		//	RobotSlips::bot->message_get(
+		//		event.msg.message_reference.message_id,
+		//		event.msg.channel_id,
+		//		[&](const dpp::confirmation_callback_t& event) {
+		//			std::get<dpp::message>(event.value).build_json();
 
-				}
-			);
-		}
+		//		}
+		//	);
+		//}
 
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
 
 		//url做处理
-		std::vector<std::string> Treatment = RegexTreatment(TextMsg);
+		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
 		//处理字符串
 		std::stringstream ss;
@@ -458,30 +458,6 @@ void UsePen::MessageDelete() {
 		});
 }
 
-std::vector<std::string> UsePen::RegexTreatment(std::string& input) {
-	std::vector<std::string> treatment;
-
-	std::vector<std::string> RegexStr = {
-		R"(https?://[^\s/$.?#].[^\s]*)",
-		R"(<:([^:]+):([^>]+)>)"
-	};
-
-	for (const std::string& Str : RegexStr) {
-		std::regex pattern(Str);
-		std::smatch matches;
-
-		while (std::regex_search(input, matches, pattern)) {
-			// 保存匹配到的 URL 链接
-			treatment.push_back(matches.str(0));
-
-			// 从原始字符串中去除匹配到的 URL 链接
-			input = input.substr(0, matches.position()) + input.substr(matches.position() + matches.length());
-		}
-	}
-
-	return treatment;
-}
-
 [[nodiscard]]
 inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id) {
 	std::mt19937 rng(static_cast<uint32_t>(guild_id));
@@ -518,3 +494,31 @@ inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel
 //	outFile.close();
 //}
 
+
+std::vector<std::string> StringPen::RegexTreatment(std::string& input) {
+	std::vector<std::string> treatment;
+
+	std::vector<std::string> RegexStr = {
+		R"(https?://[^\s/$.?#].[^\s]*)",
+		R"(<:([^:]+):([^>]+)>)"
+	};
+
+	for (const std::string& Str : RegexStr) {
+		std::regex pattern(Str);
+		std::smatch matches;
+
+		while (std::regex_search(input, matches, pattern)) {
+			// 保存匹配到的 URL 链接
+			treatment.push_back(matches.str(0));
+
+			// 从原始字符串中去除匹配到的 URL 链接
+			input = input.substr(0, matches.position()) + input.substr(matches.position() + matches.length());
+		}
+	}
+
+	return treatment;
+}
+
+void StringPen::Compatible(std::string& Obj){
+
+}

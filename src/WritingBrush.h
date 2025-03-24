@@ -60,8 +60,12 @@ public:
 public:
 	static void SlashcommandHash(std::string command, void (*Fn)(dpp::slashcommand_t*));
 private:
-	static std::vector<std::string> RegexTreatment(std::string& input);
 
 	inline static uint32_t ColorPen(dpp::snowflake guild_id, dpp::snowflake channel_id);
-	static void ChannlConfigBookUpdate();
+};
+
+class StringPen {
+public:
+	static std::vector<std::string> RegexTreatment(std::string& input);
+	static void Compatible(std::string& Obj);
 };
