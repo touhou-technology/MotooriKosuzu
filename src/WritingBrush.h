@@ -54,7 +54,7 @@ public:
 	static void OnReady();
 	static void Slashcommand();
 	static void AutoComplete();
-	static void Message();
+	static void MessageCreate();
 	static void MessageUpdate();
 	static void MessageDelete();
 public:

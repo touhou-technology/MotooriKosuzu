@@ -171,7 +171,7 @@ void UsePen::Init() {
 	OnReady();
 	Slashcommand();
 	AutoComplete();
-	Message();
+	MessageCreate();
 	MessageUpdate();
 	MessageDelete();
 }
@@ -324,7 +324,7 @@ void UsePen::AutoComplete() {
 }
 
 //这里是处理发送消息转义的
-void UsePen::Message() {
+void UsePen::MessageCreate() {
 	//同步翻译的
 	RobotSlips::bot->on_message_create([](const dpp::message_create_t& event) {
 
