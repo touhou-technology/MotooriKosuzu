@@ -362,23 +362,13 @@ void UsePen::MessageCreate() {
 		//url做处理
 		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
-		//处理字符串
-		std::stringstream ss;
-		for (char ch : TextMsg)
-			if (ch == '"')
-				ss << "\\\"";
-			else if (ch == '\n')
-				ss << "\\n";
-			else
-				ss << ch;
-
 		//set base
 		dpp::embed ObjEmbed = dpp::embed()
 			.set_color(ColorPen(event.msg.guild_id, event.msg.channel_id))
 			.set_author(event.msg.author.global_name, "", event.msg.author.get_avatar_url());
 
 		//get
-		auto MessageObj = WebPen::TranslationPen(std::move(ss.str()), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
+		auto MessageObj = WebPen::TranslationPen(StringPen::CompatibleURL(TextMsg), (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second)["translations"][0];
 
 		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 			ObjEmbed
@@ -519,6 +509,14 @@ std::vector<std::string> StringPen::RegexTreatment(std::string& input) {
 	return treatment;
 }
 
-void StringPen::Compatible(std::string& Obj){
-
+std::string StringPen::CompatibleURL(std::string& Obj) {
+	std::stringstream ss;
+	for (char ch : Obj)
+		if (ch == '"')
+			ss << "\\\"";
+		else if (ch == '\n')
+			ss << "\\n";
+		else
+			ss << ch;
+	return ss.str();
 }

@@ -67,5 +67,5 @@ private:
 class StringPen {
 public:
 	static std::vector<std::string> RegexTreatment(std::string& input);
-	static void Compatible(std::string& Obj);
+	static std::string CompatibleURL(std::string& Obj);
 };
