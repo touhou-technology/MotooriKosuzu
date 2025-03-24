@@ -16,11 +16,15 @@ public:
 	void ChangeWrie(nlohmann::json& tmp);
 	
 	void Stone();
+
+	void UseWebhook(nlohmann::json& jsonDate, std::string_view& url, std::string_view content);
 private:
 	nlohmann::json Write;
 	std::vector<std::pair<std::string, dpp::snowflake>> Channel;
 
-	std::unordered_map<dpp::snowflake, std::vector<std::string>> ChannelStone;
+	//第一个入口，piar<Channel的索引，翻译的语言>
+	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
+		>>> ChannelStone;
 public:
 	static std::unique_ptr<StoneTranslationObj> m_instance;
 };
