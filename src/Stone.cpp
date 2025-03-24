@@ -2,35 +2,34 @@
 
 StoneTranslationObj::StoneTranslationObj() {
 	ChangeWrie(ConfigSlips::ConfigJson["webhook"]);
-	Stone();
+	//Stone();
 }
 
 void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 	this->Write = tmp;
+
 	for (auto Obj : Write["ChannelWebhook"]) {
-		dpp::webhook wh(Obj);
-		Channel.push_back(wh.channel_id);
+
+		Channel.push_back(std::move(std::pair<std::string, dpp::snowflake>{std::string(Obj[0]), Obj[1]}));
 	}
 
-	for (auto debug : Channel) {
-		std::cout << debug << std::endl;
+	for (auto Obj: Write["ChannelKey"]) {
+	
 	}
 }
 
 void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
-		
+
+
+
 		std::string TextMsg = event.msg.content;
 
 		//url×ö´¦Àí
 		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
 
-
-		for (auto Obj : Write["ChannlKey"]) {
-
-			if (event.msg.channel_id != Channel[Obj[0]])
-				continue;
+		for (auto Key : Write["ChannlKey"]) {
 
 
 
@@ -40,9 +39,5 @@ void StoneTranslationObj::Stone() {
 			event.msg.content;
 		}
 		});
-
-}
-
-void StoneTranslationObj::WebhookSend(std::string_view& webhook, const dpp::message_create_t& event){
 
 }

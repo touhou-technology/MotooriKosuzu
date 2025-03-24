@@ -3,6 +3,8 @@
 #include "Dictation.h"
 #include "Stone.h"
 
+std::unique_ptr<StoneTranslationObj> StoneTranslationObj::m_instance;
+
 //×¢ÒâË³Ðò
 Kosuzu::Kosuzu() {
 	InitPen::Init();
@@ -17,10 +19,14 @@ Kosuzu& Kosuzu::StartDebug(){
 }
 
 Kosuzu& Kosuzu::WriteStone(){
-	static StoneTranslationObj AwA;
+	StoneTranslationObj::m_instance.reset(new StoneTranslationObj);
+
+	return *this;
 }
 
 
 Kosuzu& Kosuzu::Start() {
 	RobotPen::Start();
+
+	return *this;
 }

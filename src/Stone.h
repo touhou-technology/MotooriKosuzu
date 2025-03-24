@@ -1,6 +1,8 @@
 //取自"把字刻在石头上"(笑)
 #pragma once
 #include <dpp/dpp.h>
+#include <memory>
+#include <unordered_map>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
@@ -15,9 +17,10 @@ public:
 	
 	void Stone();
 private:
-	void WebhookSend(std::string_view& webhook,const dpp::message_create_t& event);
-
 	nlohmann::json Write;
-	std::vector<dpp::snowflake> Channel;
-};
+	std::vector<std::pair<std::string, dpp::snowflake>> Channel;
 
+	std::unordered_map<dpp::snowflake, std::vector<std::string>> ChannelStone;
+public:
+	static std::unique_ptr<StoneTranslationObj> m_instance;
+};
