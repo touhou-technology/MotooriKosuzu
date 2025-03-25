@@ -461,7 +461,8 @@ std::vector<std::string> StringPen::RegexTreatment(std::string& input) {
 
 	std::vector<std::string> RegexStr = {
 		R"(https?://[^\s/$.?#].[^\s]*)",
-		R"(<:([^:]+):([^>]+)>)"
+		R"(<:([^:]+):([^>]+)>)",
+		R"(<(a?:\w+:\d+)>)"
 	};
 
 	for (const std::string& Str : RegexStr) {
