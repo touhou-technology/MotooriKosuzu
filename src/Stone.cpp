@@ -1,21 +1,23 @@
 #include "Stone.h"
 
-MessageQueue::MessageQueue() {
-	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
+void MessageQueue::check(const dpp::message_create_t& event){
+	if (event.msg.author.is_bot()) {
+		return;
+	}
 
-		if (event.msg.author.is_bot()) {
-			return;
+	for (auto Obj : Message) {
+
+		std::cout << Obj << ":" << event.msg.content << std::endl;
+
+		if (Obj != event.msg.content) {
+			continue;
 		}
 
-		for (auto Obj : Message) {
-			if (Obj != event.msg.content || Obj != event.msg.author.global_name) {
-				continue;
-			}
+		(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(event.msg.id, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
+		(*HashSlips::HashSnowflakeStr)[event.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
 
-			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(event.msg.id, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
-			(*HashSlips::HashSnowflakeStr)[event.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
-		}
-		});
+		std::cout << "HashMessage OK~" << std::endl;
+	}
 }
 
 void MessageQueue::push(std::string& message) {
@@ -105,7 +107,7 @@ void StoneTranslationObj::Stone() {
 				TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
 
 				jsonData["content"] = MessageObj["text"].get<std::string>();
-				//MQ.push(jsonData["content"]);
+				MQ.push(jsonData["content"]);
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
 
@@ -122,7 +124,6 @@ void StoneTranslationObj::Stone() {
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
 		}
-
 		});
 
 }

@@ -9,10 +9,13 @@
 #include "BambooSlips.h"
 #include "WritingBrush.h"
 
+//TODO
 class MessageQueue {
 public:
-	MessageQueue();
+	MessageQueue() = default;
 	~MessageQueue() = default;
+
+	void check(const dpp::message_create_t& event);
 
 	void push(std::string& message);
 	void push(std::string&& message);
@@ -29,7 +32,7 @@ public:
 
 	std::string MarkdownAttached(std::string&& str);
 private:
-
+	
 };
 
 class StoneTranslationObj {
