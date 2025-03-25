@@ -114,8 +114,18 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 MessageQueue::MessageQueue() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
 
+		if (event.msg.author.is_bot()) {
+			return;
+		}
 
+		for (auto Obj : Message) {
+			if (Obj != event.msg.content || Obj != event.msg.author.global_name) {
+				continue;
+			}
 
+			(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(BotMsg.msg.id, (*HashSlips::HashSnowflakeStr)[BotMsg.msg.channel_id].second);
+			(*HashSlips::HashSnowflakeStr)[BotMsg.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
+		}
 		});
 }
 
@@ -127,20 +137,17 @@ void MessageQueue::push(std::string&& message) {
 	Message.push_back(std::move(message));
 }
 
-std::string markdown::MarkdownRemove(std::string&& str){
+std::string markdown::MarkdownRemove(std::string&& str) {
 	std::vector<std::pair<std::string, std::string>> regexReplacements = {
-		{ R"(<@!?(\d+)>)", "" },         // 用户提及，如 <@123456789> 或 <@!987654321> → 保留数字 ID
-		{ R"(<@&(\d+)>)", "" },           // 角色提及，如 <@&111222333> → 保留数字 ID
-		{ R"(<#(\d+)>)", "" },            // 频道提及，如 <#444555666> → 保留数字 ID
 		{ R"(\*\*([^*]+)\*\*)", "$1" },      // Markdown 加粗，如 **加粗** → 保留内部内容
 		{ R"(\*([^*]+)\*)", "$1" },          // Markdown 斜体，如 *斜体* → 保留内部内容
 		{ R"(__([^_]+)__)", "$1" },          // Markdown 下划线，如 __下划线__ → 保留内部内容
 		{ R"(~~([^~]+)~~)", "$1" },          // Markdown 删除线，如 ~~删除线~~ → 保留内部内容
-		{ R"(`([^`]+)`)", "$1" },            // 行内代码，如 `code` → 保留内部代码
-		{ R"(\|\|([^|]+)\|\|)", "$1" }       // 剧透文本，如 ||剧透内容|| → 保留内部内容
+		{ R"(\|\|([^|]+)\|\|)", "$1" },       // 剧透文本，如 ||剧透内容|| → 保留内部内容
+		{ R"(<@!?(\d+)>)", "" },         // 用户提及，如 <@123456789> 或 <@!987654321> → 保留数字 ID
+		{ R"(<@&(\d+)>)", "" },           // 角色提及，如 <@&111222333> → 保留数字 ID
+		{ R"(<#(\d+)>)", "" },            // 频道提及，如 <#444555666> → 保留数字 ID
 	};
-
-
 
 	for (const auto& pair : regexReplacements) {
 		std::regex pattern(pair.first);
@@ -149,6 +156,6 @@ std::string markdown::MarkdownRemove(std::string&& str){
 	return str;
 }
 
-std::string markdown::MarkdownAttached(std::string&& str){
+std::string markdown::MarkdownAttached(std::string&& str) {
 	return str;
 }
