@@ -112,7 +112,24 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 }
 
 std::string markdown::MarkdownRemove(std::string&& str){
+	std::vector<std::pair<std::string, std::string>> regexReplacements = {
+		{ R"(<@!?(\d+)>)", "" },         // 用户提及，如 <@123456789> 或 <@!987654321> → 保留数字 ID
+		{ R"(<@&(\d+)>)", "" },           // 角色提及，如 <@&111222333> → 保留数字 ID
+		{ R"(<#(\d+)>)", "" },            // 频道提及，如 <#444555666> → 保留数字 ID
+		{ R"(\*\*([^*]+)\*\*)", "$1" },      // Markdown 加粗，如 **加粗** → 保留内部内容
+		{ R"(\*([^*]+)\*)", "$1" },          // Markdown 斜体，如 *斜体* → 保留内部内容
+		{ R"(__([^_]+)__)", "$1" },          // Markdown 下划线，如 __下划线__ → 保留内部内容
+		{ R"(~~([^~]+)~~)", "$1" },          // Markdown 删除线，如 ~~删除线~~ → 保留内部内容
+		{ R"(`([^`]+)`)", "$1" },            // 行内代码，如 `code` → 保留内部代码
+		{ R"(\|\|([^|]+)\|\|)", "$1" }       // 剧透文本，如 ||剧透内容|| → 保留内部内容
+	};
 
+
+
+	for (const auto& pair : regexReplacements) {
+		std::regex pattern(pair.first);
+		str = std::regex_replace(str, pattern, pair.second);
+	}
 	return str;
 }
 

@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <curl/curl.h>
+#include <regex>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
