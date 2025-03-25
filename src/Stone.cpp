@@ -1,6 +1,6 @@
 #include "Stone.h"
 
-void MessageQueue::check(const dpp::message_create_t& event){
+void MessageQueue::check(const dpp::message_create_t& event) {
 	if (event.msg.author.is_bot()) {
 		return;
 	}
@@ -30,25 +30,36 @@ void MessageQueue::push(std::string&& message) {
 
 
 std::string markdown::MarkdownRemove(std::string str) {
-	std::vector<std::pair<std::string, std::string>> regexReplacements = {
-		{ R"(\*\*([^*]+)\*\*)", "$1" },      // Markdown 加粗，如 **加粗** → 保留内部内容
-		{ R"(\*([^*]+)\*)", "$1" },          // Markdown 斜体，如 *斜体* → 保留内部内容
-		{ R"(__([^_]+)__)", "$1" },          // Markdown 下划线，如 __下划线__ → 保留内部内容
-		{ R"(~~([^~]+)~~)", "$1" },          // Markdown 删除线，如 ~~删除线~~ → 保留内部内容
-		{ R"(\|\|([^|]+)\|\|)", "$1" },       // 剧透文本，如 ||剧透内容|| → 保留内部内容
-		{ R"(<@!?(\d+)>)", "" },         // 用户提及，如 <@123456789> 或 <@!987654321> → 保留数字 ID
-		{ R"(<@&(\d+)>)", "" },           // 角色提及，如 <@&111222333> → 保留数字 ID
-		{ R"(<#(\d+)>)", "" },            // 频道提及，如 <#444555666> → 保留数字 ID
+	std::vector<std::tuple<std::string, std::string, std::string>> regexReplacements = {
+		{ R"(\*\*([^*]+)\*\*)", "$1","**"},      // Markdown 加粗，如 **加粗** → 保留内部内容
+		{ R"(\*([^*]+)\*)", "$1","*" },          // Markdown 斜体，如 *斜体* → 保留内部内容
+		{ R"(__([^_]+)__)", "$1","__" },          // Markdown 下划线，如 __下划线__ → 保留内部内容
+		{ R"(~~([^~]+)~~)", "$1","~~" },          // Markdown 删除线，如 ~~删除线~~ → 保留内部内容
+		{ R"(\|\|([^|]+)\|\|)", "$1","||" },       // 剧透文本，如 ||剧透内容|| → 保留内部内容
+		{ R"(<@!?(\d+)>)", "","" },         // 用户提及，如 <@123456789> 或 <@!987654321> → 保留数字 ID
+		{ R"(<@&(\d+)>)", "","" },           // 角色提及，如 <@&111222333> → 保留数字 ID
+		{ R"(<#(\d+)>)", "","" },            // 频道提及，如 <#444555666> → 保留数字 ID
 	};
 
-	for (const auto& pair : regexReplacements) {
-		std::regex pattern(pair.first);
-		str = std::regex_replace(str, pattern, pair.second);
+	std::string tmp;
+	for (const auto& Obj : regexReplacements) {
+		auto [regex, rp, flag] = Obj;
+
+		tmp = str;
+		std::regex pattern(regex);
+		str = std::regex_replace(str, pattern, rp);
+		if (tmp.size() != str.size()) {
+			Flag.push_back(flag);
+		}
 	}
 	return str;
 }
 
 std::string markdown::MarkdownAttached(std::string&& str) {
+	for (const auto& Obj : Flag) {
+		str = Obj + str + Obj;
+		std::cout << str << std::endl;
+	}
 	return str;
 }
 
@@ -90,12 +101,10 @@ void StoneTranslationObj::Stone() {
 		std::string TextMsg = event.msg.content;
 		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
+		//Discord
 		markdown TextMsgMK;
 
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
-
-		std::cout << TextMsg << std::endl;
-
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
 		for (auto Obj : ChannelStone[event.msg.channel_id]) {
@@ -104,15 +113,11 @@ void StoneTranslationObj::Stone() {
 
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 
-				TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-
-				jsonData["content"] = MessageObj["text"].get<std::string>();
-				MQ.push(jsonData["content"]);
+				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
 
-
-			//附件
+			//附件q
 			for (const auto& obj : EventJson["attachments"]) {
 				jsonData["content"] = obj["url"].get<std::string>();
 				UseWebhook(jsonData, Channel[Obj.first].first);

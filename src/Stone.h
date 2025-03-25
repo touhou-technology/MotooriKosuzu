@@ -32,7 +32,7 @@ public:
 
 	std::string MarkdownAttached(std::string&& str);
 private:
-	
+	std::vector<std::string> Flag;
 };
 
 class StoneTranslationObj {
@@ -54,6 +54,6 @@ private:
 	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
 		>>> ChannelStone;
 public:
-	MessageQueue MQ;
+	//MessageQueue MQ;
 	static std::unique_ptr<StoneTranslationObj> m_instance;
 };
