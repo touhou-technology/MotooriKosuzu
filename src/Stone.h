@@ -31,6 +31,18 @@ public:
 	static std::unique_ptr<StoneTranslationObj> m_instance;
 };
 
+class MessageQueue {
+public:
+	MessageQueue();
+	~MessageQueue() = default;
+
+	void push(std::string& message);
+	void push(std::string&& message);
+
+private:
+	std::vector<std::string> Message;
+};
+
 class markdown {
 public:
 	markdown() = default;

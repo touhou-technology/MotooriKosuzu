@@ -111,6 +111,22 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 	curl_global_cleanup();
 }
 
+MessageQueue::MessageQueue() {
+	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
+
+
+
+		});
+}
+
+void MessageQueue::push(std::string& message) {
+	Message.push_back(message);
+}
+
+void MessageQueue::push(std::string&& message) {
+	Message.push_back(std::move(message));
+}
+
 std::string markdown::MarkdownRemove(std::string&& str){
 	std::vector<std::pair<std::string, std::string>> regexReplacements = {
 		{ R"(<@!?(\d+)>)", "" },         // 用户提及，如 <@123456789> 或 <@!987654321> → 保留数字 ID
