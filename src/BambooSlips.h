@@ -39,5 +39,5 @@ public:
 
 class VoiceSlips {
 public:
-	static std::unique_ptr<TranslateVoice> S_TranslateVoice;
+	//static std::unique_ptr<TranslateVoice> S_TranslateVoice;
 };

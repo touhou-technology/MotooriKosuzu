@@ -95,8 +95,6 @@ void StoneTranslationObj::Stone() {
 		jsonData["username"] = event.msg.author.global_name;
 		jsonData["avatar_url"] = event.msg.author.get_avatar_url();
 
-		dpp::snowflake re = NULL;
-
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
 		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
