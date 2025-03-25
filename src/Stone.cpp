@@ -68,7 +68,6 @@ void StoneTranslationObj::Stone() {
 }
 
 void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) {
-
 	std::string jsonStr = jsonData.dump();
 
 	// 初始化 libcurl
@@ -101,4 +100,20 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 		std::cerr << "初始化 libcurl 失败" << std::endl;
 	}
 	curl_global_cleanup();
+}
+
+MessageQueue::MessageQueue(){
+	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
+
+		
+
+		});
+}
+
+void MessageQueue::push(std::string& message){
+	Message.push_back(message);
+}
+
+void MessageQueue::push(std::string&& message){
+	Message.push_back(std::move(message));
 }
