@@ -38,6 +38,12 @@ void StoneTranslationObj::Stone() {
 		std::string TextMsg = event.msg.content;
 		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
+		markdown TextMsgMK;
+
+		TextMsg = TextMsgMK.MarkdownRemove(std::move(TextMsg));
+
+		std::cout << TextMsg << std::endl;
+
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
 		for (auto Obj : ChannelStone[event.msg.channel_id]) {
@@ -45,6 +51,9 @@ void StoneTranslationObj::Stone() {
 
 
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+
+				TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+
 				jsonData["content"] = MessageObj["text"].get<std::string>();
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
@@ -102,14 +111,11 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 	curl_global_cleanup();
 }
 
-markdown::markdown(std::string& message){
-	MarkdownRemove(message);
+std::string markdown::MarkdownRemove(std::string&& str){
+
+	return str;
 }
 
-void markdown::MarkdownRemove(std::string& str){
-
-}
-
-void markdown::MarkdownAttached(std::string& str){
-
+std::string markdown::MarkdownAttached(std::string&& str){
+	return str;
 }

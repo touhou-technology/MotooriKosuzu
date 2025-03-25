@@ -34,11 +34,9 @@ class markdown {
 public:
 	markdown() = default;
 
-	markdown(std::string& message);
+	std::string MarkdownRemove(std::string&& str);
 
-	void MarkdownRemove(std::string& str);
-
-	void MarkdownAttached(std::string& str);
+	std::string MarkdownAttached(std::string&& str);
 private:
 	
 };
