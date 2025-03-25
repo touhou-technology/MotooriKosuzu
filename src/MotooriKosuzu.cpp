@@ -8,7 +8,7 @@ std::unique_ptr<StoneTranslationObj> StoneTranslationObj::m_instance;
 //×¢ÒâË³Ðò
 Kosuzu::Kosuzu() {
 	InitPen::Init();
-	InitVoice::Init();
+	//InitVoice::Init();
 }
 
 Kosuzu& Kosuzu::StartDebug(){
