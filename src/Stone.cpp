@@ -103,5 +103,13 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 }
 
 markdown::markdown(std::string& message){
+	MarkdownRemove(message);
+}
+
+void markdown::MarkdownRemove(std::string& str){
+
+}
+
+void markdown::MarkdownAttached(std::string& str){
 
 }
