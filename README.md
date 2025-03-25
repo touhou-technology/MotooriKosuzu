@@ -13,8 +13,7 @@ But the program needs a daemon to replace the original program with an updated o
 ```bash
 git clone https://github.com/touhou-technology/MotooriKosuzu
 cd MotooriKosuzu/src
-g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h WritingBrush.cpp WritingBrush.h -s
-td=c++20 -l"dpp" -l"pthread" -l"curl"
+g++ Application.cpp BambooSlips.h Bookshelf.hpp MotooriKosuzu.cpp MotooriKosuzu.h WritingBrush.cpp WritingBrush.h Stone.cpp Stone.h Dictation.cpp Dictation.h -std=c++20 -l"dpp" -l"pthread" -l"curl"
 ```
  Or in docker
 ```bash
