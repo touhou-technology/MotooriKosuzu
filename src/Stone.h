@@ -19,6 +19,9 @@ public:
 	void Stone();
 
 	void UseWebhook(nlohmann::json& jsonDate, std::string url);
+
+	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
+		>>>& GetChannelStone();
 private:
 	nlohmann::json Write;
 	std::vector<std::pair<std::string, dpp::snowflake>> Channel;
@@ -28,17 +31,4 @@ private:
 		>>> ChannelStone;
 public:
 	static std::unique_ptr<StoneTranslationObj> m_instance;
-	MessageQueue c_MessageQueue;
-};
-
-class MessageQueue {
-public:
-	MessageQueue();
-	~MessageQueue() = default;
-
-	void push(std::string& message);
-	void push(std::string&& message);
-
-private:
-	std::vector<std::string> Message;
 };
