@@ -4,9 +4,36 @@
 #include <memory>
 #include <unordered_map>
 #include <curl/curl.h>
+#include <regex>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
+
+//TODO
+class MessageQueue {
+public:
+	MessageQueue() = default;
+	~MessageQueue() = default;
+
+	void check(const dpp::message_create_t& event);
+
+	void push(std::string& message);
+	void push(std::string&& message);
+
+private:
+	std::vector<std::string> Message;
+};
+
+class markdown {
+public:
+	markdown() = default;
+
+	std::string MarkdownRemove(std::string str);
+
+	std::string MarkdownAttached(std::string&& str);
+private:
+	std::vector<std::string> Flag;
+};
 
 class StoneTranslationObj {
 public:
@@ -27,5 +54,6 @@ private:
 	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
 		>>> ChannelStone;
 public:
+	//MessageQueue MQ;
 	static std::unique_ptr<StoneTranslationObj> m_instance;
 };
