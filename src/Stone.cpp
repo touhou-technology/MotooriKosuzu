@@ -101,3 +101,7 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 	}
 	curl_global_cleanup();
 }
+
+markdown::markdown(std::string& message){
+
+}

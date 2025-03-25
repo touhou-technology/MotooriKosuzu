@@ -29,3 +29,12 @@ private:
 public:
 	static std::unique_ptr<StoneTranslationObj> m_instance;
 };
+
+class markdown {
+public:
+	markdown() = default;
+	markdown(std::string& message);
+
+private:
+	
+};
