@@ -331,7 +331,7 @@ void UsePen::MessageCreate() {
 		nlohmann::json data = event.msg.to_json();
 
 		//message_referencea
-		dpp::snowflake re = NULL;
+		dpp::snowflake re;
 
 		//create temp Text url
 		std::string TextMsg = event.msg.content;
