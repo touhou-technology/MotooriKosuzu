@@ -225,8 +225,6 @@ void UsePen::Slashcommand() {
 		std::string To = std::get<std::string>(event->get_parameter("译至"));
 
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
-
-		//ChannlConfigBookUpdate();
 		});
 
 	SlashcommandHash("翻訳を双方向に開く", [](dpp::slashcommand_t* event)->void {
@@ -247,8 +245,6 @@ void UsePen::Slashcommand() {
 		//建立双向链接
 		(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>(channel, To);
 		(*HashSlips::HashSnowflakeStr)[channel] = std::pair<dpp::snowflake, std::string>(event->command.channel_id, This_channel);
-
-		//ChannlConfigBookUpdate();
 		});
 
 	//停下翻译
@@ -258,8 +254,6 @@ void UsePen::Slashcommand() {
 		else {
 			event->reply("わかった");
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
-
-			//ChannlConfigBookUpdate();
 		}
 		});
 
@@ -276,8 +270,6 @@ void UsePen::Slashcommand() {
 			(*HashSlips::HashSnowflakeStr)[(*HashSlips::HashSnowflakeStr)[event->command.channel_id].first] = std::pair<dpp::snowflake, std::string>();
 
 			(*HashSlips::HashSnowflakeStr)[event->command.channel_id] = std::pair<dpp::snowflake, std::string>();
-
-			//ChannlConfigBookUpdate();
 		}
 		});
 
@@ -340,21 +332,6 @@ void UsePen::MessageCreate() {
 
 		//message_referencea
 		dpp::snowflake re = NULL;
-
-		//if (data["message_reference"]["message_id"] != nullptr) {
-		//	uint64_t value = std::stoull((std::string)data["message_reference"]["message_id"]);
-
-		//	dpp::message tmp;
-
-		//	RobotSlips::bot->message_get(
-		//		event.msg.message_reference.message_id,
-		//		event.msg.channel_id,
-		//		[&](const dpp::confirmation_callback_t& event) {
-		//			std::get<dpp::message>(event.value).build_json();
-
-		//		}
-		//	);
-		//}
 
 		//create temp Text url
 		std::string TextMsg = event.msg.content;

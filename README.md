@@ -42,6 +42,11 @@ Delete from the hash table
 双方向翻訳の停止
 Only a two-way channel can be used normally
 
+## webhook
+
+The webhook can only send messages, and you don't care what you do after sending it
+Use webhooks to translate multiple languages at once
+
 ## Disposition
 You need to configure
 ```bash
