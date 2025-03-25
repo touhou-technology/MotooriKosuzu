@@ -9,6 +9,29 @@
 #include "BambooSlips.h"
 #include "WritingBrush.h"
 
+class MessageQueue {
+public:
+	MessageQueue();
+	~MessageQueue() = default;
+
+	void push(std::string& message);
+	void push(std::string&& message);
+
+private:
+	std::vector<std::string> Message;
+};
+
+class markdown {
+public:
+	markdown() = default;
+
+	std::string MarkdownRemove(std::string str);
+
+	std::string MarkdownAttached(std::string&& str);
+private:
+
+};
+
 class StoneTranslationObj {
 public:
 	StoneTranslationObj();
@@ -28,28 +51,6 @@ private:
 	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
 		>>> ChannelStone;
 public:
+	MessageQueue MQ;
 	static std::unique_ptr<StoneTranslationObj> m_instance;
-};
-
-class MessageQueue {
-public:
-	MessageQueue();
-	~MessageQueue() = default;
-
-	void push(std::string& message);
-	void push(std::string&& message);
-
-private:
-	std::vector<std::string> Message;
-};
-
-class markdown {
-public:
-	markdown() = default;
-
-	std::string MarkdownRemove(std::string&& str);
-
-	std::string MarkdownAttached(std::string&& str);
-private:
-	
 };
