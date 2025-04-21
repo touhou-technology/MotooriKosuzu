@@ -28,7 +28,6 @@ void MessageQueue::push(std::string&& message) {
 	Message.push_back(std::move(message));
 }
 
-
 std::string markdown::MarkdownRemove(std::string str) {
 	std::vector<std::tuple<std::string, std::string, std::string>> regexReplacements = {
 		{ R"(\*\*([^*]+)\*\*)", "$1","**"},      // Markdown 加粗，如 **加粗** → 保留内部内容

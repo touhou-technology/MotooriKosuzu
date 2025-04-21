@@ -1,10 +1,16 @@
-//取自"把字刻在石头上"(笑)
+/**取自"把字刻在石头上"(笑)
+ * 对channel中翻译
+ * 按照配置文件来进行
+ */
 #pragma once
 #include <dpp/dpp.h>
-#include <memory>
-#include <unordered_map>
 #include <curl/curl.h>
+#include <memory>
+
+#include <unordered_map>
 #include <regex>
+#include <thread>
+#include <atomic>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
