@@ -72,7 +72,7 @@ void StoneTranslationObj::Stone() {
 			Queue.check(event);
 			return;
 		}
-
+		StoneMessage MessageTmp;
 		nlohmann::json EventJson = event.msg.to_json();
 		nlohmann::json jsonData;
 
@@ -92,6 +92,8 @@ void StoneTranslationObj::Stone() {
 		for (auto Obj : ChannelStone[event.msg.channel_id]) {
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
 
+			event.msg.channel_id;
+			event.msg.id;
 
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 
@@ -111,6 +113,9 @@ void StoneTranslationObj::Stone() {
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
 		}
+
+		//建立链接做准备
+		Queue.push(std::move(MessageTmp));
 		});
 
 	//TODO
