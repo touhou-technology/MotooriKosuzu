@@ -15,7 +15,10 @@
 #include "BambooSlips.h"
 #include "WritingBrush.h"
 
-class base {
+//保存石头中翻译的或者其他消息
+class StoneMessage {
+
+public:
 
 };
 
@@ -26,10 +29,10 @@ public:
 	~MessageQueue() = default;
 
 	void check(const dpp::message_create_t& event);
-	void push(const base& base);
-	void push(const base&& base);
+	void push(const StoneMessage& StoneMessage);
+	void push(const StoneMessage&& StoneMessage);
 private:
-	std::vector<base> Obj;
+	std::vector<StoneMessage> Obj;
 };
 
 class markdown {

@@ -4,11 +4,11 @@ void MessageQueue::check(const dpp::message_create_t& event) {
 
 }
 
-void MessageQueue::push(const base& base){
+void MessageQueue::push(const StoneMessage& StoneMessage){
 
 }
 
-void MessageQueue::push(const base&& base){
+void MessageQueue::push(const StoneMessage&& StoneMessage){
 
 }
 
@@ -113,50 +113,8 @@ void StoneTranslationObj::Stone() {
 		}
 		});
 
+	//TODO
 	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
-		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
-			>>() || event.msg.author.is_bot()) {
-			return;
-		}
-
-		nlohmann::json EventJson = event.msg.to_json();
-		nlohmann::json jsonData;
-
-		jsonData["username"] = event.msg.author.global_name;
-		jsonData["avatar_url"] = event.msg.author.get_avatar_url();
-
-		//create temp Text url
-		std::string TextMsg = event.msg.content;
-		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
-
-		//Discord
-		markdown TextMsgMK;
-
-		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
-		TextMsg = StringPen::CompatibleURL(TextMsg);
-
-		for (auto Obj : ChannelStone[event.msg.channel_id]) {
-			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
-
-
-			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-
-				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-				UseWebhook(jsonData, Channel[Obj.first].first);
-			}
-
-			//¸½¼þq
-			for (const auto& obj : EventJson["attachments"]) {
-				jsonData["content"] = obj["url"].get<std::string>();
-				UseWebhook(jsonData, Channel[Obj.first].first);
-			}
-
-			//url
-			for (const auto& temp : Treatment) {
-				jsonData["content"] = temp;
-				UseWebhook(jsonData, Channel[Obj.first].first);
-			}
-		}
 
 		});
 }
