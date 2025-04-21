@@ -1,31 +1,15 @@
 #include "Stone.h"
 
 void MessageQueue::check(const dpp::message_create_t& event) {
-	if (event.msg.author.is_bot()) {
-		return;
-	}
 
-	for (auto Obj : Message) {
-
-		std::cout << Obj << ":" << event.msg.content << std::endl;
-
-		if (Obj != event.msg.content) {
-			continue;
-		}
-
-		(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(event.msg.id, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
-		(*HashSlips::HashSnowflakeStr)[event.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
-
-		std::cout << "HashMessage OK~" << std::endl;
-	}
 }
 
-void MessageQueue::push(std::string& message) {
-	Message.push_back(message);
+void MessageQueue::push(const base& base){
+
 }
 
-void MessageQueue::push(std::string&& message) {
-	Message.push_back(std::move(message));
+void MessageQueue::push(const base&& base){
+
 }
 
 std::string markdown::MarkdownRemove(std::string str) {
@@ -85,6 +69,7 @@ void StoneTranslationObj::Stone() {
 
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
+			Queue.check(event);
 			return;
 		}
 

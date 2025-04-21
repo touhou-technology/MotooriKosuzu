@@ -15,6 +15,10 @@
 #include "BambooSlips.h"
 #include "WritingBrush.h"
 
+class base {
+
+};
+
 //TODO
 class MessageQueue {
 public:
@@ -22,12 +26,10 @@ public:
 	~MessageQueue() = default;
 
 	void check(const dpp::message_create_t& event);
-
-	void push(std::string& message);
-	void push(std::string&& message);
-
+	void push(const base& base);
+	void push(const base&& base);
 private:
-	std::vector<std::string> Message;
+	std::vector<base> Obj;
 };
 
 class markdown {
@@ -49,6 +51,7 @@ public:
 public:
 	void ChangeWrie(nlohmann::json& tmp);
 
+	//主要处理任务
 	void Stone();
 
 	void UseWebhook(nlohmann::json& jsonDate, std::string url);
@@ -60,6 +63,10 @@ private:
 	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
 		>>> ChannelStone;
 public:
-	//MessageQueue MQ;
+
+	//instance
 	static std::unique_ptr<StoneTranslationObj> m_instance;
+
+	//message
+	MessageQueue Queue;
 };
