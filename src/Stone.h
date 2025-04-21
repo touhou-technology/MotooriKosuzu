@@ -15,11 +15,16 @@
 #include "BambooSlips.h"
 #include "WritingBrush.h"
 
-//保存石头中翻译的或者其他消息
-class StoneMessage {
+ //保存石头中翻译的或者其他消息
+struct StoneMessage {
+	//channel, content
+	std::vector<std::tuple<dpp::snowflake, std::string>> translate_content;
 
-public:
+	//最基础的消息
+	std::tuple<dpp::snowflake, std::string> content_origin;
 
+	//
+	bool flag;
 };
 
 //TODO
@@ -32,7 +37,10 @@ public:
 	void push(const StoneMessage& StoneMessage);
 	void push(const StoneMessage&& StoneMessage);
 private:
+	friend class StoneTranslationObj;
+
 	std::vector<StoneMessage> Obj;
+	std::unordered_map<dpp::snowflake, int> ChannelIndex;
 };
 
 class markdown {
@@ -63,8 +71,8 @@ private:
 	std::vector<std::pair<std::string, dpp::snowflake>> Channel;
 
 	//第一个入口，piar<Channel的索引，翻译的语言>
-	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string
-		>>> ChannelStone;
+	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string>>> ChannelStone;
+
 public:
 
 	//instance

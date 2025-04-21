@@ -1,15 +1,27 @@
 #include "Stone.h"
 
 void MessageQueue::check(const dpp::message_create_t& event) {
+	//·¢ËÍµÄ·­ÒëÄÚÈÝ
+	auto& translate_msg =event.msg.content;
 
+	for (auto& StoneMessageObj : Obj) {
+		//hash
+		auto& [channel_id,content] = StoneMessageObj.translate_content[ChannelIndex[event.msg.channel_id]];
+
+		if (content == translate_msg) {
+
+		}
+
+
+	}
 }
 
 void MessageQueue::push(const StoneMessage& StoneMessage){
-
+	Obj.push_back(StoneMessage);
 }
 
 void MessageQueue::push(const StoneMessage&& StoneMessage){
-
+	Obj.push_back(StoneMessage);
 }
 
 std::string markdown::MarkdownRemove(std::string str) {
@@ -54,9 +66,13 @@ StoneTranslationObj::StoneTranslationObj() {
 void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 	this->Write = tmp;
 
+	int index = 0;
 	for (auto Obj : Write["ChannelWebhook"]) {
 
 		Channel.push_back(std::move(std::pair<std::string, dpp::snowflake>{std::string(Obj[0]), Obj[1]}));
+
+		Queue.ChannelIndex[Obj[1]] = index;
+		index++;
 	}
 
 	for (auto Obj : Write["ChannelKey"]) {
