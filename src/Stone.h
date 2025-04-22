@@ -20,17 +20,14 @@ struct StoneMessage {
 	//channel, content
 	std::vector<std::tuple<dpp::snowflake, std::string>> translate_content;
 
-	//channel, message_id, content
+	//message_id, channel
 	std::tuple<dpp::snowflake, dpp::snowflake> content_origin;
-
-	//
-	bool flag;
 };
 
 //TODO
 class StoneMessageDispose {
 public:
-	StoneMessageDispose() = default;
+	StoneMessageDispose();
 	~StoneMessageDispose() = default;
 
 	void check(const dpp::message_create_t& event);
@@ -41,6 +38,15 @@ private:
 
 	std::vector<StoneMessage> Obj;
 	std::unordered_map<dpp::snowflake, int> ChannelIndex;
+
+	using MessageStone = std::vector<dpp::snowflake, dpp::snowflake>;
+
+	//´æ·Åw
+	std::vector<std::shared_ptr<MessageStone>> MessageStoneInstancePtr;
+
+	std::unordered_map<dpp::snowflake, MessageStone*> MessageStoneHash;
+private:
+	void make_message_hash();
 };
 
 class markdown {

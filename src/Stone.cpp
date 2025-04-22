@@ -1,5 +1,9 @@
 #include "Stone.h"
 
+StoneMessageDispose::StoneMessageDispose(){
+
+}
+
 void StoneMessageDispose::check(const dpp::message_create_t& event) {
 	//发送的翻译内容
 	auto& translate_msg = event.msg.content;
@@ -14,6 +18,7 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 
 		//建立hash表
 
+
 	}
 }
 
@@ -22,7 +27,18 @@ void StoneMessageDispose::push(StoneMessage& StoneMessage) {
 }
 
 void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
+	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
+
+	auto& [message_id, channel] = StoneMessage.content_origin;
+
+	//MessageStoneHash[message_id] = &(MessageStoneInstancePtr.end());
+
+	MessageStoneInstancePtr.end();
 	Obj.push_back(StoneMessage);
+}
+
+void StoneMessageDispose::make_message_hash(){
+
 }
 
 std::string markdown::MarkdownRemove(std::string str) {
@@ -130,7 +146,7 @@ void StoneTranslationObj::Stone() {
 			MessageTmp.translate_content.push_back({ Channel[Obj.first].first, MessageObj });
 		}
 
-		MessageTmp.content_origin = { event.msg.channel_id, event.msg.id };
+		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
 		//建立链接做准备
 		Queue.push(std::move(MessageTmp));
 		});
