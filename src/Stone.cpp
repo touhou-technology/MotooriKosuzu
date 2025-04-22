@@ -1,6 +1,6 @@
 #include "Stone.h"
 
-void MessageQueue::check(const dpp::message_create_t& event) {
+void StoneMessageDispose::check(const dpp::message_create_t& event) {
 	//·¢ËÍµÄ·­ÒëÄÚÈİ
 	auto& translate_msg = event.msg.content;
 
@@ -17,11 +17,11 @@ void MessageQueue::check(const dpp::message_create_t& event) {
 	}
 }
 
-void MessageQueue::push(StoneMessage& StoneMessage) {
+void StoneMessageDispose::push(StoneMessage& StoneMessage) {
 	Obj.push_back(StoneMessage);
 }
 
-void MessageQueue::push(StoneMessage&& StoneMessage) {
+void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
 	Obj.push_back(StoneMessage);
 }
 
@@ -137,6 +137,11 @@ void StoneTranslationObj::Stone() {
 
 	//TODO
 	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
+
+		});
+
+	//TODO
+	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {
 
 		});
 }

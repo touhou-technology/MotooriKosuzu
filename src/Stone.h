@@ -28,10 +28,10 @@ struct StoneMessage {
 };
 
 //TODO
-class MessageQueue {
+class StoneMessageDispose {
 public:
-	MessageQueue() = default;
-	~MessageQueue() = default;
+	StoneMessageDispose() = default;
+	~StoneMessageDispose() = default;
 
 	void check(const dpp::message_create_t& event);
 	void push(StoneMessage& StoneMessage);
@@ -79,5 +79,5 @@ public:
 	static std::unique_ptr<StoneTranslationObj> m_instance;
 
 	//message
-	MessageQueue Queue;
+	StoneMessageDispose Queue;
 };
