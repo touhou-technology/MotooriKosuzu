@@ -26,6 +26,9 @@ struct StoneMessage {
 //TODO
 class StoneMessageDispose {
 public:
+	using MessageStone = std::vector<std::pair<dpp::snowflake, dpp::snowflake>>;
+
+
 	StoneMessageDispose();
 	~StoneMessageDispose() = default;
 
@@ -38,7 +41,6 @@ private:
 	std::vector<StoneMessage> Obj;
 	std::unordered_map<dpp::snowflake, int> ChannelIndex;
 
-	using MessageStone = std::vector<std::pair<dpp::snowflake, dpp::snowflake>>;
 
 	//´æ·Åw
 	std::vector<std::shared_ptr<MessageStone>> MessageStoneInstancePtr;

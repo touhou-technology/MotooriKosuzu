@@ -160,6 +160,15 @@ void StoneTranslationObj::Stone() {
 
 	//TODO
 	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {
+		if (*Queue.MessageStoneHash[event.id] == StoneMessageDispose::MessageStone()) {
+			return;
+		}
+
+		for (auto& Obj : *Queue.MessageStoneHash[event.id]) {
+			RobotSlips::bot->message_delete(Obj.first, Obj.second);
+		}
+
+		*Queue.MessageStoneHash[event.id] = StoneMessageDispose::MessageStone();
 
 		});
 }
