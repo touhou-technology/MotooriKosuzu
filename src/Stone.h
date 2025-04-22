@@ -38,7 +38,7 @@ private:
 	std::vector<StoneMessage> Obj;
 	std::unordered_map<dpp::snowflake, int> ChannelIndex;
 
-	using MessageStone = std::vector<dpp::snowflake, dpp::snowflake>;
+	using MessageStone = std::vector<std::pair<dpp::snowflake, dpp::snowflake>>;
 
 	//´æ·Åw
 	std::vector<std::shared_ptr<MessageStone>> MessageStoneInstancePtr;

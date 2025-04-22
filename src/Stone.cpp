@@ -1,6 +1,6 @@
 #include "Stone.h"
 
-StoneMessageDispose::StoneMessageDispose(){
+StoneMessageDispose::StoneMessageDispose() {
 
 }
 
@@ -30,7 +30,11 @@ void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 
 	auto& [message_id, channel] = StoneMessage.content_origin;
+
 	MessageStoneHash[message_id] = MessageStoneInstancePtr.end()->get();
+
+	MessageStoneInstancePtr.end()->get()->push_back({ message_id, channel });
+
 
 	Obj.push_back(StoneMessage);
 }
