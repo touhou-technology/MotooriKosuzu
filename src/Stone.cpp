@@ -17,8 +17,8 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		}
 
 		//½¨Á¢hash±í
-
-
+		MessageStoneHash[event.msg.id]->push_back({event.msg.id, event.msg.channel_id});
+		break;
 	}
 }
 
@@ -104,7 +104,7 @@ void StoneTranslationObj::Stone() {
 
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
-			Queue.check(event);
+			//Queue.check(event);
 			return;
 		}
 		StoneMessage MessageTmp;
@@ -145,7 +145,7 @@ void StoneTranslationObj::Stone() {
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
 
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].first, MessageObj });
+			//MessageTmp.translate_content.push_back({ Channel[Obj.first].first, MessageObj });
 		}
 
 		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
