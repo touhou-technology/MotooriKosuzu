@@ -20,8 +20,8 @@ struct StoneMessage {
 	//channel, content
 	std::vector<std::tuple<dpp::snowflake, std::string>> translate_content;
 
-	//最基础的消息
-	std::tuple<dpp::snowflake, std::string> content_origin;
+	//channel, message_id, content
+	std::tuple<dpp::snowflake, dpp::snowflake> content_origin;
 
 	//
 	bool flag;
@@ -34,8 +34,8 @@ public:
 	~MessageQueue() = default;
 
 	void check(const dpp::message_create_t& event);
-	void push(const StoneMessage& StoneMessage);
-	void push(const StoneMessage&& StoneMessage);
+	void push(StoneMessage& StoneMessage);
+	void push(StoneMessage&& StoneMessage);
 private:
 	friend class StoneTranslationObj;
 

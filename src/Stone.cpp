@@ -2,25 +2,26 @@
 
 void MessageQueue::check(const dpp::message_create_t& event) {
 	//发送的翻译内容
-	auto& translate_msg =event.msg.content;
+	auto& translate_msg = event.msg.content;
 
 	for (auto& StoneMessageObj : Obj) {
 		//hash
-		auto& [channel_id,content] = StoneMessageObj.translate_content[ChannelIndex[event.msg.channel_id]];
+		auto& [channel_id, content] = StoneMessageObj.translate_content[ChannelIndex[event.msg.channel_id]];
 
-		if (content == translate_msg) {
-
+		if (content != translate_msg) {
+			continue;
 		}
 
+		//建立hash表
 
 	}
 }
 
-void MessageQueue::push(const StoneMessage& StoneMessage){
+void MessageQueue::push(StoneMessage& StoneMessage) {
 	Obj.push_back(StoneMessage);
 }
 
-void MessageQueue::push(const StoneMessage&& StoneMessage){
+void MessageQueue::push(StoneMessage&& StoneMessage) {
 	Obj.push_back(StoneMessage);
 }
 
@@ -108,9 +109,6 @@ void StoneTranslationObj::Stone() {
 		for (auto Obj : ChannelStone[event.msg.channel_id]) {
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
 
-			event.msg.channel_id;
-			event.msg.id;
-
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 
 				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
@@ -128,8 +126,11 @@ void StoneTranslationObj::Stone() {
 				jsonData["content"] = temp;
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
+
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].first, MessageObj });
 		}
 
+		MessageTmp.content_origin = { event.msg.channel_id, event.msg.id };
 		//建立链接做准备
 		Queue.push(std::move(MessageTmp));
 		});
