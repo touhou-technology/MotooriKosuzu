@@ -10,7 +10,6 @@
 #include <unordered_map>
 #include <regex>
 #include <thread>
-#include <atomic>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
@@ -45,8 +44,6 @@ private:
 	std::vector<std::shared_ptr<MessageStone>> MessageStoneInstancePtr;
 
 	std::unordered_map<dpp::snowflake, MessageStone*> MessageStoneHash;
-private:
-	void make_message_hash();
 };
 
 class markdown {

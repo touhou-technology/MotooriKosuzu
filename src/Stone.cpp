@@ -30,15 +30,9 @@ void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 
 	auto& [message_id, channel] = StoneMessage.content_origin;
+	MessageStoneHash[message_id] = MessageStoneInstancePtr.end()->get();
 
-	//MessageStoneHash[message_id] = &(MessageStoneInstancePtr.end());
-
-	MessageStoneInstancePtr.end();
 	Obj.push_back(StoneMessage);
-}
-
-void StoneMessageDispose::make_message_hash(){
-
 }
 
 std::string markdown::MarkdownRemove(std::string str) {
