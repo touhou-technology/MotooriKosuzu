@@ -9,7 +9,7 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
 		//debug
-		//std::clog << content << ":" << translate_msg << std::endl;
+		std::clog << content << ":" << translate_msg << std::endl;
 
 		if (content != translate_msg) {
 			continue;
@@ -21,7 +21,7 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 
 		//debug
-		//std::cout << "LINK" << std::endl;
+		std::cout << "LINK" << std::endl;
 
 		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
 
@@ -42,7 +42,7 @@ void StoneMessageDispose::check(const dpp::message_update_t& event){
 		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
 		//debug
-		//std::clog << content << ":" << translate_msg << std::endl;
+		std::clog << content << ":" << translate_msg << std::endl;
 
 		if (content != translate_msg) {
 			continue;
@@ -54,7 +54,7 @@ void StoneMessageDispose::check(const dpp::message_update_t& event){
 		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 
 		//debug
-		//std::cout << "LINK" << std::endl;
+		std::cout << "LINK" << std::endl;
 
 		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
 
@@ -158,72 +158,13 @@ void StoneTranslationObj::Stone() {
 			Queue.check(event);
 			return;
 		}
-		StoneMessage MessageTmp;
-		nlohmann::json EventJson = event.msg.to_json();
-		nlohmann::json jsonData;
-
-		jsonData["username"] = event.msg.author.global_name;
-		jsonData["avatar_url"] = event.msg.author.get_avatar_url();
-
-		//create temp Text url
-		std::string TextMsg = event.msg.content;
-		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
-
-		//Discord
-		markdown TextMsgMK;
-
-		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
-		TextMsg = StringPen::CompatibleURL(TextMsg);
-
-		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
-			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
-
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, MessageObj["text"].get<std::string>() });
-
-			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-				UseWebhook(jsonData, Channel[Obj.first].first);
-			}
-
-			//附件q
-			for (const auto& obj : EventJson["attachments"]) {
-				jsonData["content"] = obj["url"].get<std::string>();
-				UseWebhook(jsonData, Channel[Obj.first].first);
-			}
-
-			//url
-			for (const auto& temp : Treatment) {
-				jsonData["content"] = temp;
-				UseWebhook(jsonData, Channel[Obj.first].first);
-			}
-
-		}
-
-		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
-		//建立链接做准备
-		Queue.push(std::move(MessageTmp));
 		});
 
-	//TODO
-	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
+	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
-			Queue.check(event);
 			return;
 		}
-
-		if (Queue.MessageStoneHash[event.msg.id] == nullptr) {
-			return;
-		}
-
-		for (auto& Obj : *Queue.MessageStoneHash[event.msg.id]) {
-			if (Obj.first == event.msg.id) {
-				continue;
-			}
-			RobotSlips::bot->message_delete(Obj.first, Obj.second);
-		}
-
-		*Queue.MessageStoneHash[event.msg.id] = StoneMessageDispose::MessageStone();
 
 		StoneMessage MessageTmp;
 		nlohmann::json EventJson = event.msg.to_json();
@@ -255,16 +196,92 @@ void StoneTranslationObj::Stone() {
 
 			//附件q
 			for (const auto& obj : EventJson["attachments"]) {
-				if (MessageObj["detected_source_language"].get<std::string>() == "empty") {
-					unity += "\\n";
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
 				}
 				unity += obj["url"].get<std::string>();
 			}
 
 			//url
 			for (const auto& temp : Treatment) {
-				if (MessageObj["detected_source_language"].get<std::string>() == "empty") {
-					unity += "\\n";
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
+				}
+				unity += temp;
+			}
+
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, unity });
+			jsonData["content"] = unity;
+			UseWebhook(jsonData, Channel[Obj.first].first);
+		}
+
+		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
+		//建立链接做准备
+		Queue.push(std::move(MessageTmp));
+		});
+
+	//TODO
+	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
+		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
+			>>() || event.msg.author.is_bot()) {
+			Queue.check(event);
+			return;
+		}
+
+		if (Queue.MessageStoneHash[event.msg.id] == nullptr) {
+			return;
+		}
+
+		for (auto& Obj : *Queue.MessageStoneHash[event.msg.id]) {
+			if (Obj.first == event.msg.id) {
+				continue;
+			}
+			RobotSlips::bot->message_delete(Obj.first, Obj.second);
+		}
+
+		*Queue.MessageStoneHash[event.msg.id] = StoneMessageDispose::MessageStone();
+
+		//()
+		StoneMessage MessageTmp;
+		nlohmann::json EventJson = event.msg.to_json();
+		nlohmann::json jsonData;
+
+		jsonData["username"] = event.msg.author.global_name;
+		jsonData["avatar_url"] = event.msg.author.get_avatar_url();
+
+		//create temp Text url
+		std::string TextMsg = event.msg.content;
+		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
+
+		//Discord
+		markdown TextMsgMK;
+
+		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
+		TextMsg = StringPen::CompatibleURL(TextMsg);
+
+		std::string unity = "";
+
+		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+			unity = "";
+
+			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
+
+			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+				unity = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+			}
+
+			//附件q
+			for (const auto& obj : EventJson["attachments"]) {
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
+				}
+				unity += obj["url"].get<std::string>();
+			}
+
+			//url
+			for (const auto& temp : Treatment) {
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
 				}
 				unity += temp;
 			}
@@ -289,6 +306,9 @@ void StoneTranslationObj::Stone() {
 			if (Obj.first == event.id) {
 				continue;
 			}
+
+			std::cout << event.id << std::endl;
+
 			RobotSlips::bot->message_delete(Obj.first, Obj.second);
 		}
 
