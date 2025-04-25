@@ -155,6 +155,7 @@ void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
+			std::cout << event.msg.content << std::endl;
 			Queue.check(event);
 			return;
 		}
@@ -183,10 +184,8 @@ void StoneTranslationObj::Stone() {
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
-		std::string unity = "";
-
 		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
-			unity = "";
+			std::string unity = "";
 
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
 
@@ -210,8 +209,8 @@ void StoneTranslationObj::Stone() {
 				unity += temp;
 			}
 
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, unity });
 			jsonData["content"] = unity;
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
 			UseWebhook(jsonData, Channel[Obj.first].first);
 		}
 
