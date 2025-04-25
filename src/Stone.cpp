@@ -228,7 +228,6 @@ void StoneTranslationObj::Stone() {
 
 	
 
-	//TODO
 	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
@@ -248,11 +247,6 @@ void StoneTranslationObj::Stone() {
 		}
 
 		//()
-		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
-			>>() || event.msg.author.is_bot()) {
-			return;
-		}
-
 		StoneMessage MessageTmp;
 		nlohmann::json EventJson = event.msg.to_json();
 		nlohmann::json jsonData;
@@ -275,8 +269,13 @@ void StoneTranslationObj::Stone() {
 
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg + "\\n<重新发送>", Obj.second))["translations"][0];
 
+			if (event.msg.message_reference.message_id != 0) {
+				auto& ref = event.msg.message_reference;
+				unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
+			}
+
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-				unity = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+				unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
 			}
 
 			//附件q
