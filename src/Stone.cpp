@@ -179,9 +179,8 @@ void StoneTranslationObj::Stone() {
 
 		});
 
-	//TODO
 	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {
-		if (*Queue.MessageStoneHash[event.id] == StoneMessageDispose::MessageStone()) {
+		if (Queue.MessageStoneHash[event.id] == nullptr) {
 			return;
 		}
 
