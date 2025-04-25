@@ -180,9 +180,9 @@
   },
   "webhook": {
     "ChannelWebhook": [
-      [ "https://discord.com/api/webhooks/1353591208454258748/vGJYUhhtb6WtJtHtuyYSZP94A2MoDY2OyhbmNoGaPy-BsoY6ocQT2IoC44SpFIMT_qOx", 1353393450145550449 ],
-      [ "https://discord.com/api/webhooks/1353602958285209644/uMIG_fAMMjUQi5ztbEldpUIkMPhcEV07Es9DmcHreihELfY8cDo87zqo7D_XEWiUe2fc", 1353393466050089071 ],
-      [ "https://discord.com/api/webhooks/1353592131230498856/suhypgGv6fMPzYLeJJc1I7q7rhGe-aU_rnuTw2PPE2wepc3BfaMoUj-gzIBxSvVapVHZ", 1353416254752555208 ]
+      [ "https://discord.com/api/webhooks/", 1353393450145550449 ],
+      [ "https://discord.com/api/webhooks/", 1353393466050089071 ],
+      [ "https://discord.com/api/webhooks/", 1353416254752555208 ]
     ],
     "ChannelKey": [
       [ 0, 2, "CH" ],

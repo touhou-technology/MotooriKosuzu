@@ -1,44 +1,102 @@
-#include "Stone.h"
+ï»¿#include "Stone.h"
 
-void MessageQueue::check(const dpp::message_create_t& event) {
-	if (event.msg.author.is_bot()) {
-		return;
-	}
+void StoneMessageDispose::check(const dpp::message_create_t& event) {
+	//å‘é€çš„ç¿»è¯‘å†…å®¹
+	auto& translate_msg = event.msg.content;
 
-	for (auto Obj : Message) {
+	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
+		//hash
+		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
-		std::cout << Obj << ":" << event.msg.content << std::endl;
+		//debug
+		std::clog << content << ":" << translate_msg << std::endl;
 
-		if (Obj != event.msg.content) {
+		if (content != translate_msg) {
 			continue;
 		}
 
-		(*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.id] = std::pair<dpp::snowflake, std::string>(event.msg.id, (*HashSlips::HashSnowflakeStr)[event.msg.channel_id].second);
-		(*HashSlips::HashSnowflakeStr)[event.msg.id] = std::pair<dpp::snowflake, std::string>(RobotSlips::ObjMsg.msg.id, (*HashSlips::HashSnowflakeStr)[RobotSlips::ObjMsg.msg.channel_id].second);
+		//å»ºç«‹hashè¡¨
+		auto& [a, b] = (*iter).content_origin;
+		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
+		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 
-		std::cout << "HashMessage OK~" << std::endl;
+		//debug
+		std::cout << "LINK" << std::endl;
+
+		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+
+		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
+			Obj.erase(iter);
+		}
+
+		break;
 	}
 }
 
-void MessageQueue::push(std::string& message) {
-	Message.push_back(message);
+void StoneMessageDispose::check(const dpp::message_update_t& event){
+	//å‘é€çš„ç¿»è¯‘å†…å®¹
+	auto& translate_msg = event.msg.content;
+
+	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
+		//hash
+		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
+
+		//debug
+		std::clog << content << ":" << translate_msg << std::endl;
+
+		if (content != translate_msg) {
+			continue;
+		}
+
+		//å»ºç«‹hashè¡¨
+		auto& [a, b] = (*iter).content_origin;
+		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
+		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
+
+		//debug
+		std::cout << "LINK" << std::endl;
+
+		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+
+		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
+			Obj.erase(iter);
+		}
+
+		break;
+	}
 }
 
-void MessageQueue::push(std::string&& message) {
-	Message.push_back(std::move(message));
+void StoneMessageDispose::push(StoneMessage& StoneMessage) {
+	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
+	auto& [message_id, channel] = StoneMessage.content_origin;
+
+	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
+	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
+
+	Obj.push_back(StoneMessage);
 }
 
+void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
+	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
+	auto& [message_id, channel] = StoneMessage.content_origin;
+
+	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
+	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
+
+
+	Obj.push_back(StoneMessage);
+}
 
 std::string markdown::MarkdownRemove(std::string str) {
 	std::vector<std::tuple<std::string, std::string, std::string>> regexReplacements = {
-		{ R"(\*\*([^*]+)\*\*)", "$1","**"},      // Markdown ¼Ó´Ö£¬Èç **¼Ó´Ö** ¡ú ±£ÁôÄÚ²¿ÄÚÈİ
-		{ R"(\*([^*]+)\*)", "$1","*" },          // Markdown Ğ±Ìå£¬Èç *Ğ±Ìå* ¡ú ±£ÁôÄÚ²¿ÄÚÈİ
-		{ R"(__([^_]+)__)", "$1","__" },          // Markdown ÏÂ»®Ïß£¬Èç __ÏÂ»®Ïß__ ¡ú ±£ÁôÄÚ²¿ÄÚÈİ
-		{ R"(~~([^~]+)~~)", "$1","~~" },          // Markdown É¾³ıÏß£¬Èç ~~É¾³ıÏß~~ ¡ú ±£ÁôÄÚ²¿ÄÚÈİ
-		{ R"(\|\|([^|]+)\|\|)", "$1","||" },       // ¾çÍ¸ÎÄ±¾£¬Èç ||¾çÍ¸ÄÚÈİ|| ¡ú ±£ÁôÄÚ²¿ÄÚÈİ
-		{ R"(<@!?(\d+)>)", "","" },         // ÓÃ»§Ìá¼°£¬Èç <@123456789> »ò <@!987654321> ¡ú ±£ÁôÊı×Ö ID
-		{ R"(<@&(\d+)>)", "","" },           // ½ÇÉ«Ìá¼°£¬Èç <@&111222333> ¡ú ±£ÁôÊı×Ö ID
-		{ R"(<#(\d+)>)", "","" },            // ÆµµÀÌá¼°£¬Èç <#444555666> ¡ú ±£ÁôÊı×Ö ID
+		{ R"(\*\*([^*]+)\*\*)", "$1","**"},      // Markdown åŠ ç²—ï¼Œå¦‚ **åŠ ç²—** â†’ ä¿ç•™å†…éƒ¨å†…å®¹
+		{ R"(\*([^*]+)\*)", "$1","*" },          // Markdown æ–œä½“ï¼Œå¦‚ *æ–œä½“* â†’ ä¿ç•™å†…éƒ¨å†…å®¹
+		{ R"(__([^_]+)__)", "$1","__" },          // Markdown ä¸‹åˆ’çº¿ï¼Œå¦‚ __ä¸‹åˆ’çº¿__ â†’ ä¿ç•™å†…éƒ¨å†…å®¹
+		{ R"(~~([^~]+)~~)", "$1","~~" },          // Markdown åˆ é™¤çº¿ï¼Œå¦‚ ~~åˆ é™¤çº¿~~ â†’ ä¿ç•™å†…éƒ¨å†…å®¹
+		{ R"(\|\|([^|]+)\|\|)", "$1","||" },       // å‰§é€æ–‡æœ¬ï¼Œå¦‚ ||å‰§é€å†…å®¹|| â†’ ä¿ç•™å†…éƒ¨å†…å®¹
+		{ R"(<@!?(\d+)>)", "","" },         // ç”¨æˆ·æåŠï¼Œå¦‚ <@123456789> æˆ– <@!987654321> â†’ ä¿ç•™æ•°å­— ID
+		{ R"(<@&(\d+)>)", "","" },           // è§’è‰²æåŠï¼Œå¦‚ <@&111222333> â†’ ä¿ç•™æ•°å­— ID
+		{ R"(<#(\d+)>)", "","" },            // é¢‘é“æåŠï¼Œå¦‚ <#444555666> â†’ ä¿ç•™æ•°å­— ID
 	};
 
 	std::string tmp;
@@ -66,14 +124,26 @@ std::string markdown::MarkdownAttached(std::string&& str) {
 StoneTranslationObj::StoneTranslationObj() {
 	ChangeWrie(ConfigSlips::ConfigJson["webhook"]);
 	Stone();
+	std::thread([&]() {
+		while (1) {
+			std::this_thread::sleep_for(std::chrono::days(1));
+			for (auto& ptr : Queue.MessageStoneInstancePtr) {
+				ptr.reset();
+			}
+		}
+		}).detach();
 }
 
 void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 	this->Write = tmp;
 
+	int index = 0;
 	for (auto Obj : Write["ChannelWebhook"]) {
 
 		Channel.push_back(std::move(std::pair<std::string, dpp::snowflake>{std::string(Obj[0]), Obj[1]}));
+
+		Queue.ChannelIndex[Obj[1]] = index;
+		index++;
 	}
 
 	for (auto Obj : Write["ChannelKey"]) {
@@ -83,12 +153,21 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 
 void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
+		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
+			>>() || event.msg.author.is_bot()) {
+			std::cout << event.msg.content << std::endl;
+			Queue.check(event);
+			return;
+		}
+		});
 
+	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
 			return;
 		}
 
+		StoneMessage MessageTmp;
 		nlohmann::json EventJson = event.msg.to_json();
 		nlohmann::json jsonData;
 
@@ -105,36 +184,70 @@ void StoneTranslationObj::Stone() {
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
-		for (auto Obj : ChannelStone[event.msg.channel_id]) {
+		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+			std::string unity = "";
+
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
 
-
-			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-
-				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-				UseWebhook(jsonData, Channel[Obj.first].first);
+			if (event.msg.message_reference.message_id != 0) {
+				auto& ref = event.msg.message_reference;
+				unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
 			}
 
-			//¸½¼şq
+			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+				unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+			}
+
+			//é™„ä»¶q
 			for (const auto& obj : EventJson["attachments"]) {
-				jsonData["content"] = obj["url"].get<std::string>();
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
+				}
+				unity += obj["url"].get<std::string>();
 			}
 
 			//url
 			for (const auto& temp : Treatment) {
-				jsonData["content"] = temp;
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
+				}
+				unity += temp;
 			}
+
+			std::cout << unity << std::endl;
+
+			jsonData["content"] = unity;
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
+			UseWebhook(jsonData, Channel[Obj.first].first);
 		}
+
+		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
+		//å»ºç«‹é“¾æ¥åšå‡†å¤‡
+		Queue.push(std::move(MessageTmp));
 		});
+
+	
 
 	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
+			Queue.check(event);
 			return;
 		}
 
+		if (Queue.MessageStoneHash[event.msg.id] != nullptr) {
+			for (auto& Obj : *Queue.MessageStoneHash[event.msg.id]) {
+				if (Obj.first == event.msg.id) {
+					continue;
+				}
+				RobotSlips::bot->message_delete(Obj.first, Obj.second);
+			}
+
+			*Queue.MessageStoneHash[event.msg.id] = StoneMessageDispose::MessageStone();
+		}
+
+		//()
+		StoneMessage MessageTmp;
 		nlohmann::json EventJson = event.msg.to_json();
 		nlohmann::json jsonData;
 
@@ -151,63 +264,100 @@ void StoneTranslationObj::Stone() {
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
-		for (auto Obj : ChannelStone[event.msg.channel_id]) {
-			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
+		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+			std::string unity = "";
 
+			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg + "\\n<é‡æ–°å‘é€>", Obj.second))["translations"][0];
 
-			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-
-				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-				UseWebhook(jsonData, Channel[Obj.first].first);
+			if (event.msg.message_reference.message_id != 0) {
+				auto& ref = event.msg.message_reference;
+				unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
 			}
 
-			//¸½¼şq
+			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+				unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+			}
+
+			//é™„ä»¶q
 			for (const auto& obj : EventJson["attachments"]) {
-				jsonData["content"] = obj["url"].get<std::string>();
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
+				}
+				unity += obj["url"].get<std::string>();
 			}
 
 			//url
 			for (const auto& temp : Treatment) {
-				jsonData["content"] = temp;
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+					unity += "\n";
+				}
+				unity += temp;
 			}
+
+			std::cout << unity << std::endl;
+
+			jsonData["content"] = unity;
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
+			UseWebhook(jsonData, Channel[Obj.first].first);
 		}
 
+		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
+		//å»ºç«‹é“¾æ¥åšå‡†å¤‡
+		Queue.push(std::move(MessageTmp));
 		});
+
+	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {
+		if (Queue.MessageStoneHash[event.id] == nullptr) {
+			return;
+		}
+
+		for (auto& Obj : *Queue.MessageStoneHash[event.id]) {
+			if (Obj.first == event.id) {
+				continue;
+			}
+
+			std::cout << event.id << std::endl;
+
+			RobotSlips::bot->message_delete(Obj.first, Obj.second);
+		}
+
+		*Queue.MessageStoneHash[event.id] = StoneMessageDispose::MessageStone();
+
+		});
+
 }
 
 void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) {
 	std::string jsonStr = jsonData.dump();
 
-	// ³õÊ¼»¯ libcurl
+	// åˆå§‹åŒ– libcurl
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	CURL* curl = curl_easy_init();
 	if (curl) {
-		// ÉèÖÃÇëÇóÍ·Îª JSON ¸ñÊ½
+		// è®¾ç½®è¯·æ±‚å¤´ä¸º JSON æ ¼å¼
 		struct curl_slist* headers = nullptr;
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 
-		// ÉèÖÃÇëÇó URL ºÍ POST Êı¾İ
+		// è®¾ç½®è¯·æ±‚ URL å’Œ POST æ•°æ®
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonStr.c_str());
 
-		// Ö´ĞĞÇëÇó
+		// æ‰§è¡Œè¯·æ±‚
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK) {
-			std::cerr << "ÇëÇóÊ§°Ü: " << curl_easy_strerror(res) << std::endl;
+			std::cerr << "è¯·æ±‚å¤±è´¥: " << curl_easy_strerror(res) << std::endl;
 		}
 		else {
 
 		}
 
-		// ÇåÀí×ÊÔ´
+		// æ¸…ç†èµ„æº
 		curl_slist_free_all(headers);
 		curl_easy_cleanup(curl);
 	}
 	else {
-		std::cerr << "³õÊ¼»¯ libcurl Ê§°Ü" << std::endl;
+		std::cerr << "åˆå§‹åŒ– libcurl å¤±è´¥" << std::endl;
 	}
 	curl_global_cleanup();
 }
