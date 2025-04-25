@@ -132,6 +132,13 @@ StoneTranslationObj::StoneTranslationObj() {
 			}
 		}
 		}).detach();
+
+	std::thread([&]() {
+		while (1) {
+			std::this_thread::sleep_for(std::chrono::seconds(1200));
+			Queue.Obj = std::vector<StoneMessage>();
+		}
+		}).detach();
 }
 
 void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
