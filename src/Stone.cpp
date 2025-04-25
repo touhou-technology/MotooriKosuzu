@@ -91,6 +91,14 @@ std::string markdown::MarkdownAttached(std::string&& str) {
 StoneTranslationObj::StoneTranslationObj() {
 	ChangeWrie(ConfigSlips::ConfigJson["webhook"]);
 	Stone();
+	std::thread([&]() {
+		while (1) {
+			std::this_thread::sleep_for(std::chrono::days(1));
+			for (auto& ptr : Queue.MessageStoneInstancePtr) {
+				ptr.reset();
+			}
+		}
+		});
 }
 
 void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
