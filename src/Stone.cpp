@@ -1,9 +1,5 @@
 #include "Stone.h"
 
-StoneMessageDispose::StoneMessageDispose() {
-
-}
-
 void StoneMessageDispose::check(const dpp::message_create_t& event) {
 	//·¢ËÍµÄ·­ÒëÄÚÈİ
 	auto& translate_msg = event.msg.content;

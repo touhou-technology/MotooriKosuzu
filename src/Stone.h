@@ -28,7 +28,7 @@ public:
 	using MessageStone = std::vector<std::pair<dpp::snowflake, dpp::snowflake>>;
 
 
-	StoneMessageDispose();
+	StoneMessageDispose() = default;
 	~StoneMessageDispose() = default;
 
 	void check(const dpp::message_create_t& event);
