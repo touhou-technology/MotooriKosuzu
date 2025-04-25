@@ -189,8 +189,13 @@ void StoneTranslationObj::Stone() {
 
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
 
+			if (event.msg.message_reference.message_id != 0) {
+				auto& ref = event.msg.message_reference;
+				unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
+			}
+
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-				unity = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+				unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
 			}
 
 			//附件q
@@ -209,6 +214,8 @@ void StoneTranslationObj::Stone() {
 				unity += temp;
 			}
 
+			std::cout << unity << std::endl;
+
 			jsonData["content"] = unity;
 			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
 			UseWebhook(jsonData, Channel[Obj.first].first);
@@ -219,6 +226,8 @@ void StoneTranslationObj::Stone() {
 		Queue.push(std::move(MessageTmp));
 		});
 
+	
+
 	//TODO
 	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
@@ -227,20 +236,23 @@ void StoneTranslationObj::Stone() {
 			return;
 		}
 
-		if (Queue.MessageStoneHash[event.msg.id] == nullptr) {
+		if (Queue.MessageStoneHash[event.msg.id] != nullptr) {
+			for (auto& Obj : *Queue.MessageStoneHash[event.msg.id]) {
+				if (Obj.first == event.msg.id) {
+					continue;
+				}
+				RobotSlips::bot->message_delete(Obj.first, Obj.second);
+			}
+
+			*Queue.MessageStoneHash[event.msg.id] = StoneMessageDispose::MessageStone();
+		}
+
+		//()
+		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
+			>>() || event.msg.author.is_bot()) {
 			return;
 		}
 
-		for (auto& Obj : *Queue.MessageStoneHash[event.msg.id]) {
-			if (Obj.first == event.msg.id) {
-				continue;
-			}
-			RobotSlips::bot->message_delete(Obj.first, Obj.second);
-		}
-
-		*Queue.MessageStoneHash[event.msg.id] = StoneMessageDispose::MessageStone();
-
-		//()
 		StoneMessage MessageTmp;
 		nlohmann::json EventJson = event.msg.to_json();
 		nlohmann::json jsonData;
@@ -258,12 +270,10 @@ void StoneTranslationObj::Stone() {
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
-		std::string unity = "";
-
 		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
-			unity = "";
+			std::string unity = "";
 
-			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
+			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg + "\\n<重新发送>", Obj.second))["translations"][0];
 
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 				unity = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
@@ -285,9 +295,10 @@ void StoneTranslationObj::Stone() {
 				unity += temp;
 			}
 
+			std::cout << unity << std::endl;
 
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, unity });
 			jsonData["content"] = unity;
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
 			UseWebhook(jsonData, Channel[Obj.first].first);
 		}
 
