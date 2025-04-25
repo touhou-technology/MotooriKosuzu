@@ -23,7 +23,6 @@ struct StoneMessage {
 	std::tuple<dpp::snowflake, dpp::snowflake> content_origin;
 };
 
-//TODO
 class StoneMessageDispose {
 public:
 	using MessageStone = std::vector<std::pair<dpp::snowflake, dpp::snowflake>>;

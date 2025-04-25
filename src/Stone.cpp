@@ -24,6 +24,13 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
 		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 		std::cout << "LINK" << std::endl;
+
+		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+
+		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
+			Obj.erase(iter);
+		}
+
 		break;
 	}
 }
