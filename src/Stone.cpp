@@ -8,9 +8,9 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 	//发送的翻译内容
 	auto& translate_msg = event.msg.content;
 
-	for (auto& StoneMessageObj : Obj) {
+	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
 		//hash
-		auto& [channel_id, content] = StoneMessageObj.translate_content[ChannelIndex[event.msg.channel_id] - 1];
+		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
 		//debug
 		std::clog << content << ":" << translate_msg << std::endl;
@@ -20,8 +20,7 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		}
 
 		//建立hash表
-		auto& [a, b] = StoneMessageObj.content_origin;
-
+		auto& [a, b] = (*iter).content_origin;
 		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
 		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 		std::cout << "LINK" << std::endl;
@@ -151,6 +150,9 @@ void StoneTranslationObj::Stone() {
 
 			//附件q
 			for (const auto& obj : EventJson["attachments"]) {
+				//LINK
+				MessageTmp.translate_content.push_back({ Channel[Obj.first].second, obj["url"].get<std::string>() });
+
 				jsonData["content"] = obj["url"].get<std::string>();
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
