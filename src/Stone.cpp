@@ -9,7 +9,7 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
 		//debug
-		std::clog << content << ":" << translate_msg << std::endl;
+		//std::clog << content << ":" << translate_msg << std::endl;
 
 		if (content != translate_msg) {
 			continue;
@@ -19,7 +19,9 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 		auto& [a, b] = (*iter).content_origin;
 		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
 		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
-		std::cout << "LINK" << std::endl;
+
+		//debug
+		//std::cout << "LINK" << std::endl;
 
 		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
 
@@ -112,7 +114,6 @@ void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
-			std::cout << "------" << std::endl;
 			Queue.check(event);
 			return;
 		}
