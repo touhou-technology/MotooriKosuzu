@@ -10,14 +10,21 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 
 	for (auto& StoneMessageObj : Obj) {
 		//hash
-		auto& [channel_id, content] = StoneMessageObj.translate_content[ChannelIndex[event.msg.channel_id]];
+		auto& [channel_id, content] = StoneMessageObj.translate_content[ChannelIndex[event.msg.channel_id] - 1];
+
+		//debug
+		std::clog << content << ":" << translate_msg << std::endl;
 
 		if (content != translate_msg) {
 			continue;
 		}
 
 		//½¨Á¢hash±í
-		MessageStoneHash[event.msg.id]->push_back({event.msg.id, event.msg.channel_id});
+		auto& [a, b] = StoneMessageObj.content_origin;
+
+		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
+		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
+		std::cout << "LINK" << std::endl;
 		break;
 	}
 }
@@ -26,8 +33,8 @@ void StoneMessageDispose::push(StoneMessage& StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
-	MessageStoneHash[message_id] = MessageStoneInstancePtr.end()->get();
-	MessageStoneInstancePtr.end()->get()->push_back({ message_id, channel });
+	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
+	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
 
 	Obj.push_back(StoneMessage);
 }
@@ -36,8 +43,8 @@ void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
-	MessageStoneHash[message_id] = MessageStoneInstancePtr.end()->get();
-	MessageStoneInstancePtr.end()->get()->push_back({ message_id, channel });
+	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
+	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
 
 
 	Obj.push_back(StoneMessage);
@@ -101,10 +108,17 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 
 void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
-
 		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 			>>() || event.msg.author.is_bot()) {
-			//Queue.check(event);
+			std::cout << "------" << std::endl;
+			Queue.check(event);
+			return;
+		}
+		});
+
+	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
+		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
+			>>() || event.msg.author.is_bot()) {
 			return;
 		}
 		StoneMessage MessageTmp;
@@ -124,8 +138,10 @@ void StoneTranslationObj::Stone() {
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
-		for (auto Obj : ChannelStone[event.msg.channel_id]) {
+		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
+
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, MessageObj["text"].get<std::string>() });
 
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 
@@ -145,7 +161,6 @@ void StoneTranslationObj::Stone() {
 				UseWebhook(jsonData, Channel[Obj.first].first);
 			}
 
-			//MessageTmp.translate_content.push_back({ Channel[Obj.first].first, MessageObj });
 		}
 
 		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };

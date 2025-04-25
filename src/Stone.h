@@ -19,7 +19,7 @@ struct StoneMessage {
 	//channel, content
 	std::vector<std::tuple<dpp::snowflake, std::string>> translate_content;
 
-	//message_id, channel
+	//message_id, channel_id
 	std::tuple<dpp::snowflake, dpp::snowflake> content_origin;
 };
 
@@ -45,7 +45,7 @@ private:
 	//´æ·Åw
 	std::vector<std::shared_ptr<MessageStone>> MessageStoneInstancePtr;
 
-	std::unordered_map<dpp::snowflake, MessageStone*> MessageStoneHash;
+	std::unordered_map<dpp::snowflake, std::shared_ptr<MessageStone>> MessageStoneHash;
 };
 
 class markdown {
