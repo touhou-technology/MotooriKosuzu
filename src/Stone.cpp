@@ -242,28 +242,37 @@ void StoneTranslationObj::Stone() {
 		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 		TextMsg = StringPen::CompatibleURL(TextMsg);
 
+		std::string unity = "";
+
 		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+			unity = "";
+
 			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
 
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, MessageObj["text"].get<std::string>() });
-
 			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-				jsonData["content"] = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				unity = TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
 			}
 
 			//附件q
 			for (const auto& obj : EventJson["attachments"]) {
-				jsonData["content"] = obj["url"].get<std::string>();
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				if (MessageObj["detected_source_language"].get<std::string>() == "empty") {
+					unity += "\\n";
+				}
+				unity += obj["url"].get<std::string>();
 			}
 
 			//url
 			for (const auto& temp : Treatment) {
-				jsonData["content"] = temp;
-				UseWebhook(jsonData, Channel[Obj.first].first);
+				if (MessageObj["detected_source_language"].get<std::string>() == "empty") {
+					unity += "\\n";
+				}
+				unity += temp;
 			}
 
+
+			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, unity });
+			jsonData["content"] = unity;
+			UseWebhook(jsonData, Channel[Obj.first].first);
 		}
 
 		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
