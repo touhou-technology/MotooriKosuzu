@@ -26,3 +26,6 @@ std::string WebSlips::Token = "";
 
 //VoiceSlips
 //std::unique_ptr<TranslateVoice> VoiceSlips::S_TranslateVoice;
+
+#define HASHflakeStr HashSlips::HashSnowflakeStr
+#define Robot RobotSlips::bot
