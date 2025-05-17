@@ -112,9 +112,6 @@
     <None Include="config\language.json" />
     <None Include="README.md" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <LibraryDependencies>dpp;pthread;curl</LibraryDependencies>
