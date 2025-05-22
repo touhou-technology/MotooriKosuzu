@@ -66,23 +66,12 @@ void StoneMessageDispose::check(const dpp::message_update_t& event){
 	}
 }
 
-void StoneMessageDispose::push(StoneMessage& StoneMessage) {
+void StoneMessageDispose::push(StoneMessage StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
 	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
 	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
-
-	Obj.push_back(StoneMessage);
-}
-
-void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
-	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
-	auto& [message_id, channel] = StoneMessage.content_origin;
-
-	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
-	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
-
 
 	Obj.push_back(StoneMessage);
 }
@@ -230,7 +219,7 @@ void StoneTranslationObj::Stone() {
 
 		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
 		//建立链接做准备
-		Queue.push(std::move(MessageTmp));
+		Queue.forward_push(std::move(MessageTmp));
 		});
 
 	
@@ -310,7 +299,7 @@ void StoneTranslationObj::Stone() {
 
 		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
 		//建立链接做准备
-		Queue.push(std::move(MessageTmp));
+		Queue.forward_push(std::move(MessageTmp));
 		});
 
 	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {

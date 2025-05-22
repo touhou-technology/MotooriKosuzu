@@ -33,9 +33,16 @@ public:
 
 	void check(const dpp::message_create_t& event);
 	void check(const dpp::message_update_t& event);
-	void push(StoneMessage& StoneMessage);
-	void push(StoneMessage&& StoneMessage);
+
+	template <typename T,typename = std::enable_if_t<std::is_same_v<T, StoneMessage>>>
+	void forward_push(T&& t) {
+		push(std::forward<T>(t));
+	}
+
 private:
+	void push(StoneMessage StoneMessage);
+
+
 	friend class StoneTranslationObj;
 
 	std::vector<StoneMessage> Obj;
