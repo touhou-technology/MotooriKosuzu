@@ -66,7 +66,7 @@ void StoneMessageDispose::check(const dpp::message_update_t& event){
 	}
 }
 
-void StoneMessageDispose::push(StoneMessage StoneMessage) {
+void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
