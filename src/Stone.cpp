@@ -212,10 +212,18 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 	TextMsg = StringPen::CompatibleURL(TextMsg);
 
+
+	std::queue<std::future<nlohmann::json>> FutureTranslation;
+	//TranslationPen async
+	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+		FutureTranslation.push(std::async(std::launch::async, WebPen::TranslationPen, TextMsg, Obj.second));
+	}
+
 	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
 		std::string unity = "";
 
-		auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
+		auto MessageObj = (FutureTranslation.front()).get()["translations"][0];
+		FutureTranslation.pop();
 
 		if (event.msg.message_reference.message_id != 0) {
 			auto& ref = event.msg.message_reference;

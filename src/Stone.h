@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <regex>
 #include <thread>
+#include <future>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
