@@ -97,4 +97,14 @@ public:
 
 	//message
 	StoneMessageDispose Queue;
+
+	struct message {
+		message() = default;
+
+		message(dpp::message msg) :msg(msg) {
+
+		}
+
+		dpp::message msg = {};
+	};
 };

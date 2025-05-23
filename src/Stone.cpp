@@ -179,15 +179,14 @@ void StoneTranslationObj::Stone() {
 }
 
 void StoneTranslationObj::create_message(input_message Obj) {
-
-	dpp::message_create_t event;
+	message event;
 
 	if (const auto event_obj = std::get_if<dpp::message_create_t>(&Obj)) {
-		event = { *event_obj };
+		event = { event_obj->msg };
 	}
-	//TODO
+
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
-		event = { *event_obj };
+		event = { event_obj->msg };
 	}
 
 
