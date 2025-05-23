@@ -189,9 +189,8 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		event = { event_obj->msg };
 	}
 
-
-	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
-		>>() || event.msg.author.is_bot()) {
+	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>() 
+		|| event.msg.author.is_bot()) {
 		return;
 	}
 
@@ -211,7 +210,6 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 	TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
 	TextMsg = StringPen::CompatibleURL(TextMsg);
-
 
 	std::queue<std::future<nlohmann::json>> FutureTranslation;
 	//TranslationPen async
@@ -260,8 +258,6 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
 	//建立链接做准备
 	Queue.forward_push(std::move(MessageTmp));
-
-
 }
 
 void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) {
