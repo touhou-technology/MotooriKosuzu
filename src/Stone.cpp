@@ -184,15 +184,19 @@ void StoneTranslationObj::Stone() {
 }
 
 void StoneTranslationObj::create_message(input_message Obj) {
-	
-	dpp::snowflake ObjChannel_id;
 
-	if (const auto event = std::get_if<dpp::message_create_t>(&Obj)) {
-		ObjChannel_id = event->msg.channel_id;
+	dpp::message_create_t event;
+
+	if (const auto event_obj = std::get_if<dpp::message_create_t>(&Obj)) {
+		event = { *event_obj };
+	}
+	//TODO
+	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
+		event = { *event_obj };
 	}
 
 
-	if (ChannelStone[ObjChannel_id] == std::vector<std::pair<int, std::string
+	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
 		>>() || event.msg.author.is_bot()) {
 		return;
 	}
