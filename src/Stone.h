@@ -71,11 +71,16 @@ public:
 	StoneTranslationObj();
 
 	~StoneTranslationObj() = default;
+
+	using input_message = std::variant<dpp::message_create_t, dpp::message_update_t>;
 public:
 	void ChangeWrie(nlohmann::json& tmp);
 
 	//主要处理任务
 	void Stone();
+
+
+	void create_message(input_message Obj);
 
 	void UseWebhook(nlohmann::json& jsonDate, std::string url);
 private:

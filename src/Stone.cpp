@@ -33,7 +33,7 @@ void StoneMessageDispose::check(const dpp::message_create_t& event) {
 	}
 }
 
-void StoneMessageDispose::check(const dpp::message_update_t& event){
+void StoneMessageDispose::check(const dpp::message_update_t& event) {
 	//发送的翻译内容
 	auto& translate_msg = event.msg.content;
 
@@ -149,157 +149,17 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 
 void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
-		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
-			>>() || event.msg.author.is_bot()) {
-			std::cout << event.msg.content << std::endl;
-			Queue.check(event);
-			return;
-		}
+
+		m_instance->create_message({ event });
+
 		});
 
-	RobotSlips::bot->on_message_create([&](const dpp::message_create_t& event) {
-		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
-			>>() || event.msg.author.is_bot()) {
-			return;
-		}
 
-		StoneMessage MessageTmp;
-		nlohmann::json EventJson = event.msg.to_json();
-		nlohmann::json jsonData;
-
-		jsonData["username"] = event.msg.author.global_name;
-		jsonData["avatar_url"] = event.msg.author.get_avatar_url();
-
-		//create temp Text url
-		std::string TextMsg = event.msg.content;
-		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
-
-		//Discord
-		markdown TextMsgMK;
-
-		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
-		TextMsg = StringPen::CompatibleURL(TextMsg);
-
-		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
-			std::string unity = "";
-
-			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
-
-			if (event.msg.message_reference.message_id != 0) {
-				auto& ref = event.msg.message_reference;
-				unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
-			}
-
-			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-				unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-			}
-
-			//附件q
-			for (const auto& obj : EventJson["attachments"]) {
-				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-					unity += "\n";
-				}
-				unity += obj["url"].get<std::string>();
-			}
-
-			//url
-			for (const auto& temp : Treatment) {
-				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-					unity += "\n";
-				}
-				unity += temp;
-			}
-
-			std::cout << unity << std::endl;
-
-			jsonData["content"] = unity;
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
-			UseWebhook(jsonData, Channel[Obj.first].first);
-		}
-
-		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
-		//建立链接做准备
-		Queue.forward_push(std::move(MessageTmp));
-		});
-
-	
 
 	RobotSlips::bot->on_message_update([&](const dpp::message_update_t& event) {
-		if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string
-			>>() || event.msg.author.is_bot()) {
-			Queue.check(event);
-			return;
-		}
 
-		if (Queue.MessageStoneHash[event.msg.id] != nullptr) {
-			for (auto& Obj : *Queue.MessageStoneHash[event.msg.id]) {
-				if (Obj.first == event.msg.id) {
-					continue;
-				}
-				RobotSlips::bot->message_delete(Obj.first, Obj.second);
-			}
+		m_instance->create_message({ event });
 
-			*Queue.MessageStoneHash[event.msg.id] = StoneMessageDispose::MessageStone();
-		}
-
-		//()
-		StoneMessage MessageTmp;
-		nlohmann::json EventJson = event.msg.to_json();
-		nlohmann::json jsonData;
-
-		jsonData["username"] = event.msg.author.global_name;
-		jsonData["avatar_url"] = event.msg.author.get_avatar_url();
-
-		//create temp Text url
-		std::string TextMsg = event.msg.content;
-		std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
-
-		//Discord
-		markdown TextMsgMK;
-
-		TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
-		TextMsg = StringPen::CompatibleURL(TextMsg);
-
-		for (auto& Obj : ChannelStone[event.msg.channel_id]) {
-			std::string unity = "";
-
-			auto MessageObj = std::move(WebPen::TranslationPen(TextMsg + "\\n<重新发送>", Obj.second))["translations"][0];
-
-			if (event.msg.message_reference.message_id != 0) {
-				auto& ref = event.msg.message_reference;
-				unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
-			}
-
-			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-				unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
-			}
-
-			//附件q
-			for (const auto& obj : EventJson["attachments"]) {
-				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-					unity += "\n";
-				}
-				unity += obj["url"].get<std::string>();
-			}
-
-			//url
-			for (const auto& temp : Treatment) {
-				if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
-					unity += "\n";
-				}
-				unity += temp;
-			}
-
-			std::cout << unity << std::endl;
-
-			jsonData["content"] = unity;
-			MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
-			UseWebhook(jsonData, Channel[Obj.first].first);
-		}
-
-		MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
-		//建立链接做准备
-		Queue.forward_push(std::move(MessageTmp));
 		});
 
 	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {
@@ -320,6 +180,81 @@ void StoneTranslationObj::Stone() {
 		*Queue.MessageStoneHash[event.id] = StoneMessageDispose::MessageStone();
 
 		});
+
+}
+
+void StoneTranslationObj::create_message(input_message Obj) {
+	
+	dpp::snowflake ObjChannel_id;
+
+	if (const auto event = std::get_if<dpp::message_create_t>(&Obj)) {
+		ObjChannel_id = event->msg.channel_id;
+	}
+
+
+	if (ChannelStone[ObjChannel_id] == std::vector<std::pair<int, std::string
+		>>() || event.msg.author.is_bot()) {
+		return;
+	}
+
+	StoneMessage MessageTmp;
+	nlohmann::json EventJson = event.msg.to_json();
+	nlohmann::json jsonData;
+
+	jsonData["username"] = event.msg.author.global_name;
+	jsonData["avatar_url"] = event.msg.author.get_avatar_url();
+
+	//create temp Text url
+	std::string TextMsg = event.msg.content;
+	std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
+
+	//Discord
+	markdown TextMsgMK;
+
+	TextMsg = TextMsgMK.MarkdownRemove(TextMsg);
+	TextMsg = StringPen::CompatibleURL(TextMsg);
+
+	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+		std::string unity = "";
+
+		auto MessageObj = std::move(WebPen::TranslationPen(TextMsg, Obj.second))["translations"][0];
+
+		if (event.msg.message_reference.message_id != 0) {
+			auto& ref = event.msg.message_reference;
+			unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
+		}
+
+		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+			unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
+		}
+
+		//附件q
+		for (const auto& obj : EventJson["attachments"]) {
+			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+				unity += "\n";
+			}
+			unity += obj["url"].get<std::string>();
+		}
+
+		//url
+		for (const auto& temp : Treatment) {
+			if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
+				unity += "\n";
+			}
+			unity += temp;
+		}
+
+		std::cout << unity << std::endl;
+
+		jsonData["content"] = unity;
+		MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
+		UseWebhook(jsonData, Channel[Obj.first].first);
+	}
+
+	MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
+	//建立链接做准备
+	Queue.forward_push(std::move(MessageTmp));
+
 
 }
 
