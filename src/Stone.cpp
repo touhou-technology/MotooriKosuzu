@@ -1,5 +1,6 @@
 ﻿#include "Stone.h"
 
+//TODO: 重构为更稳重的逻辑
 void StoneMessageDispose::check(const dpp::message_create_t& event) {
 	//发送的翻译内容
 	auto& translate_msg = event.msg.content;
