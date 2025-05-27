@@ -224,17 +224,17 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		//reference
 		if (event.msg.message_reference.message_id != dpp::snowflake{}) {
 			//TODO:尝试索引
-			unity = "&>[☯](" + event.get_message_reference_url() + ":" + message_extend + ")\n" + unity;
+			unity = "&>[☯](" + event.get_message_reference_url() + ")\n" + unity;
 		}
-		else {
-			unity = "&>(" + message_extend + ")" + unity;
-		}
+
+		unity += message_extend;
 
 		std::cout << unity << std::endl;
 
 		jsonData["content"] = unity;
 		MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
-		UseWebhook(jsonData, Channel[Obj.first].first);
+
+		std::thread([&] {UseWebhook(jsonData, Channel[Obj.first].first); }).detach();
 	}
 
 	MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
