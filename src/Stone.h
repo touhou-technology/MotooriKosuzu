@@ -70,7 +70,7 @@ private:
 private:
 	void check(const common_message event);
 
-	std::queue<common_message> queue_check;
+	std::stack<common_message> queue_check;
 };
 
 class markdown {
