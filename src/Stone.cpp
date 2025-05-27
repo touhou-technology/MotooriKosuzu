@@ -1,40 +1,7 @@
 ﻿#include "Stone.h"
 
 //TODO: 重构为更稳重的逻辑
-void StoneMessageDispose::check(const dpp::message_create_t& event) {
-	//发送的翻译内容
-	auto& translate_msg = event.msg.content;
-
-	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
-		//hash
-		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
-
-		//debug
-		std::clog << content << ":" << translate_msg << std::endl;
-
-		if (content != translate_msg) {
-			continue;
-		}
-
-		//建立hash表
-		auto& [a, b] = (*iter).content_origin;
-		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
-		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
-
-		//debug
-		std::cout << "LINK" << std::endl;
-
-		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
-
-		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
-			Obj.erase(iter);
-		}
-
-		break;
-	}
-}
-
-void StoneMessageDispose::check(const dpp::message_update_t& event) {
+void StoneMessageDispose::check(const common_message event) {
 	//发送的翻译内容
 	auto& translate_msg = event.msg.content;
 
@@ -179,17 +146,23 @@ void StoneTranslationObj::Stone() {
 }
 
 void StoneTranslationObj::create_message(input_message Obj) {
-	message event;
+	common_message event = {};
 
 	if (const auto event_obj = std::get_if<dpp::message_create_t>(&Obj)) {
 		event = { event_obj->msg };
 	}
-
+	std::string update_message = {};
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
+		//TODO:hash消息添加
+		update_message = "->update";
 		event = { event_obj->msg };
 	}
 
-	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>() 
+	std::jthread([&] {
+		Queue.check(event);
+		});
+
+	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()
 		|| event.msg.author.is_bot()) {
 		return;
 	}
@@ -247,6 +220,8 @@ void StoneTranslationObj::create_message(input_message Obj) {
 			}
 			unity += temp;
 		}
+
+		unity += update_message;
 
 		std::cout << unity << std::endl;
 

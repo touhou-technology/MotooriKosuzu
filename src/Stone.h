@@ -15,6 +15,17 @@
 #include "BambooSlips.h"
 #include "WritingBrush.h"
 
+//common_message
+struct common_message {
+	common_message() = default;
+
+	common_message(dpp::message msg) :msg(msg) {
+
+	}
+
+	dpp::message msg = {};
+};
+
  //保存石头中翻译的或者其他消息
 struct StoneMessage {
 	//channel, content
@@ -32,8 +43,7 @@ public:
 	StoneMessageDispose() = default;
 	~StoneMessageDispose() = default;
 
-	void check(const dpp::message_create_t& event);
-	void check(const dpp::message_update_t& event);
+	void check(const common_message event);
 
 	template <typename T,typename = std::enable_if_t<std::is_same_v<T, StoneMessage>>>
 	void forward_push(T&& t) {
@@ -98,14 +108,4 @@ public:
 
 	//message
 	StoneMessageDispose Queue;
-
-	struct message {
-		message() = default;
-
-		message(dpp::message msg) :msg(msg) {
-
-		}
-
-		dpp::message msg = {};
-	};
 };
