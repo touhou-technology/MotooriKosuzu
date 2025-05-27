@@ -53,7 +53,7 @@ public:
 	}
 
 private:
-	void push(StoneMessage&& StoneMessage);
+	void push(StoneMessage StoneMessage);
 
 
 	friend class StoneTranslationObj;

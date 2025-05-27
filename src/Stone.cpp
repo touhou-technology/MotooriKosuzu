@@ -8,38 +8,38 @@ std::string common_message::get_message_reference_url() {
 //TODO: 重构为更稳重的逻辑
 void StoneMessageDispose::check(const common_message event) {
 	//发送的翻译内容
-	auto& translate_msg = event.msg.content;
+	//auto& translate_msg = event.msg.content;
 
-	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
-		//hash
-		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
+	//for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
+	//	//hash
+	//	auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
-		//debug
-		std::clog << content << ":" << translate_msg << std::endl;
+	//	//debug
+	//	std::clog << content << ":" << translate_msg << std::endl;
 
-		if (content != translate_msg) {
-			continue;
-		}
+	//	if (content != translate_msg) {
+	//		continue;
+	//	}
 
-		//建立hash表
-		auto& [a, b] = (*iter).content_origin;
-		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
-		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
+	//	//建立hash表
+	//	auto& [a, b] = (*iter).content_origin;
+	//	MessageStoneHash[event.msg.id] = MessageStoneHash[a];
+	//	MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 
-		//debug
-		std::cout << "LINK" << std::endl;
+	//	//debug
+	//	std::cout << "LINK" << std::endl;
 
-		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+	//	(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
 
-		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
-			Obj.erase(iter);
-		}
+	//	if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
+	//		Obj.erase(iter);
+	//	}
 
-		break;
-	}
+	//	break;
+	//}
 }
 
-void StoneMessageDispose::push(StoneMessage&& StoneMessage) {
+void StoneMessageDispose::push(StoneMessage StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
@@ -159,13 +159,13 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
 		//TODO:hash消息添加
-		message_extend = "\n⫸update";
+		message_extend = "\n{⫸update}";
 		event = { event_obj->msg };
 	}
 
-	//std::jthread([&] {
-	//	Queue.check(event);
-	//	});
+	std::jthread([&] {
+		Queue.check(event);
+		});
 
 	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()
 		|| event.msg.author.is_bot()) {
@@ -238,6 +238,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 
 	MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
+
 	//建立链接做准备
 	Queue.forward_push(std::move(MessageTmp));
 }
