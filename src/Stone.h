@@ -24,6 +24,8 @@ struct common_message {
 	}
 
 	dpp::message msg = {};
+	
+	std::string get_message_reference_url();
 };
 
  //保存石头中翻译的或者其他消息

@@ -1,5 +1,10 @@
 ﻿#include "Stone.h"
 
+std::string common_message::get_message_reference_url(){
+	return {"https://discord.com/channels/" + std::to_string(this->msg.guild_id) + "/" + std::to_string(this->msg.channel_id) + "/" + std::to_string(this->msg.message_reference.message_id)};
+}
+
+
 //TODO: 重构为更稳重的逻辑
 void StoneMessageDispose::check(const common_message event) {
 	//发送的翻译内容
@@ -158,9 +163,9 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		event = { event_obj->msg };
 	}
 
-	std::jthread([&] {
-		Queue.check(event);
-		});
+	//std::jthread([&] {
+	//	Queue.check(event);
+	//	});
 
 	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()
 		|| event.msg.author.is_bot()) {
@@ -196,11 +201,6 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		auto MessageObj = (FutureTranslation.front()).get()["translations"][0];
 		FutureTranslation.pop();
 
-		if (event.msg.message_reference.message_id != 0) {
-			auto& ref = event.msg.message_reference;
-			unity += "&>https://discord.com/channels/" + std::to_string(ref.guild_id) + "/" + std::to_string(ref.channel_id) + "/" + std::to_string(ref.message_id) + "\n";
-		}
-
 		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
 			unity += TextMsgMK.MarkdownAttached(MessageObj["text"].get<std::string>());
 		}
@@ -219,6 +219,12 @@ void StoneTranslationObj::create_message(input_message Obj) {
 				unity += "\n";
 			}
 			unity += temp;
+		}
+
+		//reference
+		if (event.msg.message_reference.message_id != dpp::snowflake{}) {
+			//TODO:尝试索引
+			unity = "&>[☯](" + event.get_message_reference_url() +")\n" + unity;
 		}
 
 		unity += message_extend;
@@ -269,3 +275,4 @@ void StoneTranslationObj::UseWebhook(nlohmann::json& jsonData, std::string url) 
 	}
 	curl_global_cleanup();
 }
+
