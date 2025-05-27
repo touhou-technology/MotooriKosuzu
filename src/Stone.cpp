@@ -1,7 +1,7 @@
 ﻿#include "Stone.h"
 
-std::string common_message::get_message_reference_url(){
-	return {"https://discord.com/channels/" + std::to_string(this->msg.guild_id) + "/" + std::to_string(this->msg.channel_id) + "/" + std::to_string(this->msg.message_reference.message_id)};
+std::string common_message::get_message_reference_url() {
+	return { "https://discord.com/channels/" + std::to_string(this->msg.guild_id) + "/" + std::to_string(this->msg.channel_id) + "/" + std::to_string(this->msg.message_reference.message_id) };
 }
 
 
@@ -224,10 +224,11 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		//reference
 		if (event.msg.message_reference.message_id != dpp::snowflake{}) {
 			//TODO:尝试索引
-			unity = "&>[☯](" + event.get_message_reference_url() +")\n" + unity;
+			unity = "&>[☯](" + event.get_message_reference_url() + ":" + message_extend + ")\n" + unity;
 		}
-
-		unity += message_extend;
+		else {
+			unity = "&>(" + message_extend + ")" + unity;
+		}
 
 		std::cout << unity << std::endl;
 
