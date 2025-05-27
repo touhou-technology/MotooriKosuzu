@@ -147,14 +147,14 @@ void StoneTranslationObj::Stone() {
 
 void StoneTranslationObj::create_message(input_message Obj) {
 	common_message event = {};
+	std::string message_extend = {};
 
 	if (const auto event_obj = std::get_if<dpp::message_create_t>(&Obj)) {
 		event = { event_obj->msg };
 	}
-	std::string update_message = {};
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
 		//TODO:hash消息添加
-		update_message = "->update";
+		message_extend = "\n⫸update";
 		event = { event_obj->msg };
 	}
 
@@ -221,7 +221,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 			unity += temp;
 		}
 
-		unity += update_message;
+		unity += message_extend;
 
 		std::cout << unity << std::endl;
 
