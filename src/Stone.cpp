@@ -6,37 +6,39 @@ std::string common_message::get_message_reference_url() {
 
 
 //TODO: 重构为更稳重的逻辑
-void StoneMessageDispose::check(const common_message event) {
+void StoneMessageDispose::push_check(const common_message event) {
 	//发送的翻译内容
-	//auto& translate_msg = event.msg.content;
+	auto& translate_msg = event.msg.content;
 
-	//for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
-	//	//hash
-	//	auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
+	//input
 
-	//	//debug
-	//	std::clog << content << ":" << translate_msg << std::endl;
+	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
+		//hash
+		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
-	//	if (content != translate_msg) {
-	//		continue;
-	//	}
+		//debug
+		std::clog << content << ":" << translate_msg << std::endl;
 
-	//	//建立hash表
-	//	auto& [a, b] = (*iter).content_origin;
-	//	MessageStoneHash[event.msg.id] = MessageStoneHash[a];
-	//	MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
+		if (content != translate_msg) {
+			continue;
+		}
 
-	//	//debug
-	//	std::cout << "LINK" << std::endl;
+		//建立hash表
+		auto& [a, b] = (*iter).content_origin;
+		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
+		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 
-	//	(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+		//debug
+		std::cout << "LINK" << std::endl;
 
-	//	if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
-	//		Obj.erase(iter);
-	//	}
+		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
 
-	//	break;
-	//}
+		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
+			Obj.erase(iter);
+		}
+
+		break;
+	}
 }
 
 void StoneMessageDispose::push(StoneMessage StoneMessage) {
@@ -47,6 +49,10 @@ void StoneMessageDispose::push(StoneMessage StoneMessage) {
 	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
 
 	Obj.push_back(StoneMessage);
+}
+
+void StoneMessageDispose::check(const common_message event){
+
 }
 
 std::string markdown::MarkdownRemove(std::string str) {
@@ -164,7 +170,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 
 	std::jthread([&] {
-		Queue.check(event);
+		Queue.push_check(event);
 		});
 
 	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()

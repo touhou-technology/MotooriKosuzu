@@ -45,7 +45,7 @@ public:
 	StoneMessageDispose() = default;
 	~StoneMessageDispose() = default;
 
-	void check(const common_message event);
+	void push_check(const common_message event);
 
 	template <typename T,typename = std::enable_if_t<std::is_same_v<T, StoneMessage>>>
 	void forward_push(T&& t) {
@@ -62,10 +62,15 @@ private:
 	std::unordered_map<dpp::snowflake, int> ChannelIndex;
 
 
-	//´æ·Åw
+	//´æ·Å
 	std::vector<std::shared_ptr<MessageStone>> MessageStoneInstancePtr;
 
 	std::unordered_map<dpp::snowflake, std::shared_ptr<MessageStone>> MessageStoneHash;
+
+private:
+	void check(const common_message event);
+
+	std::queue<common_message> queue_check;
 };
 
 class markdown {
