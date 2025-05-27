@@ -7,37 +7,13 @@ std::string common_message::get_message_reference_url() {
 
 //TODO: 重构为更稳重的逻辑
 void StoneMessageDispose::push_check(const common_message event) {
+	std::lock_guard<std::mutex> lock(mtx);
+
 	//发送的翻译内容
 	auto& translate_msg = event.msg.content;
 
-	//input
-
 	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
-		//hash
-		auto& [channel_id, content] = (*iter).translate_content[ChannelIndex[event.msg.channel_id] - 1];
 
-		//debug
-		std::clog << content << ":" << translate_msg << std::endl;
-
-		if (content != translate_msg) {
-			continue;
-		}
-
-		//建立hash表
-		auto& [a, b] = (*iter).content_origin;
-		MessageStoneHash[event.msg.id] = MessageStoneHash[a];
-		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
-
-		//debug
-		std::cout << "LINK" << std::endl;
-
-		(*iter).translate_content.erase({ (*iter).translate_content.begin() + ChannelIndex[event.msg.channel_id] });
-
-		if ((*iter).translate_content.begin() == (*iter).translate_content.end()) {
-			Obj.erase(iter);
-		}
-
-		break;
 	}
 }
 
@@ -169,9 +145,9 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		event = { event_obj->msg };
 	}
 
-	std::jthread([&] {
+	std::thread([&] {
 		Queue.push_check(event);
-		});
+		}).detach();
 
 	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()
 		|| event.msg.author.is_bot()) {

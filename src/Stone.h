@@ -11,6 +11,7 @@
 #include <regex>
 #include <thread>
 #include <future>
+#include <mutex>
 
 #include "BambooSlips.h"
 #include "WritingBrush.h"
@@ -67,6 +68,7 @@ private:
 
 	std::unordered_map<dpp::snowflake, std::shared_ptr<MessageStone>> MessageStoneHash;
 
+	std::mutex mtx;
 private:
 	void check(const common_message event);
 
