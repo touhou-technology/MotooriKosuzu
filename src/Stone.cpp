@@ -6,7 +6,7 @@ std::string common_message::get_message_reference_url() {
 
 
 //TODO: 重构为更稳重的逻辑
-void StoneMessageDispose::push_check(const common_message event) {
+void StoneMessageDispose::check_mutex(const common_message event) {
 	std::lock_guard<std::mutex> lock(mtx);
 
 	//发送的翻译内容
@@ -25,10 +25,6 @@ void StoneMessageDispose::push(StoneMessage StoneMessage) {
 	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
 
 	Obj.push_back(StoneMessage);
-}
-
-void StoneMessageDispose::check(const common_message event){
-
 }
 
 std::string markdown::MarkdownRemove(std::string str) {
@@ -146,7 +142,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 
 	std::thread([&] {
-		Queue.push_check(event);
+		Queue.check_mutex(event);
 		}).detach();
 
 	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()
