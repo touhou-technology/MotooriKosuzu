@@ -32,10 +32,12 @@ struct common_message {
  //保存石头中翻译的或者其他消息
 struct StoneMessage {
 	//channel, content
-	std::vector<std::tuple<dpp::snowflake, std::string>> translate_content;
+	std::vector<std::tuple<dpp::snowflake, size_t>> translate_content;
 
 	//message_id, channel_id
 	std::tuple<dpp::snowflake, dpp::snowflake> content_origin;
+
+	int flag = 1;
 };
 
 class StoneMessageDispose {

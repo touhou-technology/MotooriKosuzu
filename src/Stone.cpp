@@ -9,11 +9,26 @@ std::string common_message::get_message_reference_url() {
 void StoneMessageDispose::check_mutex(const common_message event) {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	//发送的翻译内容
-	auto& translate_msg = event.msg.content;
+	std::hash<std::string> translate_event_hash;
+	size_t translate_hash_value = translate_event_hash(event.msg.content);
 
 	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
+		auto& [channel_id, content] = iter->translate_content[ChannelIndex[event.msg.channel_id]];
 
+		if (content != translate_hash_value) {
+			continue;
+		}
+
+		std::cout << event.msg.content << ">LINK" << std::endl;
+
+		//if (iter->flag == ChannelIndex.size()) {
+		//	Obj.erase(iter);
+		//}
+		//else {
+		//	iter->flag++;
+		//}
+
+		break;
 	}
 }
 
@@ -191,10 +206,12 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		FutureTranslation.push(std::async(std::launch::async, WebPen::TranslationPen, TextMsg, channel_language));
 	}
 
+	std::hash<std::string> hasher;
 	//TranslationPen
 	for (auto& [webhook, channel_id, channel_language] : Channel) {
 
 		if (channel_id == event.msg.channel_id) {
+			MessageTmp.translate_content.push_back({});
 			continue;
 		}
 
@@ -236,7 +253,9 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 		jsonData["content"] = unity;
 
-		MessageTmp.translate_content.push_back({ channel_id, std::move(unity) });
+		size_t hash_value = hasher(unity);
+
+		MessageTmp.translate_content.push_back({ channel_id, std::move(hash_value) });
 		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
 	}
 
