@@ -13,28 +13,7 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 	auto& translate_msg = event.msg.content;
 
 	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
-		for (auto& [channel_id, content] : iter->translate_content) {
-			if (content != translate_msg) {
-				continue;
-			}
 
-			std::clog << content << ":" << translate_msg << ":" << ChannelIndex[event.msg.channel_id] << std::endl;
-
-			auto& [message_id_origin, channel_id_origin] = iter->content_origin;
-			//输入消息 -> 源消息
-			MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
-			MessageStoneHash[event.msg.id]->at(ChannelIndex[event.msg.channel_id]) = { event.msg.id, event.msg.channel_id };
-
-			std::cout << "LINK" << std::endl;
-
-			iter->translate_content.erase({ iter->translate_content.begin() + ChannelIndex[event.msg.channel_id] });
-
-			if (iter->translate_content.begin() == iter->translate_content.end()) {
-				Obj.erase(iter);
-			}
-
-			return;
-		}
 	}
 }
 
@@ -174,9 +153,9 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 
 	//Message link
-	//std::thread([&] {
-	//	Queue.check_mutex(event);
-	//	}).detach();
+	std::thread([&] {
+		Queue.check_mutex(event);
+		}).detach();
 
 	if (ChannelStone[event.msg.channel_id] != true
 		|| event.msg.author.is_bot()) {
@@ -221,7 +200,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 		std::string unity = "";
 
-		auto MessageObj = (FutureTranslation.front().get())["translations"][0];
+		auto MessageObj = std::move((FutureTranslation.front().get())["translations"][0]);
 		FutureTranslation.pop();
 
 		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
