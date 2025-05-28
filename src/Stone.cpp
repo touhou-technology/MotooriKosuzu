@@ -114,15 +114,16 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 	int index = 0;
 	for (auto Obj : Write["ChannelWebhook"]) {
 
-		Channel.push_back(std::move(std::pair<std::string, dpp::snowflake>{std::string(Obj[0]), Obj[1]}));
+		Channel.push_back({Obj[0], Obj[1], Obj[2]});
 
 		Queue.ChannelIndex[Obj[1]] = index;
 		index++;
 	}
 
-	for (auto Obj : Write["ChannelKey"]) {
-		ChannelStone[Channel[Obj[0]].second].push_back({ Obj[1] , std::string(Obj[2]) });
-	}
+	
+
+	//TODO:适配新的数据结构
+
 }
 
 void StoneTranslationObj::Stone() {
@@ -241,9 +242,10 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		std::cout << unity << std::endl;
 
 		jsonData["content"] = unity;
-		MessageTmp.translate_content.push_back({ Channel[Obj.first].second, std::move(unity) });
 
-		std::thread([&] {UseWebhook(jsonData, Channel[Obj.first].first); }).detach();
+		auto& [webhook, channel_id, channel_language] = Channel[Obj.first];
+		MessageTmp.translate_content.push_back({ channel_id, std::move(unity) });
+		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
 	}
 
 	MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
