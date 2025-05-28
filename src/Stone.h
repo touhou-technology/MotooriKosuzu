@@ -37,7 +37,7 @@ struct StoneMessage {
 	//message_id, channel_id
 	std::tuple<dpp::snowflake, dpp::snowflake> content_origin;
 
-	int flag = 1;
+	int flag = 0;
 };
 
 class StoneMessageDispose {

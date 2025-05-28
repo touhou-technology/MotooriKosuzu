@@ -9,6 +9,10 @@ std::string common_message::get_message_reference_url() {
 void StoneMessageDispose::check_mutex(const common_message event) {
 	std::lock_guard<std::mutex> lock(mtx);
 
+	if (Obj.size() > 2) {
+		Obj.pop_back();
+	}
+
 	std::hash<std::string> translate_event_hash;
 	size_t translate_hash_value = translate_event_hash(event.msg.content);
 
@@ -19,14 +23,11 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 			continue;
 		}
 
-		std::cout << event.msg.content << ">LINK" << std::endl;
+		std::cout << event.msg.content << ">LINK<" << Obj.size() << std::endl;
 
-		//if (iter->flag == ChannelIndex.size()) {
-		//	Obj.erase(iter);
-		//}
-		//else {
-		//	iter->flag++;
-		//}
+		auto& [message_id_origin, channel_id_origin] = iter->content_origin;
+		MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
+		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
 
 		break;
 	}
