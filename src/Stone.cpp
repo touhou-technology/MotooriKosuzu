@@ -13,29 +13,28 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 	auto& translate_msg = event.msg.content;
 
 	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
-		auto& [channel_id, content] = iter->translate_content[ChannelIndex[event.msg.channel_id]];
+		for (auto& [channel_id, content] : iter->translate_content) {
+			if (content != translate_msg) {
+				continue;
+			}
 
-		if (content != translate_msg) {
-			continue;
+			std::clog << content << ":" << translate_msg << ":" << ChannelIndex[event.msg.channel_id] << std::endl;
+
+			auto& [message_id_origin, channel_id_origin] = iter->content_origin;
+			//输入消息 -> 源消息
+			MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
+			MessageStoneHash[event.msg.id]->at(ChannelIndex[event.msg.channel_id]) = { event.msg.id, event.msg.channel_id };
+
+			std::cout << "LINK" << std::endl;
+
+			iter->translate_content.erase({ iter->translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+
+			if (iter->translate_content.begin() == iter->translate_content.end()) {
+				Obj.erase(iter);
+			}
+
+			return;
 		}
-
-		std::clog << content << ":" << translate_msg << ":" << ChannelIndex[event.msg.channel_id] << std::endl;
-
-		auto& [message_id_origin, channel_id_origin] = iter->content_origin;
-		//输入消息 -> 源消息
-		MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
-		MessageStoneHash[event.msg.id]->at(ChannelIndex[event.msg.channel_id]) = { event.msg.id, event.msg.channel_id };
-
-		std::cout << "LINK" << std::endl;
-
-		iter->translate_content.erase({ iter->translate_content.begin() + ChannelIndex[event.msg.channel_id] });
-
-		if (iter->translate_content.begin() == iter->translate_content.end()) {
-			Obj.erase(iter);
-		}
-
-		break;
-
 	}
 }
 
@@ -130,7 +129,12 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 		}
 	}
 
-	//TODO:适配新的数据结构
+	//debug
+	for (auto& [webhook, channel_id, channel_language] : Channel) {
+		for (auto& Obj : ChannelStone[channel_id]) {
+			std::cout << "[" << Queue.ChannelIndex[channel_id] << ", " << Obj.first << ", " << Obj.second << "]" << std::endl;
+		}
+	}
 
 }
 
