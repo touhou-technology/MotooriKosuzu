@@ -39,7 +39,7 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 	}
 }
 
-std::unordered_map<dpp::snowflake, int> StoneMessageDispose::GetChannelIndex(){
+std::unordered_map<dpp::snowflake, int> StoneMessageDispose::GetChannelIndex() {
 	return ChannelIndex;
 }
 
@@ -114,13 +114,21 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 	int index = 0;
 	for (auto Obj : Write["ChannelWebhook"]) {
 
-		Channel.push_back({Obj[0], Obj[1], Obj[2]});
+		Channel.push_back({ Obj[0], Obj[1], Obj[2] });
 
 		Queue.ChannelIndex[Obj[1]] = index;
 		index++;
 	}
 
-	
+	for (auto& [webhook, channel_id, channel_language] : Channel) {
+		for (auto& [webhook_i, channel_id_i, channel_language_i] : Channel) {
+			if (channel_id == channel_id_i) {
+				continue;
+			}
+
+			ChannelStone[channel_id].push_back({ Queue.ChannelIndex[channel_id_i], channel_language_i });
+		}
+	}
 
 	//TODO:适配新的数据结构
 
@@ -208,7 +216,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
 		std::string unity = "";
 
-		auto MessageObj = (FutureTranslation.front()).get()["translations"][0];
+		auto& MessageObj = (FutureTranslation.front()).get()["translations"][0];
 		FutureTranslation.pop();
 
 		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
@@ -239,6 +247,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 		unity += message_extend;
 
+		//debug
 		std::cout << unity << std::endl;
 
 		jsonData["content"] = unity;
