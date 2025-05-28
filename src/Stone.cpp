@@ -124,15 +124,7 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 			if (channel_id == channel_id_i) {
 				continue;
 			}
-
-			ChannelStone[channel_id].push_back({ Queue.ChannelIndex[channel_id_i], channel_language_i });
-		}
-	}
-
-	//debug
-	for (auto& [webhook, channel_id, channel_language] : Channel) {
-		for (auto& Obj : ChannelStone[channel_id]) {
-			std::cout << "[" << Queue.ChannelIndex[channel_id] << ", " << Obj.first << ", " << Obj.second << "]" << std::endl;
+			ChannelStone[channel_id] = true;
 		}
 	}
 
@@ -182,11 +174,11 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 
 	//Message link
-	std::thread([&] {
-		Queue.check_mutex(event);
-		}).detach();
+	//std::thread([&] {
+	//	Queue.check_mutex(event);
+	//	}).detach();
 
-	if (ChannelStone[event.msg.channel_id] == std::vector<std::pair<int, std::string>>()
+	if (ChannelStone[event.msg.channel_id] != true
 		|| event.msg.author.is_bot()) {
 		return;
 	}
@@ -212,15 +204,24 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 	std::queue<std::future<nlohmann::json>> FutureTranslation;
 	//TranslationPen async push
-	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
-		FutureTranslation.push(std::async(std::launch::async, WebPen::TranslationPen, TextMsg, Obj.second));
+	for (auto& [webhook, channel_id, channel_language] : Channel) {
+		if (channel_id == event.msg.channel_id) {
+			continue;
+		}
+
+		FutureTranslation.push(std::async(std::launch::async, WebPen::TranslationPen, TextMsg, channel_language));
 	}
 
 	//TranslationPen
-	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
+	for (auto& [webhook, channel_id, channel_language] : Channel) {
+
+		if (channel_id == event.msg.channel_id) {
+			continue;
+		}
+
 		std::string unity = "";
 
-		auto& MessageObj = (FutureTranslation.front()).get()["translations"][0];
+		auto MessageObj = (FutureTranslation.front().get())["translations"][0];
 		FutureTranslation.pop();
 
 		if (MessageObj["detected_source_language"].get<std::string>() != "empty") {
@@ -256,7 +257,6 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 		jsonData["content"] = unity;
 
-		auto& [webhook, channel_id, channel_language] = Channel[Obj.first];
 		MessageTmp.translate_content.push_back({ channel_id, std::move(unity) });
 		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
 	}

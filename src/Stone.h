@@ -106,7 +106,7 @@ private:
 	std::vector<std::tuple<std::string, dpp::snowflake, std::string>> Channel;
 
 	//第一个入口，piar<Channel的索引，翻译的语言>
-	std::unordered_map<dpp::snowflake, std::vector<std::pair<int, std::string>>> ChannelStone;
+	std::unordered_map<dpp::snowflake, bool> ChannelStone;
 
 public:
 
