@@ -13,12 +13,39 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 	auto& translate_msg = event.msg.content;
 
 	for (auto iter = Obj.begin(); iter != Obj.end(); iter++) {
+		auto& [channel_id, content] = iter->translate_content[ChannelIndex[event.msg.channel_id]];
+
+		if (content != translate_msg) {
+			continue;
+		}
+
+		std::clog << content << ":" << translate_msg << ":" << ChannelIndex[event.msg.channel_id] << std::endl;
+
+		auto& [message_id_origin, channel_id_origin] = iter->content_origin;
+		//输入消息 -> 源消息
+		MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
+		MessageStoneHash[event.msg.id]->at(ChannelIndex[event.msg.channel_id]) = { event.msg.id, event.msg.channel_id };
+
+		std::cout << "LINK" << std::endl;
+
+		iter->translate_content.erase({ iter->translate_content.begin() + ChannelIndex[event.msg.channel_id] });
+
+		if (iter->translate_content.begin() == iter->translate_content.end()) {
+			Obj.erase(iter);
+		}
+
+		break;
 
 	}
 }
 
+std::unordered_map<dpp::snowflake, int> StoneMessageDispose::GetChannelIndex(){
+	return ChannelIndex;
+}
+
 void StoneMessageDispose::push(StoneMessage StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
+	(MessageStoneInstancePtr.end() - 1)->get()->reserve(ChannelIndex.size());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
 	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
@@ -141,6 +168,7 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		event = { event_obj->msg };
 	}
 
+	//Message link
 	std::thread([&] {
 		Queue.check_mutex(event);
 		}).detach();
@@ -151,6 +179,8 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	}
 
 	StoneMessage MessageTmp;
+	MessageTmp.translate_content.reserve(Queue.GetChannelIndex().at(event.msg.channel_id));
+
 	nlohmann::json EventJson = event.msg.to_json();
 	nlohmann::json jsonData;
 
@@ -168,11 +198,12 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	TextMsg = StringPen::CompatibleURL(TextMsg);
 
 	std::queue<std::future<nlohmann::json>> FutureTranslation;
-	//TranslationPen async
+	//TranslationPen async push
 	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
 		FutureTranslation.push(std::async(std::launch::async, WebPen::TranslationPen, TextMsg, Obj.second));
 	}
 
+	//TranslationPen
 	for (auto& Obj : ChannelStone[event.msg.channel_id]) {
 		std::string unity = "";
 

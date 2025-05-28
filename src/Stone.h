@@ -53,6 +53,7 @@ public:
 		push(std::forward<T>(t));
 	}
 
+	std::unordered_map<dpp::snowflake, int> GetChannelIndex();
 private:
 	void push(StoneMessage StoneMessage);
 
