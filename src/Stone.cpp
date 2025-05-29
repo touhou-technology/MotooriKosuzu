@@ -182,6 +182,14 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
 		event = { event_obj->msg };
+
+		dpp::message_delete_t DelObj;
+		DelObj.id = event.msg.id;
+		DelObj.channel_id = event.msg.channel_id;
+		DelObj.guild_id = event.msg.guild_id;
+
+		m_instance->del_msg({ DelObj });
+
 		message_extend = "\n<update>";
 	}
 
