@@ -9,9 +9,12 @@ std::string common_message::get_message_reference_url() {
 void StoneMessageDispose::check_mutex(const common_message event) {
 	std::lock_guard<std::mutex> lock(mtx);
 
+	static int i = 1;
+	if (i == ChannelIndex.size()) {
+		std::cout << "del" << std::endl;
 
-	if (Obj.size() > 2) {
 		Obj.pop_back();
+		i = 1;
 	}
 
 	std::hash<std::string> translate_event_hash;
@@ -30,6 +33,7 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 		MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
 		MessageStoneHash[event.msg.id].get()->at(ChannelIndex[event.msg.channel_id]) = { event.msg.id, event.msg.channel_id };
 
+		i++;
 		break;
 	}
 }
