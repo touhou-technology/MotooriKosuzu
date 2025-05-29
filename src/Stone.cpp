@@ -9,6 +9,11 @@ std::string common_message::get_message_reference_url() {
 void StoneMessageDispose::check_mutex(const common_message event) {
 	std::lock_guard<std::mutex> lock(mtx);
 
+
+	if (Obj.size() > 2) {
+		Obj.pop_back();
+	}
+
 	std::hash<std::string> translate_event_hash;
 	size_t translate_hash_value = translate_event_hash(event.msg.content);
 
