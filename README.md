@@ -107,6 +107,6 @@ Enter the token for Discord and translation
 ## Dependencies
 * [dpp](https://github.com/brainboxdotcc/DPP);
 * [cpp-httplib](https://github.com/yhirose/cpp-httplib);
-* [whisper.cpp](https://github.com/ggerganov/whisper.cpp);
+* ~~[whisper.cpp](https://github.com/ggerganov/whisper.cpp);~~
 * curl-dev
 * openssl-dev
