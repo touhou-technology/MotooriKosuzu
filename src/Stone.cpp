@@ -120,6 +120,7 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json& tmp) {
 			if (channel_id == channel_id_i) {
 				continue;
 			}
+
 			ChannelStone[channel_id] = true;
 		}
 	}
@@ -247,7 +248,13 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 			//TODO
 			if (Queue.MessageStoneHash[event.msg.message_reference.message_id] != nullptr) {
+				for (auto& [message_id_i, channel_id_i] : *Queue.MessageStoneHash[event.msg.message_reference.message_id]) {
+					if (channel_id == channel_id_i) {
+						tmp = "&>[☯](https://discord.com/channels/" + std::to_string(event.msg.guild_id) + "/" + std::to_string(channel_id_i) + "/" + std::to_string(message_id_i) + ")\n";
 
+						break;
+					}
+				}
 			}
 
 			if (tmp == "") {
