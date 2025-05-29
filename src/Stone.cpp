@@ -9,10 +9,6 @@ std::string common_message::get_message_reference_url() {
 void StoneMessageDispose::check_mutex(const common_message event) {
 	std::lock_guard<std::mutex> lock(mtx);
 
-	if (Obj.size() > 2) {
-		Obj.pop_back();
-	}
-
 	std::hash<std::string> translate_event_hash;
 	size_t translate_hash_value = translate_event_hash(event.msg.content);
 
@@ -27,7 +23,7 @@ void StoneMessageDispose::check_mutex(const common_message event) {
 
 		auto& [message_id_origin, channel_id_origin] = iter->content_origin;
 		MessageStoneHash[event.msg.id] = MessageStoneHash[message_id_origin];
-		MessageStoneHash[event.msg.id].get()->push_back({ event.msg.id, event.msg.channel_id });
+		MessageStoneHash[event.msg.id].get()->at(ChannelIndex[event.msg.channel_id]) = { event.msg.id, event.msg.channel_id };
 
 		break;
 	}
@@ -39,11 +35,16 @@ std::unordered_map<dpp::snowflake, int> StoneMessageDispose::GetChannelIndex() {
 
 void StoneMessageDispose::push(StoneMessage StoneMessage) {
 	MessageStoneInstancePtr.push_back(std::make_shared<MessageStone>());
-	(MessageStoneInstancePtr.end() - 1)->get()->reserve(ChannelIndex.size());
 	auto& [message_id, channel] = StoneMessage.content_origin;
 
 	MessageStoneHash[message_id] = *(MessageStoneInstancePtr.end() - 1);
-	(MessageStoneInstancePtr.end() - 1)->get()->push_back({ message_id, channel });
+
+	//MessageStone排序 
+	for (int i = 0; i < ChannelIndex.size(); i++) {
+		(MessageStoneInstancePtr.end() - 1)->get()->push_back({});
+	}
+
+	(MessageStoneInstancePtr.end() - 1)->get()->at(ChannelIndex[channel]) = { message_id, channel };
 
 	Obj.push_back(StoneMessage);
 }
