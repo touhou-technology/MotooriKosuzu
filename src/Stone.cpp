@@ -253,12 +253,13 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		//debug
 		std::cout << unity << std::endl;
 
+		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
+
 		jsonData["content"] = unity;
 
 		size_t hash_value = hasher(unity);
 
 		MessageTmp.translate_content.push_back({ channel_id, std::move(hash_value) });
-		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
 	}
 
 	MessageTmp.content_origin = { event.msg.id, event.msg.channel_id };
