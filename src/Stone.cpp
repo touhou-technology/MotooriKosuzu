@@ -164,7 +164,6 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		event = { event_obj->msg };
 	}
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
-		//TODO:hash消息添加
 		message_extend = "\n{⫸update}";
 		event = { event_obj->msg };
 	}
@@ -244,8 +243,19 @@ void StoneTranslationObj::create_message(input_message Obj) {
 
 		//reference
 		if (event.msg.message_reference.message_id != dpp::snowflake{}) {
-			//TODO:尝试索引
-			unity = "&>[☯](" + event.get_message_reference_url() + ")\n" + unity;
+			std::string tmp = {};
+
+			//TODO
+			if (Queue.MessageStoneHash[event.msg.message_reference.message_id] != nullptr) {
+
+			}
+
+			if (tmp == "") {
+				unity = "&>[☯](" + event.get_message_reference_url() + ")\n" + unity;
+			}
+			else {
+				unity = tmp + unity;
+			}
 		}
 
 		unity += message_extend;

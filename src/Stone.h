@@ -24,6 +24,13 @@ struct common_message {
 
 	}
 
+	common_message(dpp::message::message_ref msg_ref) {
+		msg.id = msg_ref.message_id;
+		msg.channel_id = msg_ref.channel_id;
+		msg.guild_id = msg_ref.guild_id;
+
+	}
+
 	dpp::message msg = {};
 	
 	std::string get_message_reference_url();
