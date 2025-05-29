@@ -142,23 +142,29 @@ void StoneTranslationObj::Stone() {
 		});
 
 	RobotSlips::bot->on_message_delete([&](const dpp::message_delete_t& event) {
-		if (Queue.MessageStoneHash[event.id] == nullptr) {
-			return;
-		}
-
-		for (auto& Obj : *Queue.MessageStoneHash[event.id]) {
-			if (Obj.first == event.id) {
-				continue;
-			}
-
-			std::cout << event.id << std::endl;
-
-			RobotSlips::bot->message_delete(Obj.first, Obj.second);
-		}
-
-		*Queue.MessageStoneHash[event.id] = StoneMessageDispose::MessageStone();
-
+		m_instance->del_msg({ event });
 		});
+
+}
+
+void StoneTranslationObj::del_msg(dpp::message_delete_t event){
+	std::lock_guard<std::mutex> lock(del);
+
+	if (Queue.MessageStoneHash[event.id] == nullptr) {
+		return;
+	}
+
+	for (auto& Obj : *Queue.MessageStoneHash[event.id]) {
+		if (Obj.first == event.id) {
+			continue;
+		}
+
+		std::cout << event.id << std::endl;
+
+		RobotSlips::bot->message_delete(Obj.first, Obj.second);
+	}
+
+	*Queue.MessageStoneHash[event.id] = StoneMessageDispose::MessageStone();
 
 }
 
@@ -169,9 +175,10 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	if (const auto event_obj = std::get_if<dpp::message_create_t>(&Obj)) {
 		event = { event_obj->msg };
 	}
+
 	if (const auto event_obj = std::get_if<dpp::message_update_t>(&Obj)) {
-		message_extend = "\n{⫸update}";
 		event = { event_obj->msg };
+		message_extend = "\n<update>";
 	}
 
 	//Message link

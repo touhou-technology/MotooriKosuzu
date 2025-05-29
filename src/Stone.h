@@ -67,6 +67,7 @@ private:
 	void push(StoneMessage StoneMessage);
 
 
+
 	friend class StoneTranslationObj;
 
 	std::vector<StoneMessage> Obj;
@@ -105,11 +106,14 @@ public:
 	//主要处理任务
 	void Stone();
 
+	void del_msg(dpp::message_delete_t event);
 
 	void create_message(input_message Obj);
 
 	void UseWebhook(nlohmann::json& jsonDate, std::string url);
 private:
+	std::mutex del;
+
 	nlohmann::json Write;
 	//webhook, channel_id, channel_language
 	std::vector<std::tuple<std::string, dpp::snowflake, std::string>> Channel;
