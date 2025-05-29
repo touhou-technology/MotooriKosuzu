@@ -253,9 +253,8 @@ void StoneTranslationObj::create_message(input_message Obj) {
 		//debug
 		std::cout << unity << std::endl;
 
-		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
-
 		jsonData["content"] = unity;
+		std::thread([&] {UseWebhook(jsonData, webhook); }).detach();
 
 		size_t hash_value = hasher(unity);
 
