@@ -2,6 +2,7 @@
 I adopted a method of constructing human behavior(
 > [!IMPORTANT]
 > No longer maintain, migrate to (MotooriKosuzu-CLI)[https://github.com/touhou-technology/MotooriKosuzu-CLI]
+> in remembrance of
 
 This is a Discord listening channel translation bot (channel monitoring is selected according to commands)
 I tried adding a command to enable this program to attempt updating itself
