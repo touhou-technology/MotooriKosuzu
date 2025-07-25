@@ -1,7 +1,7 @@
 ﻿# This is an automatic translation DCbot
 I adopted a method of constructing human behavior(
 > [!IMPORTANT]
-> This is my first time doing this, So there will be some issues*(
+> No longer maintain, migrate to (MotooriKosuzu-CLI)[https://github.com/touhou-technology/MotooriKosuzu-CLI]
 
 This is a Discord listening channel translation bot (channel monitoring is selected according to commands)
 I tried adding a command to enable this program to attempt updating itself
