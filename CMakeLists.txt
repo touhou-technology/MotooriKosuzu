@@ -61,7 +61,8 @@ add_executable(MotooriKosuzu
   src/main.cpp
 )
 
-target_link_libraries(MotooriKosuzu PRIVATE dpp core)
+target_link_libraries(MotooriKosuzu
+  PRIVATE dpp core)
 
 target_compile_options(MotooriKosuzu PRIVATE
   -freflection
