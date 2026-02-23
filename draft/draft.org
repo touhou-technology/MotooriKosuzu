@@ -8,8 +8,8 @@
 不过我也会从我使用的角度来考虑如何实现功能(或者说从用户的角度来出发)
 
 以下是计划实现的功能
-* C++反射功能添加
-- 为什么要添加反射的原因是
+* 使用C++反射
+- 为什么要使用反射的原因是
   Remember,
   one of the most important principles in programming is the same as one of the most important principles in sorcery,
   all right? That's if you have the name of the spirit, you get control over it. - Hal Abelson
@@ -55,4 +55,4 @@
       Discord Message URL
 之后lisp可以随意配置<一般情况, 用户不能使用绝大多数功能, 也可以使用自涉性来删除敏感的功能>
 
-  
+* +为什么一个翻译+
