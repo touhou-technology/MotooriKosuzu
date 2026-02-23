@@ -1,0 +1,38 @@
+我认为使用母语能更准确的表述想法
+况且这只是草图()
+一般使用AI来进行翻译应该语意准确差不多
+如果有歧义或者不清楚的地方可以发发邮件到<awalwashig@gmail.com>(但是由于有GFW存在, 我不能很好的和emacs集成在一起, 所以我检查邮件可能要很久才检查一次)
+
+不过这个项目依旧是想练习我之前学习的内容(+just for fun+)
+所以可能有些瑕疵
+不过我也会从我使用的角度来考虑如何实现功能(或者说从用户的角度来出发)
+
+以下是计划实现的功能
+* C++反射功能添加
+- 为什么要添加反射的原因是
+  Remember,
+  one of the most important principles in programming is the same as one of the most important principles in sorcery,
+  all right? That's if you have the name of the spirit, you get control over it. - Hal Abelson
+  +知らないわ~~~ そんな魔法！+
+
+
+* 翻译功能
+- 调用多个翻译API并可以切换
+  或许某个语种翻译的更好
+- 对个人来说可编程
+  使用
+- 实验性(+just for fun+)分布式计算实现ASR->翻译
+  虽然说可能ASR的准确性不是很高, 但我因为如果想要交流的话, 这不是问题, 只要三段验证一次就可以了(对于双方)
+  discord的bot可以监听在VC中成员的对话, 所以可以使用[[https://docs.discord.com/developers/activities/overview][Discord Activities]] + [[https://ggml.ai/whisper.cpp/stream.wasm/][whisper.cpp_wasm]]
+  或者说也可以采用积分策略(不过关于这一点等到实现了再提)
+
+* LISP
+
+* TUI
+- 为什么要做TUI
+  得益于C++ 反射, TUI可以探查到类的实现和成员(或者说能让代码看到代码了<自涉性>)
+  因此将配置抽象成可以一眼就理解的(虽然我有点想嵌入Plan9的操作, 对于作UI还是对于习惯的人来操作较好)
+  
+* Boost
+
+  
