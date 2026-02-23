@@ -16,13 +16,17 @@
   +知らないわ~~~ そんな魔法！+
   对于个人来说只是想玩玩反射^^
   也是实验一些想法
-
+  尽管目前GCC反射是实验以及不支持LSP,
+  +但我总感觉LSP在妨碍我如果不是我英语不好的话+.
 
 * 翻译功能
 - 调用多个翻译API并可以切换
   或许某个语种翻译的更好
 - 对个人来说可编程
   使用LISP, 在后面提到
+- 消息映射
+  我认为必须要, 但可能要满足一些约束
+  必须对应才行, 对于约束来说, 添加可以debug的功能<LISP>
 - 实验性(+just for fun+)分布式计算实现ASR->翻译
   虽然说可能ASR的准确性不是很高, 但我因为如果想要交流的话, 这不是问题, 只要三段验证一次就可以了(对于双方)
   discord的bot可以监听在VC中成员的对话, 所以可以使用[[https://docs.discord.com/developers/activities/overview][Discord Activities]] + [[https://ggml.ai/whisper.cpp/stream.wasm/][whisper.cpp_wasm]]
@@ -34,11 +38,19 @@
   我有点不太习惯对于配置文件来控制代码行为(如果使用配置文件基本只有我知道要如何编写, 后期维护麻烦 +主要还是我比较懒+ )
   我想做到看到这样写就知道怎么做(也就是反射?)
   依旧是实验项目
+- Command
+  对discord注册功能<或者说可以像是dishell>
+  以及可以提供[[https://dpp.dev/application-command-autocomplete.html][智能补全]]
+  Command可以用户自行编写
+- Hook
+  提供触发event后回调函数
+  
 * TUI
 - 为什么要做TUI
   得益于C++ 反射, TUI可以探查到类的实现和成员(或者说能让代码看到代码了<自涉性>)
   因此将配置抽象成可以一眼就理解的(虽然我有点想嵌入Plan9的操作, 但是最为UI来说还是对于大部分人都习惯来设计)
-
+- 用户使用
+  使用[[https://docs.discord.com/developers/activities/overview][Discord Activities]]来构建TUI或者直接访问静态网站即可食用wasm
 
 * 读取配置
 - +初始化+
@@ -55,4 +67,5 @@
       Discord Message URL
 之后lisp可以随意配置<一般情况, 用户不能使用绝大多数功能, 也可以使用自涉性来删除敏感的功能>
 
-* +为什么一个翻译+
+* TODO
+可能未完善, 需要后续校验
