@@ -14,25 +14,45 @@
   one of the most important principles in programming is the same as one of the most important principles in sorcery,
   all right? That's if you have the name of the spirit, you get control over it. - Hal Abelson
   +知らないわ~~~ そんな魔法！+
+  对于个人来说只是想玩玩反射^^
+  也是实验一些想法
 
 
 * 翻译功能
 - 调用多个翻译API并可以切换
   或许某个语种翻译的更好
 - 对个人来说可编程
-  使用
+  使用LISP, 在后面提到
 - 实验性(+just for fun+)分布式计算实现ASR->翻译
   虽然说可能ASR的准确性不是很高, 但我因为如果想要交流的话, 这不是问题, 只要三段验证一次就可以了(对于双方)
   discord的bot可以监听在VC中成员的对话, 所以可以使用[[https://docs.discord.com/developers/activities/overview][Discord Activities]] + [[https://ggml.ai/whisper.cpp/stream.wasm/][whisper.cpp_wasm]]
   或者说也可以采用积分策略(不过关于这一点等到实现了再提)
 
 * LISP
-
+- LISP?
+  Code as Data!
+  我有点不太习惯对于配置文件来控制代码行为(如果使用配置文件基本只有我知道要如何编写, 后期维护麻烦 +主要还是我比较懒+ )
+  我想做到看到这样写就知道怎么做(也就是反射?)
+  依旧是实验项目
 * TUI
 - 为什么要做TUI
   得益于C++ 反射, TUI可以探查到类的实现和成员(或者说能让代码看到代码了<自涉性>)
-  因此将配置抽象成可以一眼就理解的(虽然我有点想嵌入Plan9的操作, 对于作UI还是对于习惯的人来操作较好)
-  
-* Boost
+  因此将配置抽象成可以一眼就理解的(虽然我有点想嵌入Plan9的操作, 但是最为UI来说还是对于大部分人都习惯来设计)
+
+
+* 读取配置
+- +初始化+
+  对于初始化还是需要先读取配置才能使用,
+  但alpine是运行时不可写的文件体系, 可能就得写死行为后不可变更(或者重启后丢失)
+  不能读取后保存, 但其实有一个事情被忽略了, 不是还有一个几乎无限的存储配置地方吗
+  那就是把配置发在discord上, 在第一个启动的配置写下这个消息的链接, 如果想要更改可以自己编辑消息更改(自己发送的消息), 或者bot发送自己的消息配置然后更改
+- 顺序
+  - boot
+    1 //etc/MotooriKosuzu/config//
+    2 ~/.config/
+    3 ./config/
+    - Init.el
+      Discord Message URL
+之后lisp可以随意配置<一般情况, 用户不能使用绝大多数功能, 也可以使用自涉性来删除敏感的功能>
 
   
