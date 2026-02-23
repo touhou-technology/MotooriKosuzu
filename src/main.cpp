@@ -1,17 +1,15 @@
 #include <iostream>
 #include <meta>
+#include <print>
+
+#include "core/core.hpp"
 
 
-// test
 int main() {
-	struct S {
-		int m;
-		int n;
-	};
+    UseAPI Test;
 
-	constexpr auto ctx = std::meta::access_context::current();
-	template for (constexpr auto m : std::define_static_array(
-					  nonstatic_data_members_of(^^S, ctx))) {
-		std::cout << identifier_of(m) << std::endl;
-	}
+    auto Obj = Test.ReflectionAPI();
+    for(auto Str : Obj){
+        std::cout << Str << std::endl;
+    }
 }

@@ -42,7 +42,10 @@ target_compile_features(core
 
 target_sources(core
   PRIVATE
+  src/core/core.hpp
   src/core/core.cpp
+  src/core/web.h
+  src/core/web.cpp
 )
 
 target_link_libraries(core
@@ -52,6 +55,10 @@ target_link_libraries(core
   ftxui::component
 
   spdlog::spdlog
+)
+
+target_compile_options(core PRIVATE
+  -freflection
 )
 
 # core end

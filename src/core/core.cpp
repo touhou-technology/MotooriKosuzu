@@ -1,5 +1,3 @@
-int main(int argc, char *argv[])
-{
+#include <iostream>
 
-    return 0;
-}
+void test() { std::cout << "test\n"; }
