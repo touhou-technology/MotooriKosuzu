@@ -1,5 +1,4 @@
 #include <iostream>
-#include <meta>
 #include <print>
 
 #include "core/core.hpp"

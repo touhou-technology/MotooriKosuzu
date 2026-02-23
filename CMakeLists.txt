@@ -89,3 +89,15 @@ target_compile_options(tui PRIVATE
   -freflection
 )
 #END
+# Test
+add_executable(test
+  src/test/test.cpp
+)
+
+target_link_libraries(test
+  PRIVATE core
+)
+
+target_compile_options(test PRIVATE
+  -freflection
+)
