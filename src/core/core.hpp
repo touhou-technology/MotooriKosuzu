@@ -16,4 +16,16 @@ constexpr std::string_view enum_to_string(E value) {
   return "<unnamed>";
 }
 
+template <typename E, bool Enumerable = std::meta::is_enumerable_type(^^E)>
+  requires std::is_enum_v<E>
+constexpr std::optional<E> string_to_enum(std::string_view name) {
+  if constexpr (Enumerable)
+    template for (constexpr auto e :
+                  std::define_static_array(std::meta::enumerators_of(^^E)))
+      if (name == std::meta::identifier_of(e))
+        return [:e:];
+
+  return std::nullopt;
+}
+
 #endif /* CORE_HPP */
