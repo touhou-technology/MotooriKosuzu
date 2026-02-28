@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <meta>
 
+namespace mkr {
+
 template <typename E, bool Enumerable = std::meta::is_enumerable_type(^^E)>
 	requires std::is_enum_v<E>
 constexpr std::string_view enum_to_string(E value) {
@@ -38,4 +40,5 @@ consteval auto make_named_tuple(
 	return std::meta::define_aggregate(type, nsdms);
 }
 
+} // namespace mkr
 #endif /* REFLECTION_HPP */

@@ -6,8 +6,8 @@
 
 struct R;
 consteval {
-	make_named_tuple(^^R, {
-							  {^^int, "Test_1"}, {^^double, "Test_2"}});
+	mkr::make_named_tuple(^^R, {
+								   {^^int, "Test_1"}, {^^double, "Test_2"}});
 }
 
 int main(int argc, char *argv[]) {
