@@ -40,12 +40,18 @@ target_compile_features(core
   cxx_std_26
 )
 
+target_include_directories(core
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 target_sources(core
-  PRIVATE
+  PUBLIC
   src/core/core.hpp
   src/core/core.cpp
   src/core/web.h
   src/core/web.cpp
+  src/core/reflection.hpp
 )
 
 target_link_libraries(core
