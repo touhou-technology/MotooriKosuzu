@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <meta>
 #include <print>
 
 #include "core/reflection.hpp"

@@ -3,12 +3,11 @@
 
 #include "core/core.hpp"
 
-
 int main() {
-    UseAPI Test;
+	UseAPI Test;
 
-    auto Obj = Test.ReflectionAPI();
-    for(auto Str : Obj){
-        std::cout << Str << std::endl;
-    }
+	auto Obj = Test.ReflectionAPI();
+	for (auto Str : Obj) {
+		std::cout << Str << std::endl;
+	}
 }

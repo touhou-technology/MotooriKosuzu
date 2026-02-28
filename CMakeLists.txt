@@ -47,10 +47,10 @@ target_include_directories(core
 
 target_sources(core
   PUBLIC
-  src/core/core.hpp
-  src/core/core.cpp
   src/core/web.h
   src/core/web.cpp
+
+  src/core/core.hpp
   src/core/reflection.hpp
 )
 
