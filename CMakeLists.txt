@@ -32,6 +32,12 @@ CPMAddPackage(
   OPTIONS "SPDLOG_FMT_EXTERNAL OFF"
 )
 
+# google benchmark
+CPMAddPackage(
+  URI "gh:google/benchmark@1.9.5"
+  OPTIONS "BENCHMARK_ENABLE_TESTING Off"
+)
+
 # core添加核心依赖
 add_library(core)
 
@@ -106,4 +112,19 @@ target_link_libraries(test
 
 target_compile_options(test PRIVATE
   -freflection
+)
+# Test End
+
+# Benchmark
+add_executable(mkbenchmark
+  src/benchmark/benchmark.cpp
+)
+
+target_link_libraries(mkbenchmark
+  PRIVATE core benchmark::benchmark
+)
+
+target_compile_options(mkbenchmark PRIVATE
+  -freflection
+  -DCMAKE_BUILD_TYPE=Release
 )
