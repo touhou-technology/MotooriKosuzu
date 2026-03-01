@@ -126,5 +126,4 @@ target_link_libraries(mkbenchmark
 
 target_compile_options(mkbenchmark PRIVATE
   -freflection
-  -DCMAKE_BUILD_TYPE=Release
 )
