@@ -14,10 +14,12 @@ template <typename T, size_t N>
 using struct_of_arrays = mkr::struct_of_arrays_impl<T, N>::impl;
 
 struct point {
-	float x;
-	float y;
-	float z;
+	float x = 1;
+	float y = 3;
+	float z = 123;
 };
+
+template <> struct std::formatter<point> : mkr::universal_formatter {};
 
 int main(int argc, char *argv[]) {
 	auto A = R{.Test_1 = 1, .Test_2 = 2.1};
@@ -31,5 +33,12 @@ int main(int argc, char *argv[]) {
 	for (size_t i = 0; i != 2; ++i) {
 		std::println("({}, {}, {})", p.x[i], p.y[i], p.z[i]);
 	}
+
+	std::string OwO = {
+#embed "test.txt"
+	};
+	std::println("{}", OwO);
+
+	std::println("{}", point());
 	return 0;
 }
