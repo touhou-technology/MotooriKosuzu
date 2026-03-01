@@ -2,6 +2,8 @@
 #define REFLECTION_HPP
 
 #include <algorithm>
+#include <array>
+#include <format>
 #include <meta>
 
 namespace mkr {
@@ -39,6 +41,29 @@ consteval auto make_named_tuple(
 	}
 	return std::meta::define_aggregate(type, nsdms);
 }
+
+// Test (Just for fun?)都是抄写的()
+template <typename T, size_t N> struct struct_of_arrays_impl {
+	struct impl;
+
+	consteval {
+		auto ctx = std::meta::access_context::current();
+
+		std::vector<std::meta::info> old_members =
+			nonstatic_data_members_of(^^T, ctx);
+		std::vector<std::meta::info> new_members = {};
+		for (auto member : old_members) {
+			auto array_type = std::meta::substitute(
+				^^std::array,
+				{
+					type_of(member), std::meta::reflect_constant(N)});
+			auto mem_descr =
+				data_member_spec(array_type, {.name = identifier_of(member)});
+			new_members.push_back(mem_descr);
+		}
+		define_aggregate(^^impl, new_members);
+	}
+};
 
 } // namespace mkr
 #endif /* REFLECTION_HPP */
