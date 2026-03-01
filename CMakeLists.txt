@@ -6,10 +6,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_STANDARD 26)
 
-#
-
 #set(CMAKE_C_COMPILER "/opt/gcc-trunk/bin/gcc")
-set(CMAKE_CXX_COMPILER "/opt/gcc-trunk/bin/g++")
+#set(CMAKE_CXX_COMPILER "/opt/gcc-trunk/bin/g++")
 
 # include CPM
 include(cmake/CPM.cmake)
@@ -101,6 +99,7 @@ target_compile_options(tui PRIVATE
   -freflection
 )
 #END
+
 # Test
 add_executable(test
   src/test/test.cpp
@@ -127,3 +126,4 @@ target_link_libraries(mkbenchmark
 target_compile_options(mkbenchmark PRIVATE
   -freflection
 )
+# Benchmark
