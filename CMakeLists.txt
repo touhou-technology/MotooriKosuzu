@@ -39,7 +39,7 @@ CPMAddPackage(
 )
 
 # core添加核心依赖
-add_library(core)
+add_library(core STATIC)
 
 target_compile_features(core
   PUBLIC
