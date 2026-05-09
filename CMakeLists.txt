@@ -12,6 +12,9 @@ set(CMAKE_CXX_STANDARD 26)
 # include CPM
 include(cmake/CPM.cmake)
 
+# include FindCPP_modules
+include(cmake/FindCPP_modules.cmake)
+
 CPMAddPackage("gh:brainboxdotcc/DPP@10.1.4")
 
 # FTXUI
@@ -69,6 +72,13 @@ target_link_libraries(core
 
 target_compile_options(core PRIVATE
   -freflection
+  -fmodules
+)
+
+# modules test
+find_cpp_modules(
+  TARGET  core
+  SRC_DIR ${CMAKE_SOURCE_DIR}/src
 )
 
 # core end
