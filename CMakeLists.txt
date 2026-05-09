@@ -127,3 +127,9 @@ target_compile_options(mkbenchmark PRIVATE
   -freflection
 )
 # Benchmark
+
+file(CREATE_LINK
+  ${CMAKE_SOURCE_DIR}/config/.mk.json
+  ${CMAKE_BINARY_DIR}/.mk.json
+  SYMBOLIC
+)
