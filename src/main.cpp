@@ -3,6 +3,8 @@
 
 #include "core/core.hpp"
 
+import DPPM;
+
 int main() {
 	UseAPI Test;
 
@@ -10,4 +12,6 @@ int main() {
 	for (auto Str : Obj) {
 		std::cout << Str << std::endl;
 	}
+
+	TestDPP();
 }
