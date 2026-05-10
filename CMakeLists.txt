@@ -6,9 +6,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_STANDARD 26)
 
-#set(CMAKE_C_COMPILER "/opt/gcc-trunk/bin/gcc")
-#set(CMAKE_CXX_COMPILER "/opt/gcc-trunk/bin/g++")
-
 # include CPM
 include(cmake/CPM.cmake)
 
