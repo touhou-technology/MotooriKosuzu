@@ -18,8 +18,8 @@ CPMAddPackage("gh:brainboxdotcc/DPP@10.1.4")
 CPMAddPackage(
   NAME FTXUI
   GITHUB_REPOSITORY "ArthurSonzogni/FTXUI"
-  GIT_TAG "main"
-  #OPTIONS "FTXUI_BUILD_MODULES ON;CMAKE_GENERATOR Ninja"
+  GIT_TAG "v6.1.9"
+  OPTIONS "FTXUI_BUILD_MODULES ON;CMAKE_GENERATOR Ninja"
 )
 
 # spdlog
