@@ -12,7 +12,15 @@ include(cmake/CPM.cmake)
 # include FindCPP_modules
 include(cmake/FindCPP_modules.cmake)
 
-CPMAddPackage("gh:brainboxdotcc/DPP@10.1.4")
+CPMAddPackage("gh:brainboxdotcc/DPP@10.1.5")
+
+#EnTT
+CPMAddPackage(
+  NAME entt
+  GITHUB_REPOSITORY "skypjack/entt"
+  GIT_TAG "main"
+  OPTIONS "ENTT_INCLUDE_NATVIS ON;"
+)
 
 # FTXUI
 CPMAddPackage(
@@ -65,6 +73,8 @@ target_link_libraries(core
   ftxui::component
 
   spdlog::spdlog
+
+  EnTT::EnTT
 )
 
 target_compile_options(core PRIVATE
