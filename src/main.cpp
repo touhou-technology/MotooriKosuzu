@@ -3,15 +3,16 @@
 
 #include "core/core.hpp"
 
-import DPPM;
+import dppm;
 
 int main() {
 	UseAPI Test;
+	// module test
+	dppm::bot test;
+	test.Test(1);
 
 	auto Obj = Test.ReflectionAPI();
 	for (auto Str : Obj) {
 		std::cout << Str << std::endl;
 	}
-
-	TestDPP();
 }
