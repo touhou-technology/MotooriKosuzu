@@ -85,7 +85,7 @@ target_compile_options(core PRIVATE
 # modules test
 find_cpp_modules(
   TARGET  core
-  SRC_DIR ${CMAKE_SOURCE_DIR}/src
+  SRC_DIR ${CMAKE_SOURCE_DIR}/src/core
 )
 
 # core end
