@@ -1,10 +1,6 @@
-#include <dpp/dpp.h>
+#ifndef MOTOORIKOSUZ_H
+#define MOTOORIKOSUZ_H
 
-template <typename T>
-class MotooriKosuz {
- public:
-    MotooriKosuz();
+#include "core/core.hpp"
 
- private:
-	MotooriKosuz &Start();
-};
+#endif /* MOTOORIKOSUZ_H */
