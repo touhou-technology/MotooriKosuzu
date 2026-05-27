@@ -4,10 +4,13 @@
 
 #include "core/reflection.hpp"
 
+#define SIMDJSON_STATIC_REFLECTION 1
+#include "simdjson.h"
+
 struct R;
 consteval {
 	mkr::make_named_tuple(^^R, {
-								   {^^int, "Test_1"}, {^^double, "Test_2"}});
+								   {^^int, "Hello_1"}, {^^double, "Test_2"}});
 }
 
 template <typename T, size_t N>
@@ -21,8 +24,50 @@ struct point {
 
 template <> struct std::formatter<point> : mkr::universal_formatter {};
 
+// A user-provided class.
+struct Car {
+	std::string make;
+	std::string model;
+	int year;
+	std::vector<float> tire_pressure;
+};
+
+// Short forms
+
+Car get_from() {
+	std::string json = R"( { "make": "Toyota",
+                              "model": "Camry",
+                            "year": 2018,
+        "tire_pressure": [ 40.1, 39.9 ] } )";
+	return simdjson::from(simdjson::pad(json));
+}
+
+std::string make_string(const Car &c) { return simdjson::to_json(c); }
+
+// More standard forms
+
+Car get_standard() {
+	std::string json = R"( { "make": "Toyota",
+                              "model": "Camry",
+                            "year": 2018,
+        "tire_pressure": [ 40.1, 39.9 ] } )";
+	simdjson::ondemand::parser parser;
+	simdjson::ondemand::document doc = parser.iterate(simdjson::pad(json));
+	Car c = doc.get<Car>();
+	return c;
+}
+
+void simdjsontest() {
+	std::string json = R"( { "make": "Toyota",
+                              "model": "Camry",
+                            "year": 2018,
+        "tire_pressure": [ 40.1, 39.9 ] } )";
+	Car c = simdjson::from(simdjson::pad(json));
+	std::cout << simdjson::to_json(c) << "\n";
+}
+
 int main(int argc, char *argv[]) {
-	auto A = R{.Test_1 = 1, .Test_2 = 2.1};
+	auto A = R{.Hello_1 = 1, .Test_2 = 2.1};
 	auto &[T1, T2] = A;
 	std::println("{}:{}", T1, T2);
 
@@ -40,5 +85,6 @@ int main(int argc, char *argv[]) {
 	std::println("{}", OwO);
 
 	std::println("{}", point());
+	simdjsontest();
 	return 0;
 }

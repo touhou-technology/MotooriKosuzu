@@ -14,6 +14,12 @@ include(cmake/FindCPP_modules.cmake)
 
 CPMAddPackage("gh:brainboxdotcc/DPP@10.1.5")
 
+CPMAddPackage(
+  NAME simdjson
+  GITHUB_REPOSITORY "simdjson/simdjson"
+  GIT_TAG "v4.6.4"
+)
+
 #EnTT
 CPMAddPackage(
   NAME entt
@@ -75,6 +81,7 @@ target_link_libraries(core
   spdlog::spdlog
 
   EnTT::EnTT
+  simdjson::simdjson
 )
 
 target_compile_options(core PRIVATE
