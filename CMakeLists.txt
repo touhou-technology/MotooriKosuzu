@@ -97,6 +97,25 @@ find_cpp_modules(
 
 # core end
 
+# Scheme
+add_executable(Scheme
+  src/scheme/scheme.cpp
+)
+
+target_link_libraries(Scheme
+  PRIVATE core)
+
+target_compile_options(Scheme PRIVATE
+  -freflection
+  -fmodules
+)
+
+find_cpp_modules(
+  TARGET Scheme
+  SRC_DIR ${CMAKE_SOURCE_DIR}/src/scheme
+)
+# Scheme End
+
 # MotooriKosuzu
 add_executable(MotooriKosuzu
   src/main.cpp
