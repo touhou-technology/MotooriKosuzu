@@ -1,11 +1,28 @@
 #include <algorithm>
+#include <debugging>
 #include <meta>
+#include <optional>
 #include <print>
+#include <ranges>
 
 #include "core/reflection.hpp"
 
 #define SIMDJSON_STATIC_REFLECTION 1
 #include "simdjson.h"
+
+bool Test_Debug = false;
+
+void test() {
+	std::cout << "Test Code" << std::endl;
+
+	if (std::is_debugger_present()) {
+		Test_Debug = true;
+		std::cout << "Debug" << std::endl;
+	}
+	std::breakpoint_if_debugging();
+
+	std::cout << "Continue\n";
+}
 
 struct R;
 consteval {
@@ -86,5 +103,7 @@ int main(int argc, char *argv[]) {
 
 	std::println("{}", point());
 	simdjsontest();
+
+	test();
 	return 0;
 }

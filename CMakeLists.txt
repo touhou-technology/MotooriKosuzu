@@ -74,6 +74,8 @@ target_sources(core
 
 target_link_libraries(core
   PUBLIC
+  stdc++exp
+
   ftxui::screen
   ftxui::dom
   ftxui::component
