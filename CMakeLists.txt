@@ -50,6 +50,11 @@ CPMAddPackage(
   OPTIONS "BENCHMARK_ENABLE_TESTING Off"
 )
 
+# chibi-scheme
+# src: cmake -B build .. && sudo make install
+set(chibi-scheme_DIR "/usr/local/lib64/cmake/chibi")
+find_package(chibi-scheme CONFIG REQUIRED)
+
 # core添加核心依赖
 add_library(core STATIC)
 
@@ -84,6 +89,7 @@ target_link_libraries(core
 
   EnTT::EnTT
   simdjson::simdjson
+  chibi::libchibi-scheme
 )
 
 target_compile_options(core PRIVATE
