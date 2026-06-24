@@ -14,19 +14,20 @@ include(cmake/FindCPP_modules.cmake)
 
 CPMAddPackage("gh:brainboxdotcc/DPP@10.1.5")
 
-CPMAddPackage(
-  NAME simdjson
-  GITHUB_REPOSITORY "simdjson/simdjson"
-  GIT_TAG "v4.6.4"
-)
-
-#EnTT
-CPMAddPackage(
-  NAME entt
-  GITHUB_REPOSITORY "skypjack/entt"
-  GIT_TAG "main"
-  OPTIONS "ENTT_INCLUDE_NATVIS ON;"
-)
+# #simdjson
+# CPMAddPackage(
+#   NAME simdjson
+#   GITHUB_REPOSITORY "simdjson/simdjson"
+#   GIT_TAG "v4.6.4"
+# )
+#
+# #EnTT
+# CPMAddPackage(
+#   NAME entt
+#   GITHUB_REPOSITORY "skypjack/entt"
+#   GIT_TAG "main"
+#   OPTIONS "ENTT_INCLUDE_NATVIS ON;"
+# )
 
 # FTXUI
 CPMAddPackage(
@@ -87,8 +88,8 @@ target_link_libraries(core
 
   spdlog::spdlog
 
-  EnTT::EnTT
-  simdjson::simdjson
+  # EnTT::EnTT
+  # simdjson::simdjson
   chibi::libchibi-scheme
 )
 
