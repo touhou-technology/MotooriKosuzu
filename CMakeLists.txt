@@ -63,10 +63,8 @@ target_precompile_headers(PCH PUBLIC
   src/pch/pch.hpp
 )
 
-target_link_libraries(PCH  PUBLIC
+target_link_libraries(PCH PUBLIC
   stdc++exp
-
-  dpp
 
   ftxui::screen
   ftxui::dom
