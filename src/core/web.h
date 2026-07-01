@@ -1,6 +1,7 @@
 #ifndef WEB_H
 #define WEB_H
 #include <nlohmann/json.hpp>
+#include <variant>
 #include <vector>
 
 class UseAPI {
@@ -9,7 +10,8 @@ class UseAPI {
 
 	UseAPI() = default;
 
- std::vector<std::string> ReflectionAPI();
+	// Reflection Translate API to String
+	static consteval std::vector<std::string> ReflectionAPI();
 };
 
 #endif /* WEB_H */
