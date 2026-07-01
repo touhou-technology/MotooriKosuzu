@@ -14,7 +14,5 @@
 #include <optional>
 #include <print>
 
-#include <dpp/dpp.h>
-
 #include <meta>
 #endif /* PCH_HPP */
