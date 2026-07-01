@@ -118,7 +118,6 @@ target_link_libraries(core
 
 target_compile_options(core PRIVATE
   -freflection
-  -fmodules
 )
 
 # core end
@@ -133,7 +132,6 @@ target_link_libraries(Scheme
 
 target_compile_options(Scheme PRIVATE
   -freflection
-  -fmodules
 )
 
 # Scheme End
