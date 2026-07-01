@@ -56,6 +56,29 @@ CPMAddPackage(
 set(chibi-scheme_DIR "/usr/local/lib64/cmake/chibi")
 find_package(chibi-scheme CONFIG REQUIRED)
 
+# PCH
+add_library(PCH STATIC src/pch/dummy.cpp)
+
+target_precompile_headers(PCH PUBLIC
+  src/pch/pch.hpp
+)
+
+target_link_libraries(PCH  PUBLIC
+  stdc++exp
+
+  dpp
+
+  ftxui::screen
+  ftxui::dom
+  ftxui::component
+
+  spdlog::spdlog
+
+  chibi::libchibi-scheme
+)
+
+# PCH End
+
 # core添加核心依赖
 add_library(core STATIC)
 
@@ -91,17 +114,13 @@ target_link_libraries(core
   # EnTT::EnTT
   # simdjson::simdjson
   chibi::libchibi-scheme
+
+  PCH
 )
 
 target_compile_options(core PRIVATE
   -freflection
   -fmodules
-)
-
-# modules test
-find_cpp_modules(
-  TARGET  core
-  SRC_DIR ${CMAKE_SOURCE_DIR}/src/core
 )
 
 # core end
@@ -119,10 +138,6 @@ target_compile_options(Scheme PRIVATE
   -fmodules
 )
 
-find_cpp_modules(
-  TARGET Scheme
-  SRC_DIR ${CMAKE_SOURCE_DIR}/src/scheme
-)
 # Scheme End
 
 # MotooriKosuzu
