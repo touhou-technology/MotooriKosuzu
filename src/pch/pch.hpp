@@ -1,6 +1,8 @@
 #ifndef PCH_HPP
 #define PCH_HPP
 
+#include <initializer_list>
+
 #include <iostream>
 #include <string>
 #include <string_view>
