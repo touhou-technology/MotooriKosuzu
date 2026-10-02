@@ -1,8 +1,6 @@
-#include "MotooriKosuzu.h"
+#include <iostream>
 
-int main(int argc, char** argv) {
-	Kosuzu MotooriKosuzu;
-	MotooriKosuzu.StartDebug().WriteStone().Start();
-	
-	return 9;
+int main(int argc, char *argv[]) {
+	std::cout << "test" << std::endl;
+    return 0;
 }

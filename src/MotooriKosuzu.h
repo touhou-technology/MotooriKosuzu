@@ -1,15 +1,16 @@
-#pragma once
+#ifndef MOTOORIKOSUZU_H
+#define MOTOORIKOSUZU_H
 
-//最后交给这个类来进行初始化（也就是app本体？）
-	//本体daze
 class Kosuzu {
-public:
+  public:
 	Kosuzu();
-public:
 
-	Kosuzu& Start();
-	
-	Kosuzu& WriteStone();
+  public:
+	Kosuzu &Start();
 
-	Kosuzu& StartDebug();
-};
+	Kosuzu &WriteStone();
+
+	Kosuzu &StartDebug();
+}
+
+#endif /* MOTOORIKOSUZU_H */
