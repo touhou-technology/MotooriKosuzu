@@ -1,44 +1,45 @@
 #ifndef BAMBOOSLIPS_H
 #define BAMBOOSLIPS_H
 
-#include <httplib.h>
-#include <unordered_map>
-#include <memory>
 #include <dpp/dpp.h>
+#include <httplib.h>
+#include <memory>
+#include <unordered_map>
 // #include "Dictation.h"
 
 class ConfigSlips {
-public:
-	static std::string Path_;
-	static nlohmann::json ConfigJson;
+  public:
+	inline static std::string Path_ = {};
+	inline static nlohmann::json ConfigJson = {};
 };
 
 class HashSlips {
-public:
-	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSnowflakeStr;
-	static std::unique_ptr<std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>>SlashcommandFuntion;
+  public:
+	inline static std::unique_ptr<std::unordered_map<
+		dpp::snowflake, std::pair<dpp::snowflake, std::string>>>
+		HashSnowflakeStr = {};
+	inline static std::unique_ptr<
+		std::unordered_map<std::string, void (*)(dpp::slashcommand_t *)>>
+		SlashcommandFuntion = {};
 };
 
 class RobotSlips {
-public:
-	static std::unique_ptr<dpp::cluster> bot;
-	static dpp::message_create_t ObjMsg;
+  public:
+	inline static std::unique_ptr<dpp::cluster> bot = {};
+	inline static dpp::message_create_t ObjMsg = {};
 };
 
 class WebSlips {
-public:
-	enum {
-		TranslationURL = 0,
-		Link
-	};
+  public:
+	enum { TranslationURL = 0, Link };
 
-	static std::unique_ptr<httplib::Client> Translator;
-	static std::string Token;
+	inline static std::unique_ptr<httplib::Client> Translator = {};
+	inline static std::string Token = {};
 };
 
 class VoiceSlips {
-public:
-	//static std::unique_ptr<TranslateVoice> S_TranslateVoice;
+  public:
+	// inline static std::unique_ptr<TranslateVoice> S_TranslateVoice;
 };
 
- #endif /* BAMBOOSLIPS_H */
+#endif /* BAMBOOSLIPS_H */
