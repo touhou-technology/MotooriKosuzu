@@ -11,6 +11,6 @@ class Kosuzu {
 	Kosuzu &WriteStone();
 
 	Kosuzu &StartDebug();
-}
+};
 
 #endif /* MOTOORIKOSUZU_H */

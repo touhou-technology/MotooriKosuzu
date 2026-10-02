@@ -1,0 +1,44 @@
+#ifndef BAMBOOSLIPS_H
+#define BAMBOOSLIPS_H
+
+#include <httplib.h>
+#include <unordered_map>
+#include <memory>
+#include <dpp/dpp.h>
+// #include "Dictation.h"
+
+class ConfigSlips {
+public:
+	static std::string Path_;
+	static nlohmann::json ConfigJson;
+};
+
+class HashSlips {
+public:
+	static std::unique_ptr<std::unordered_map<dpp::snowflake, std::pair<dpp::snowflake, std::string>>> HashSnowflakeStr;
+	static std::unique_ptr<std::unordered_map<std::string, void(*)(dpp::slashcommand_t*)>>SlashcommandFuntion;
+};
+
+class RobotSlips {
+public:
+	static std::unique_ptr<dpp::cluster> bot;
+	static dpp::message_create_t ObjMsg;
+};
+
+class WebSlips {
+public:
+	enum {
+		TranslationURL = 0,
+		Link
+	};
+
+	static std::unique_ptr<httplib::Client> Translator;
+	static std::string Token;
+};
+
+class VoiceSlips {
+public:
+	//static std::unique_ptr<TranslateVoice> S_TranslateVoice;
+};
+
+ #endif /* BAMBOOSLIPS_H */
