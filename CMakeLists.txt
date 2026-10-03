@@ -17,7 +17,7 @@ CPMAddPackage("gh:brainboxdotcc/DPP@10.1.6")
 add_executable(MotooriKosuzu
   src/Application.cpp
   src/BambooSlips.h
-  src/Bookshelf.hpp
+  #src/Bookshelf.hpp
   #src/Dictation.cpp
   #src/Dictation.h
   src/MotooriKosuzu.cpp
