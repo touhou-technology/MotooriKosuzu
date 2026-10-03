@@ -3,8 +3,6 @@
 #include "Stone.h"
 #include "WritingBrush.h"
 
-std::unique_ptr<StoneTranslationObj> StoneTranslationObj::m_instance;
-
 Kosuzu::Kosuzu() { InitPen::Init(); }
 
 Kosuzu &Kosuzu::StartDebug() {

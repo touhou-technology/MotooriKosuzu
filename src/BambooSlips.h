@@ -9,7 +9,7 @@
 
 class ConfigSlips {
   public:
-	inline static std::string Path_ = {};
+    inline static std::string Path_ = "/etc/MotooriKosuzu/config/ConfigBook.json";
 	inline static nlohmann::json ConfigJson = {};
 };
 

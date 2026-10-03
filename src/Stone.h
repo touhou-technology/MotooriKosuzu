@@ -117,7 +117,7 @@ class StoneTranslationObj {
 
   public:
 	// instance
-	static std::unique_ptr<StoneTranslationObj> m_instance;
+	inline static std::unique_ptr<StoneTranslationObj> m_instance;
 
 	// message
 	StoneMessageDispose Queue;

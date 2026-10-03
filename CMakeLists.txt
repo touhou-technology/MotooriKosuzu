@@ -6,6 +6,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_STANDARD 26)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 # include CPM
 include(cmake/CPM.cmake)
 
