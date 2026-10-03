@@ -1,6 +1,9 @@
 #ifndef BAMBOOSLIPS_H
 #define BAMBOOSLIPS_H
 
+#define HASHflakeStr HashSlips::HashSnowflakeStr
+#define Robot RobotSlips::bot
+
 #include <dpp/dpp.h>
 #include <httplib.h>
 #include <memory>
