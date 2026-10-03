@@ -466,6 +466,10 @@ inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel
 	return disk(rng);
 }
 
+UsePen::MultiPen::MultiPen() {
+
+}
+
 std::vector<std::string> StringPen::RegexTreatment(std::string& input) {
 	std::vector<std::string> treatment;
 
