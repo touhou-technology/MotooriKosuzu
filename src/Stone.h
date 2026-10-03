@@ -104,9 +104,11 @@ class StoneTranslationObj {
 
 	void create_message(input_message Obj);
 
-	void UseWebhook(nlohmann::json &jsonDate, std::string url);
+	void UseWebhook(nlohmann::json jsonDate, std::string url);
 
   private:
+    double nowMessageDate;
+
 	std::mutex del;
 
 	nlohmann::json Write;
