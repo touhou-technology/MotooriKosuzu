@@ -190,12 +190,12 @@ void UsePen::OnReady() {
 			RobotSlips::bot->global_command_create(dpp::slashcommand("翻訳の停止", "翻訳を停止する", RobotSlips::bot->me.id));
 			RobotSlips::bot->global_command_create(dpp::slashcommand("双方向翻訳の停止", "双方向翻訳の停止", RobotSlips::bot->me.id));
 
-			RobotSlips::bot->global_command_create(
-				dpp::slashcommand("msh", "shell", RobotSlips::bot->me.id)
-					.add_option(dpp::command_option(dpp::co_string,
-													"auto_complete", "shell",
-													true)
-									.set_auto_complete(true)));
+			// RobotSlips::bot->global_command_create(
+			// 	dpp::slashcommand("msh", "shell", RobotSlips::bot->me.id)
+			// 		.add_option(dpp::command_option(dpp::co_string,
+			// 										"auto_complete", "shell",
+			// 										true)
+			// 						.set_auto_complete(true)));
 			//);//End
 		}//If End;
 		});//END
@@ -313,39 +313,48 @@ void UsePen::AutoComplete() {
 		}
 		});
 
-	RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t &event) {
-		if (event.name != "msh")
-			return;
+	// RobotSlips::bot->on_autocomplete([](const dpp::autocomplete_t &event) {
+	// 	if (event.name != "msh")
+	// 		return;
 
-        RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), event.name);
+    //     if(!MultiPen::setPen(event.command.channel_id))
+    //         return;
 
-        dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
-        std::cout << event.command.channel_id << std::endl;
+    //     //Pure, maybe
+	// 	static auto TranslateMessageGet = [](const dpp::snowflake message_id = 0) {
 
-		RobotSlips::bot->messages_get(
-			event.command.channel_id,
-			0, // around
-			0, // before
-			0, // after
-			100, [](const dpp::confirmation_callback_t &event) {
-				if (event.is_error()) {
-					std::cerr << event.get_error().message << '\n';
-					return;
-				}
+	// 	RobotSlips::bot->messages_get(
+	// 		0,
+	// 		0, // around
+	// 		                          message_id,
+	// 		0, // after
+	// 		100, [](const dpp::confirmation_callback_t &event) {
+	// 			if (event.is_error()) {
+	// 				std::cerr << event.get_error().message << '\n';
+	// 				return;
+	// 			}
 
-				auto messages = std::get<dpp::message_map>(event.value);
+	// 			auto messages = std::get<dpp::message_map>(event.value);
 
-				for (const auto &[id, message] : messages) {
-					std::cout << message.content << '\n';
-				}
-			});
+	// 			for (const auto &[id, message] : messages) {
+	// 				std::cout << message.content << '\n';
+	// 			}
+	// 		});
 
-		for (auto& opt : event.options) {
-            std::string uservalue = std::get<std::string>(opt.value);
+	// 		return;
+	// 	};
 
-            std::cout << uservalue << std::endl;
-        }
-	});
+	// 	RobotSlips::bot->log(dpp::loglevel(dpp::ll_debug), event.name);
+
+    //     dpp::interaction_response AutoType(dpp::ir_autocomplete_reply);
+    //     std::cout << event.command.channel_id << std::endl;
+
+	// 	for (auto& opt : event.options) {
+    //         std::string uservalue = std::get<std::string>(opt.value);
+
+    //         std::cout << uservalue << std::endl;
+    //     }
+	// });
 }
 
 //这里是处理发送消息转义的
@@ -468,6 +477,16 @@ inline uint32_t UsePen::ColorPen(dpp::snowflake guild_id, dpp::snowflake channel
 
 UsePen::MultiPen::MultiPen() {
 
+}
+
+bool UsePen::MultiPen::setPen(dpp::snowflake channel_id) {
+    for(auto &TMP : m_MultiPen) {
+        if(TMP.channel_id == channel_id)
+            return false;
+    }
+
+    m_MultiPen.push_back(MultiPen());
+    return true;
 }
 
 std::vector<std::string> StringPen::RegexTreatment(std::string& input) {

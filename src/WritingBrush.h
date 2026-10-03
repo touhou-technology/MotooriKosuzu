@@ -71,8 +71,10 @@ class UsePen {
 		MultiPen();
 
 	  public:
-		// TODO: 检查输入是否存在后以及切换到不同频道防止析构, 大概类似call_once
-		static bool _(dpp::snowflake _);
+		static bool setPen(dpp::snowflake channel_id);
+
+    private:
+        dpp::snowflake channel_id = {};
 
 	  private:
 		inline static std::vector<MultiPen> m_MultiPen =
