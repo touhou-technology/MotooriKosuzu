@@ -70,11 +70,13 @@ class UsePen {
 	  public:
 		MultiPen();
 
-    public:
-        // TODO: 检查输入是否存在后以及切换到不同频道防止析构, 大概类似call_once
-        static bool _(dpp::snowflake _);
-	private:
-        inline static std::vector<MultiPen> m_MultiPen = {};
+	  public:
+		// TODO: 检查输入是否存在后以及切换到不同频道防止析构, 大概类似call_once
+		static bool _(dpp::snowflake _);
+
+	  private:
+		inline static std::vector<MultiPen> m_MultiPen =
+			std::vector<MultiPen>(8);
 	};
 };
 
