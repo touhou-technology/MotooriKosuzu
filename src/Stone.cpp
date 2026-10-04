@@ -152,6 +152,9 @@ void StoneTranslationObj::ChangeWrie(nlohmann::json &tmp) {
 
 void StoneTranslationObj::Stone() {
 	RobotSlips::bot->on_message_create([&](const dpp::message_create_t &event) {
+		// NOTE: PTF
+		std::cout << event.raw_event << std::endl;
+
 		nowMessageDate = event.msg.get_creation_time();
 		m_instance->create_message({event});
 	});
@@ -250,7 +253,14 @@ void StoneTranslationObj::create_message(input_message Obj) {
 	jsonData["avatar_url"] = event.msg.author.get_avatar_url();
 
 	// create temp Text url
-	std::string TextMsg = event.msg.content;
+    // NOTE: PTF
+	std::string TextMsg = {};
+	if (event.msg.message_snapshots.messages.empty()) {
+		TextMsg = event.msg.content;
+	} else {
+		TextMsg = event.msg.message_snapshots.messages.front().content;
+	}
+
 	std::vector<std::string> Treatment = StringPen::RegexTreatment(TextMsg);
 
 	// Discord
